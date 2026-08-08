@@ -17,31 +17,27 @@
 
 <style>
   :root{
-    --bg-0:#0B0A22;
-    --bg-1:#140F35;
-    --paper:#181233;
-    --card:#1C1540;
-    --ink:#F5F1FF;
-    --ink-soft:#ABA3D9;
+    --bg-0:#0A1620;
+    --bg-1:#0D1E29;
+    --paper:#0F212B;
+    --card:#12242F;
+    --ink:#F3FAFA;
+    --ink-soft:#9FBAC2;
     --rule: rgba(255,255,255,.14);
-    --stamp:#C084FC;
-    --stamp-2:#60A5FA;
-    --stamp-3:#F472B6;
-    --stamp-dark:#7C3AED;
+    --stamp:#2FF3D0;
+    --stamp-2:#22D3EE;
+    --stamp-dark:#0FBBA0;
     --danger:#FF7A6E;
     --green:#F0F6F6;
     --green-dark:#C3D2D3;
     --gold:#C9D4D6;
-    --radius:22px;
-    --radius-sm:14px;
-    --glass-bg: linear-gradient(160deg, rgba(255,255,255,.12), rgba(255,255,255,.02) 60%, rgba(255,255,255,.05));
-    --glass-border: rgba(255,255,255,.24);
-    --ease-spring: cubic-bezier(.22,1,.36,1);
+    --radius:16px;
+    --glass-bg: linear-gradient(160deg, rgba(255,255,255,.10), rgba(255,255,255,.03));
+    --glass-border: rgba(255,255,255,.22);
     --shadow:
-      inset 0 1px 0 rgba(255,255,255,.16),
-      inset 0 0 60px rgba(192,132,252,.05),
-      0 30px 60px -24px rgba(0,0,0,.8),
-      0 0 0 1px rgba(255,255,255,.04);
+      inset 0 1px 0 rgba(255,255,255,.14),
+      0 24px 48px -22px rgba(0,0,0,.75),
+      0 0 0 1px rgba(255,255,255,.03);
   }
 
   *{box-sizing:border-box;}
@@ -49,10 +45,9 @@
   body{
     position:relative; isolation:isolate; overflow-x:hidden;
     background:
-      radial-gradient(1100px 620px at 10% -10%, rgba(192,132,252,.24), transparent 60%),
-      radial-gradient(900px 560px at 105% 6%, rgba(96,165,250,.18), transparent 55%),
-      radial-gradient(650px 480px at 78% 65%, rgba(244,114,182,.14), transparent 60%),
-      radial-gradient(700px 500px at 50% 120%, rgba(192,132,252,.10), transparent 60%),
+      radial-gradient(1100px 620px at 10% -10%, rgba(47,243,208,.22), transparent 60%),
+      radial-gradient(900px 560px at 105% 6%, rgba(34,211,238,.16), transparent 55%),
+      radial-gradient(700px 500px at 50% 120%, rgba(47,243,208,.10), transparent 60%),
       linear-gradient(180deg, var(--bg-0) 0%, var(--bg-1) 100%);
     background-attachment: fixed;
     color:var(--ink);
@@ -68,12 +63,12 @@
   }
   body::before{
     width:520px; height:520px; top:-180px; inset-inline-end:-140px;
-    background: radial-gradient(circle, rgba(192,132,252,.35), transparent 70%);
+    background: radial-gradient(circle, rgba(47,243,208,.35), transparent 70%);
     animation: floatBlobA 17s ease-in-out infinite alternate;
   }
   body::after{
     width:480px; height:480px; bottom:-200px; inset-inline-start:-160px;
-    background: radial-gradient(circle, rgba(96,165,250,.28), transparent 70%);
+    background: radial-gradient(circle, rgba(34,211,238,.28), transparent 70%);
     animation: floatBlobB 21s ease-in-out infinite alternate;
   }
   @keyframes floatBlobA{ from{ transform:translate(0,0) scale(1); } to{ transform:translate(-50px,70px) scale(1.18); } }
@@ -84,8 +79,8 @@
   a{ color: var(--stamp); }
 
   /* ---------- Entrance animations ---------- */
-  @keyframes riseIn{ from{ opacity:0; transform:translateY(18px) scale(.98); filter:blur(6px); } to{ opacity:1; transform:none; filter:blur(0); } }
-  @keyframes popIn{ from{ opacity:0; transform:translateY(12px) scale(.92); filter:blur(4px); } to{ opacity:1; transform:none; filter:blur(0); } }
+  @keyframes riseIn{ from{ opacity:0; transform:translateY(14px); } to{ opacity:1; transform:none; } }
+  @keyframes popIn{ from{ opacity:0; transform:translateY(10px) scale(.94); } to{ opacity:1; transform:none; } }
 
   /* ---------- Header ---------- */
   .site-header{
@@ -97,24 +92,24 @@
     flex:0 0 auto;
     width:76px; height:76px; border-radius:50%;
     overflow:hidden;
-    border:2px solid rgba(192,132,252,.7);
+    border:2px solid rgba(47,243,208,.7);
     background:#000;
     box-shadow:
-      0 0 0 4px rgba(192,132,252,.10),
+      0 0 0 4px rgba(47,243,208,.10),
       0 10px 22px -8px rgba(0,0,0,.75),
-      0 0 30px -2px rgba(192,132,252,.6);
+      0 0 30px -2px rgba(47,243,208,.6);
     user-select:none;
     animation: glowRing 3.2s ease-in-out infinite;
   }
   @keyframes glowRing{
-    0%,100%{ box-shadow:0 0 0 4px rgba(192,132,252,.10), 0 10px 22px -8px rgba(0,0,0,.75), 0 0 22px -2px rgba(192,132,252,.45); }
-    50%{ box-shadow:0 0 0 6px rgba(192,132,252,.16), 0 10px 22px -8px rgba(0,0,0,.75), 0 0 38px 2px rgba(192,132,252,.75); }
+    0%,100%{ box-shadow:0 0 0 4px rgba(47,243,208,.10), 0 10px 22px -8px rgba(0,0,0,.75), 0 0 22px -2px rgba(47,243,208,.45); }
+    50%{ box-shadow:0 0 0 6px rgba(47,243,208,.16), 0 10px 22px -8px rgba(0,0,0,.75), 0 0 38px 2px rgba(47,243,208,.75); }
   }
   .brand-stamp img{ width:100%; height:100%; object-fit:cover; display:block; }
   .site-header h1{
     margin:0; font-size:clamp(26px,4vw,38px); font-weight:800; letter-spacing:.05em;
     font-family:'JetBrains Mono','Vazirmatn',sans-serif;
-    background: linear-gradient(90deg, #FFFFFF 0%, #C084FC 45%, #60A5FA 75%, #E9D5FF 100%);
+    background: linear-gradient(90deg, #FFFFFF 0%, #2FF3D0 45%, #22D3EE 75%, #B8FBF0 100%);
     background-size: 200% auto;
     -webkit-background-clip:text; background-clip:text; color:transparent;
     animation: shineText 5s linear infinite;
@@ -187,7 +182,7 @@
     width:30px; height:30px; border-radius:9px; font-size:16px; line-height:1; flex:0 0 auto;
     background:
       radial-gradient(circle at 30% 25%, rgba(255,255,255,.85), rgba(255,255,255,.08) 45%, transparent 75%),
-      linear-gradient(160deg, rgba(192,132,252,.4), rgba(96,165,250,.16));
+      linear-gradient(160deg, rgba(47,243,208,.4), rgba(34,211,238,.16));
     border:1px solid rgba(255,255,255,.35);
     box-shadow:
       inset 0 1px 1px rgba(255,255,255,.6),
@@ -199,7 +194,7 @@
   .tool-nav button[aria-selected="true"] .ico{
     background:
       radial-gradient(circle at 30% 25%, rgba(255,255,255,.95), rgba(255,255,255,.2) 45%, transparent 75%),
-      linear-gradient(160deg, #ffffff, #E9D5FF);
+      linear-gradient(160deg, #ffffff, #bdf5ec);
     box-shadow:
       inset 0 1px 1px rgba(255,255,255,.9),
       inset 0 -3px 6px rgba(0,0,0,.2),
@@ -208,15 +203,15 @@
   .tool-nav button:hover{ background:rgba(255,255,255,.08); color:var(--ink); transform:translateX(-2px); }
   .tool-nav button:hover::after{ left:120%; }
   .tool-nav button[aria-selected="true"]{
-    background: linear-gradient(180deg, #F0ABFC 0%, #A855F7 55%, #7E22CE 100%);
-    color:#2A1044; font-weight:800;
+    background: linear-gradient(180deg, #4FFCE0 0%, #1FD6BC 55%, #109E8B 100%);
+    color:#05241F; font-weight:800;
     border-color: rgba(255,255,255,.5);
     transform: translateY(-1px);
     animation: popIn .4s cubic-bezier(.16,1,.3,1) forwards, pulseGlow 2.6s ease-in-out .4s infinite;
   }
   @keyframes pulseGlow{
-    0%,100%{ box-shadow: inset 0 1px 0 rgba(255,255,255,.6), inset 0 -8px 14px -6px rgba(0,0,0,.3), 0 10px 22px -10px rgba(192,132,252,.65), 0 2px 0 rgba(0,0,0,.4); }
-    50%{ box-shadow: inset 0 1px 0 rgba(255,255,255,.75), inset 0 -8px 14px -6px rgba(0,0,0,.3), 0 16px 32px -8px rgba(192,132,252,.95), 0 2px 0 rgba(0,0,0,.4); }
+    0%,100%{ box-shadow: inset 0 1px 0 rgba(255,255,255,.6), inset 0 -8px 14px -6px rgba(0,0,0,.3), 0 10px 22px -10px rgba(47,243,208,.65), 0 2px 0 rgba(0,0,0,.4); }
+    50%{ box-shadow: inset 0 1px 0 rgba(255,255,255,.75), inset 0 -8px 14px -6px rgba(0,0,0,.3), 0 16px 32px -8px rgba(47,243,208,.95), 0 2px 0 rgba(0,0,0,.4); }
   }
 
   /* ---------- Panels ---------- */
@@ -251,10 +246,10 @@
     box-shadow: inset 0 1px 4px rgba(0,0,0,.35);
     transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
   }
-  select option{ background:#181233; color:var(--ink); }
+  select option{ background:#0F212B; color:var(--ink); }
   input:focus, textarea:focus, select:focus{
     border-color: var(--stamp); background:rgba(255,255,255,.09);
-    box-shadow: inset 0 1px 4px rgba(0,0,0,.35), 0 0 0 3px rgba(192,132,252,.22);
+    box-shadow: inset 0 1px 4px rgba(0,0,0,.35), 0 0 0 3px rgba(47,243,208,.22);
   }
   textarea{ resize:vertical; min-height:160px; line-height:1.9; }
 
@@ -265,14 +260,14 @@
   .btn{
     all:unset; cursor:pointer; display:inline-flex; align-items:center; gap:8px;
     position:relative; overflow:hidden;
-    background: linear-gradient(180deg, #F0ABFC 0%, #A855F7 55%, #7E22CE 100%);
-    color:#2A1044; font-weight:800; font-size:14.5px;
+    background: linear-gradient(180deg, #4FFCE0 0%, #1FD6BC 55%, #109E8B 100%);
+    color:#05241F; font-weight:800; font-size:14.5px;
     padding:12px 22px; border-radius:12px;
     border:1px solid rgba(255,255,255,.4);
     box-shadow:
       inset 0 1px 0 rgba(255,255,255,.65),
       inset 0 -10px 16px -6px rgba(0,0,0,.28),
-      0 12px 26px -10px rgba(192,132,252,.7),
+      0 12px 26px -10px rgba(47,243,208,.7),
       0 2px 0 rgba(0,0,0,.35);
     transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
   }
@@ -282,8 +277,8 @@
     transform: skewX(-20deg); transition: left .55s ease; pointer-events:none;
   }
   .btn:hover::after{ left:120%; }
-  .btn:hover{ filter:brightness(1.08); transform:translateY(-2px); box-shadow: inset 0 1px 0 rgba(255,255,255,.65), inset 0 -10px 16px -6px rgba(0,0,0,.28), 0 18px 34px -10px rgba(192,132,252,.85), 0 2px 0 rgba(0,0,0,.35); }
-  .btn:active{ transform:translateY(1px) scale(.985); box-shadow: inset 0 2px 8px rgba(0,0,0,.4), 0 4px 10px -6px rgba(192,132,252,.55); }
+  .btn:hover{ filter:brightness(1.08); transform:translateY(-2px); box-shadow: inset 0 1px 0 rgba(255,255,255,.65), inset 0 -10px 16px -6px rgba(0,0,0,.28), 0 18px 34px -10px rgba(47,243,208,.85), 0 2px 0 rgba(0,0,0,.35); }
+  .btn:active{ transform:translateY(1px) scale(.985); box-shadow: inset 0 2px 8px rgba(0,0,0,.4), 0 4px 10px -6px rgba(47,243,208,.55); }
   .btn:disabled{ opacity:.5; cursor:not-allowed; filter:grayscale(.35); }
   .btn.secondary{
     background: linear-gradient(180deg, #2E3D42 0%, #131E22 100%); color:var(--ink);
@@ -314,9 +309,9 @@
     background: rgba(255,255,255,.03);
     transition: border-color .2s ease, background .2s ease, transform .2s ease;
   }
-  .dropzone:hover{ transform:translateY(-2px); border-color: rgba(192,132,252,.5); }
-  .dropzone.drag{ border-color:var(--stamp); background:rgba(192,132,252,.10); animation: dashPulse 1.1s ease-in-out infinite; }
-  @keyframes dashPulse{ 0%,100%{ box-shadow:0 0 0 0 rgba(192,132,252,.35); } 50%{ box-shadow:0 0 0 10px rgba(192,132,252,0); } }
+  .dropzone:hover{ transform:translateY(-2px); border-color: rgba(47,243,208,.5); }
+  .dropzone.drag{ border-color:var(--stamp); background:rgba(47,243,208,.10); animation: dashPulse 1.1s ease-in-out infinite; }
+  @keyframes dashPulse{ 0%,100%{ box-shadow:0 0 0 0 rgba(47,243,208,.35); } 50%{ box-shadow:0 0 0 10px rgba(47,243,208,0); } }
   .dropzone strong{ color:var(--ink); }
 
   .filelist{ list-style:none; margin:16px 0 0; padding:0; display:flex; flex-direction:column; gap:8px; }
@@ -325,7 +320,7 @@
     background:rgba(255,255,255,.055); border:1px solid rgba(255,255,255,.14); border-radius:9px;
     padding:8px 10px; animation: riseIn .3s ease both;
   }
-  .filelist .thumb{ width:38px; height:38px; border-radius:6px; object-fit:cover; flex:0 0 auto; background:#181233; }
+  .filelist .thumb{ width:38px; height:38px; border-radius:6px; object-fit:cover; flex:0 0 auto; background:#0F212B; }
   .filelist .name{ flex:1; font-size:13.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .filelist .ctrls{ display:flex; gap:4px; }
   .iconbtn{
@@ -341,9 +336,9 @@
   .stamp-badge{
     display:inline-flex; align-items:center; gap:8px; margin-top:16px;
     border:2px solid var(--stamp); color: var(--stamp); font-weight:800;
-    background: rgba(192,132,252,.10); backdrop-filter: blur(10px);
+    background: rgba(47,243,208,.10); backdrop-filter: blur(10px);
     padding:9px 16px; border-radius:9px; transform:rotate(-4deg) scale(.6); opacity:0;
-    box-shadow: 0 0 24px -4px rgba(192,132,252,.75);
+    box-shadow: 0 0 24px -4px rgba(47,243,208,.75);
     transition: all .35s cubic-bezier(.2,1.4,.4,1);
   }
   .stamp-badge.show{ transform:rotate(-4deg) scale(1); opacity:1; animation: pulseGlow 2s ease-in-out .35s infinite; }
@@ -433,15 +428,15 @@
   }
   .tool-card:hover::after{ left:130%; }
   .tool-card:hover{
-    transform:translateY(-6px) scale(1.015); border-color: rgba(192,132,252,.6);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.18), 0 26px 46px -18px rgba(192,132,252,.45);
+    transform:translateY(-6px) scale(1.015); border-color: rgba(47,243,208,.6);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.18), 0 26px 46px -18px rgba(47,243,208,.45);
   }
   .tool-card .ico{
     display:inline-flex; align-items:center; justify-content:center;
     width:52px; height:52px; border-radius:16px; font-size:26px;
     background:
       radial-gradient(circle at 30% 25%, rgba(255,255,255,.85), rgba(255,255,255,.1) 45%, transparent 75%),
-      linear-gradient(160deg, rgba(192,132,252,.42), rgba(96,165,250,.18));
+      linear-gradient(160deg, rgba(47,243,208,.42), rgba(34,211,238,.18));
     border:1px solid rgba(255,255,255,.38);
     box-shadow:
       inset 0 2px 2px rgba(255,255,255,.6),
@@ -449,7 +444,7 @@
       0 8px 16px -6px rgba(0,0,0,.55);
     transition: transform .25s ease, box-shadow .25s ease;
   }
-  .tool-card:hover .ico{ transform: scale(1.15) rotate(-6deg); box-shadow: inset 0 2px 2px rgba(255,255,255,.75), inset 0 -6px 10px rgba(0,0,0,.22), 0 12px 22px -8px rgba(192,132,252,.55); }
+  .tool-card:hover .ico{ transform: scale(1.15) rotate(-6deg); box-shadow: inset 0 2px 2px rgba(255,255,255,.75), inset 0 -6px 10px rgba(0,0,0,.22), 0 12px 22px -8px rgba(47,243,208,.55); }
   .tool-card h3{ margin:12px 0 5px; font-size:16px; font-weight:800; }
   .tool-card p{ margin:0; font-size:13px; color:var(--ink-soft); }
 
@@ -511,10 +506,10 @@
     <button data-tab="text" role="tab" aria-selected="false"><span class="ico">📝</span> متن به PDF</button>
     <button data-tab="cash" role="tab" aria-selected="false"><span class="ico">💵</span> ثبت تنخواه</button>
     <button data-tab="invoice" role="tab" aria-selected="false"><span class="ico">🧮</span> ساخت فاکتور</button>
-    <button data-tab="payslip" role="tab" aria-selected="false"><span class="ico">💰</span> فیش حقوقی</button>
     <button data-tab="dateconv" role="tab" aria-selected="false"><span class="ico">📅</span> تبدیل تاریخ</button>
     <button data-tab="translate" role="tab" aria-selected="false"><span class="ico">🌐</span> مترجم</button>
     <button data-tab="hafez" role="tab" aria-selected="false"><span class="ico">📖</span> فال حافظ</button>
+    <button data-tab="salary" role="tab" aria-selected="false"><span class="ico">💰</span> حقوق و دستمزد</button>
     <button data-tab="contact" role="tab" aria-selected="false"><span class="ico">📬</span> ارتباط با ما</button>
   </nav>
 
@@ -572,11 +567,6 @@
           <div class="ico">🧮</div>
           <h3>ساخت فاکتور</h3>
           <p>فاکتور فروش رسمی با محاسبه‌ی خودکار جمع، مالیات و مبلغ نهایی بساز.</p>
-        </button>
-        <button class="tool-card" data-goto="payslip">
-          <div class="ico">💰</div>
-          <h3>فیش حقوقی</h3>
-          <p>روزهای کارکرد و اضافه‌کاری رو وارد کن، فیش حقوقی رسمی بساز و چاپ بگیر.</p>
         </button>
         <button class="tool-card" data-goto="contact">
           <div class="ico">📬</div>
@@ -920,113 +910,6 @@
       </div>
     </section>
 
-    <!-- ---------------- PAYSLIP BUILDER ---------------- -->
-    <section id="panel-payslip" class="panel">
-      <div class="card">
-        <h2>💰 ساخت فیش حقوقی</h2>
-        <p class="lede">تعداد روزهای کارکرد و اضافه‌کاری رو وارد کن؛ حقوق پایه، حق مسکن، حق خواربار و نرخ اضافه‌کاری طبق مصوبه سال ۱۴۰۵ ثابت و غیرقابل‌ویرایش هستن. در آخر فیش حقوقی رو به‌صورت PDF بساز و چاپ بگیر.</p>
-
-        <h3 style="margin:0 0 12px; font-size:14.5px; color:var(--stamp);">مشخصات پرسنل</h3>
-        <div class="row">
-          <div class="field" style="flex:2 1 220px;">
-            <label for="ps-name">نام و نام خانوادگی</label>
-            <input type="text" id="ps-name" placeholder="مثلاً: علی محمدی">
-          </div>
-          <div class="field" style="flex:1 1 160px;">
-            <label for="ps-code">شماره پرسنلی</label>
-            <input type="text" id="ps-code" placeholder="۱۰۲">
-          </div>
-          <div class="field" style="flex:1 1 200px;">
-            <label for="ps-period">عنوان دوره پرداخت</label>
-            <input type="text" id="ps-period" placeholder="مثلاً: فروردین ۱۴۰۵">
-          </div>
-        </div>
-
-        <h3 style="margin:18px 0 12px; font-size:14.5px; color:var(--stamp);">کارکرد و اضافه‌کاری</h3>
-        <div class="row">
-          <div class="field" style="flex:1 1 180px;">
-            <label for="ps-workdays">تعداد روزهای کارکرد</label>
-            <input type="number" id="ps-workdays" min="0" max="31" step="1" placeholder="۳۰">
-          </div>
-          <div class="field" style="flex:1 1 140px;">
-            <label for="ps-ot-hours">اضافه‌کاری (ساعت)</label>
-            <input type="number" id="ps-ot-hours" min="0" step="1" placeholder="۱۱">
-          </div>
-          <div class="field" style="flex:1 1 140px;">
-            <label for="ps-ot-minutes">اضافه‌کاری (دقیقه)</label>
-            <input type="number" id="ps-ot-minutes" min="0" max="59" step="1" placeholder="۱۸">
-          </div>
-        </div>
-
-        <h3 style="margin:18px 0 12px; font-size:14.5px; color:var(--stamp);">مبالغ ثابت قانون کار (سال ۱۴۰۵)</h3>
-        <div class="row">
-          <div class="field" style="flex:1 1 200px;">
-            <label for="ps-daily-wage">حقوق روزانه پایه (ریال)</label>
-            <input type="text" id="ps-daily-wage" value="۵٬۵۴۱٬۸۵۰" disabled>
-          </div>
-          <div class="field" style="flex:1 1 200px;">
-            <label for="ps-housing">حق مسکن ماهانه (ریال)</label>
-            <input type="text" id="ps-housing" value="۳۰٬۰۰۰٬۰۰۰" disabled>
-          </div>
-          <div class="field" style="flex:1 1 200px;">
-            <label for="ps-food">حق خواربار ماهانه (ریال)</label>
-            <input type="text" id="ps-food" value="۲۲٬۰۰۰٬۰۰۰" disabled>
-          </div>
-          <div class="field" style="flex:1 1 200px;">
-            <label for="ps-ot-rate">نرخ هر ساعت اضافه‌کاری (ریال)</label>
-            <input type="text" id="ps-ot-rate" value="۱٬۰۵۸٬۴۷۱" disabled>
-          </div>
-        </div>
-        <p style="color:var(--ink-soft); font-size:12.5px; margin-top:-4px;">این چهار مقدار طبق مصوبه شورای عالی کار برای سال ۱۴۰۵ ثابت است و قابل ویرایش نیست.</p>
-      </div>
-
-      <div class="card">
-        <h2>کسورات</h2>
-        <div class="row">
-          <div class="field" style="flex:2 1 220px;">
-            <label for="ps-ded-desc">عنوان کسر</label>
-            <input type="text" id="ps-ded-desc" placeholder="مثلاً: بیمه سهم کارگر">
-          </div>
-          <div class="field" style="flex:1 1 160px;">
-            <label for="ps-ded-amount">مبلغ (ریال)</label>
-            <input type="number" id="ps-ded-amount" min="0" step="1000" placeholder="۵۰۰۰۰۰">
-          </div>
-        </div>
-        <button class="btn" id="ps-ded-add">➕ افزودن کسر</button>
-
-        <div style="overflow-x:auto; margin-top:20px;">
-          <table>
-            <thead>
-              <tr><th>ردیف</th><th>عنوان کسر</th><th>مبلغ (ریال)</th><th></th></tr>
-            </thead>
-            <tbody id="ps-ded-tbody">
-              <tr class="empty-row"><td colspan="4">هنوز کسری ثبت نشده.</td></tr>
-            </tbody>
-            <tfoot>
-              <tr class="total-row"><td colspan="2">جمع کسورات</td><td class="amount-cell num" id="ps-ded-total">۰</td><td></td></tr>
-            </tfoot>
-          </table>
-        </div>
-
-        <div style="margin-top:18px; padding:14px 16px; border-radius:var(--radius-sm); background:rgba(255,255,255,.04); border:1px solid var(--rule);">
-          <div style="display:flex; justify-content:space-between; padding:4px 0;"><span>حقوق پایه (روزانه × روزهای کارکرد)</span><strong class="num" id="ps-base-out">۰</strong></div>
-          <div style="display:flex; justify-content:space-between; padding:4px 0;"><span>حق مسکن</span><strong class="num" id="ps-housing-out">۰</strong></div>
-          <div style="display:flex; justify-content:space-between; padding:4px 0;"><span>حق خواربار</span><strong class="num" id="ps-food-out">۰</strong></div>
-          <div style="display:flex; justify-content:space-between; padding:4px 0;"><span>اضافه‌کاری</span><strong class="num" id="ps-ot-out">۰</strong></div>
-          <div style="display:flex; justify-content:space-between; padding:8px 0; margin-top:4px; border-top:1px solid var(--rule); font-size:15px;"><span>جمع ناخالص</span><strong class="num" id="ps-gross-out">۰</strong></div>
-          <div style="display:flex; justify-content:space-between; padding:4px 0;"><span>جمع کسورات</span><strong class="num" id="ps-ded-out">۰</strong></div>
-          <div style="display:flex; justify-content:space-between; padding:8px 0; margin-top:4px; border-top:1px solid var(--rule); font-size:16.5px; color:var(--stamp);"><span>خالص قابل پرداخت</span><strong class="num" id="ps-net-out">۰ ریال</strong></div>
-          <div style="color:var(--ink-soft); font-size:13px; margin-top:4px;" id="ps-net-words"></div>
-        </div>
-
-        <div style="margin-top:18px; display:flex; gap:10px; flex-wrap:wrap;">
-          <button class="btn" id="ps-build">🧾 ساخت و چاپ PDF فیش حقوقی</button>
-          <button class="btn ghost" id="ps-clear">پاک کردن کسورات</button>
-        </div>
-        <div class="status" id="ps-status"></div>
-      </div>
-    </section>
-
     <!-- ---------------- DATE CONVERTER ---------------- -->
     <section id="panel-dateconv" class="panel">
       <div class="card">
@@ -1115,7 +998,273 @@
     </section>
 
     <!-- ---------------- CONTACT ---------------- -->
-    <section id="panel-contact" class="panel">
+    <!-- ══ SALARY CALCULATOR ══ -->
+    <section id="panel-salary" class="panel">
+      <div class="card">
+        <h2>💰 محاسبه حقوق و دستمزد ۱۴۰۵</h2>
+        <p class="lede">اطلاعات کارمند را وارد کنید — محاسبات بر اساس قانون کار و جداول بیمه/مالیات سال ۱۴۰۵ انجام می‌شود.</p>
+
+        <style>
+        /* ── Salary Panel Styles ── */
+        .sal-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; margin-bottom:18px; }
+        .sal-section-title {
+          font-size:13px; font-weight:700; letter-spacing:.05em; text-transform:uppercase;
+          color:var(--ink-soft,#aaa); margin:20px 0 12px;
+          display:flex; align-items:center; gap:10px;
+        }
+        .sal-section-title::after { content:''; flex:1; height:1px; background:rgba(255,255,255,.08); }
+        .sal-result-grid {
+          display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:10px; margin-top:18px;
+        }
+        .sal-result-item {
+          background:rgba(255,255,255,.04);
+          border:1px solid rgba(255,255,255,.08);
+          border-radius:12px; padding:14px 16px;
+        }
+        .sal-result-item.highlight {
+          background:linear-gradient(135deg,rgba(99,102,241,.15),rgba(59,130,246,.1));
+          border-color:rgba(99,102,241,.3);
+        }
+        .sal-result-item.deduct {
+          background:rgba(239,68,68,.06);
+          border-color:rgba(239,68,68,.2);
+        }
+        .sal-result-item.net {
+          background:linear-gradient(135deg,rgba(34,197,94,.15),rgba(16,185,129,.1));
+          border-color:rgba(34,197,94,.4);
+          grid-column: 1 / -1;
+        }
+        .sal-result-label { font-size:11.5px; color:var(--ink-soft,#aaa); margin-bottom:5px; font-weight:600; }
+        .sal-result-value { font-size:17px; font-weight:800; font-family:'JetBrains Mono',monospace; color:var(--ink,#eee); }
+        .sal-result-item.net .sal-result-value { font-size:22px; color:#4ade80; }
+        .sal-result-item.deduct .sal-result-value { color:#f87171; }
+        .sal-result-item.highlight .sal-result-value { color:#a5b4fc; }
+        .sal-note { font-size:12px; color:var(--ink-soft,#999); margin-top:5px; }
+        #sal-output { display:none; }
+        #sal-output.visible { display:block; animation:fadeUp .35s ease; }
+        @keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
+        .sal-overtimebox {
+          display:grid; grid-template-columns:1fr 1fr; gap:10px;
+          background:rgba(255,255,255,.025); border-radius:12px; padding:14px;
+          border:1px solid rgba(255,255,255,.07); margin-top:4px;
+        }
+        </style>
+
+        <!-- ── اطلاعات پایه ── -->
+        <div class="sal-section-title">اطلاعات پایه</div>
+        <div class="sal-grid">
+          <div class="field">
+            <label for="sal-name">نام کارمند</label>
+            <input type="text" id="sal-name" placeholder="مثلاً: احمدی">
+          </div>
+          <div class="field">
+            <label for="sal-month">ماه محاسبه</label>
+            <select id="sal-month">
+              <option value="31">فروردین (۳۱ روزه)</option>
+              <option value="31">اردیبهشت (۳۱ روزه)</option>
+              <option value="31">خرداد (۳۱ روزه)</option>
+              <option value="31">تیر (۳۱ روزه)</option>
+              <option value="31">مرداد (۳۱ روزه)</option>
+              <option value="31">شهریور (۳۱ روزه)</option>
+              <option value="30">مهر (۳۰ روزه)</option>
+              <option value="30">آبان (۳۰ روزه)</option>
+              <option value="30">آذر (۳۰ روزه)</option>
+              <option value="30">دی (۳۰ روزه)</option>
+              <option value="30">بهمن (۳۰ روزه)</option>
+              <option value="29">اسفند (۲۹ روزه)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="sal-daily-base">حقوق پایه روزانه ۱۴۰۵ (تومان)</label>
+            <input type="number" id="sal-daily-base" placeholder="مثلاً: 3463656" min="0" step="1000">
+          </div>
+          <div class="field">
+            <label for="sal-work-days">روزهای کارکرد</label>
+            <input type="number" id="sal-work-days" placeholder="مثلاً: 31" min="0" max="31" value="31">
+          </div>
+          <div class="field">
+            <label for="sal-hire-year">سال استخدام (شمسی)</label>
+            <input type="number" id="sal-hire-year" placeholder="مثلاً: 1398" min="1360" max="1405" value="1405">
+          </div>
+        </div>
+
+        <!-- ── وضعیت خانوادگی ── -->
+        <div class="sal-section-title">وضعیت خانوادگی</div>
+        <div class="sal-grid">
+          <div class="field">
+            <label for="sal-marital">وضعیت تأهل</label>
+            <select id="sal-marital">
+              <option value="1">مجرد</option>
+              <option value="2">متأهل</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="sal-children">تعداد فرزند</label>
+            <input type="number" id="sal-children" placeholder="0" min="0" max="20" value="0">
+          </div>
+        </div>
+
+        <!-- ── مزایا ── -->
+        <div class="sal-section-title">مزایا و حقوق جانبی</div>
+        <div class="sal-grid">
+          <div class="field">
+            <label for="sal-housing">حق مسکن (تومان/ماه)</label>
+            <input type="number" id="sal-housing" value="30000000" min="0" step="1000">
+          </div>
+          <div class="field">
+            <label for="sal-food">حق خواربار (تومان/ماه)</label>
+            <input type="number" id="sal-food" value="22000000" min="0" step="1000">
+          </div>
+          <div class="field">
+            <label for="sal-mission">ماموریت (تومان)</label>
+            <input type="number" id="sal-mission" value="0" min="0" step="1000">
+          </div>
+          <div class="field">
+            <label for="sal-commission">پورسانت (تومان)</label>
+            <input type="number" id="sal-commission" value="0" min="0" step="1000">
+          </div>
+          <div class="field">
+            <label for="sal-supplement">بیمه تکمیلی (تومان)</label>
+            <input type="number" id="sal-supplement" value="0" min="0" step="1000">
+          </div>
+          <div class="field">
+            <label for="sal-advance">مساعده (تومان)</label>
+            <input type="number" id="sal-advance" value="0" min="0" step="1000">
+          </div>
+        </div>
+
+        <!-- ── اضافه‌کاری ── -->
+        <div class="sal-section-title">اضافه‌کاری</div>
+        <div class="sal-overtimebox">
+          <div class="field" style="margin:0">
+            <label for="sal-ot-hours">ساعت اضافه‌کاری</label>
+            <input type="number" id="sal-ot-hours" value="0" min="0" max="200" step="0.5">
+          </div>
+          <div class="field" style="margin:0">
+            <label>نرخ اضافه‌کاری</label>
+            <div style="padding:11px 14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:10px;font-size:13px;color:var(--ink-soft,#aaa);">
+              ۱/۴۰ حقوق روزانه × ۱.۴
+            </div>
+          </div>
+        </div>
+
+        <!-- ── دکمه محاسبه ── -->
+        <div style="margin-top:22px;">
+          <button class="btn" id="sal-calc-btn" type="button">🧮 محاسبه حقوق</button>
+        </div>
+
+        <!-- ── خروجی ── -->
+        <div id="sal-output">
+          <div class="sal-section-title" style="margin-top:28px;">نتیجه محاسبه — <span id="sal-out-name"></span></div>
+
+          <div class="sal-result-grid">
+            <div class="sal-result-item highlight">
+              <div class="sal-result-label">حقوق ماهانه (بدون سنوات)</div>
+              <div class="sal-result-value" id="r-base-monthly">—</div>
+            </div>
+            <div class="sal-result-item highlight">
+              <div class="sal-result-label">پایه سنوات روزانه</div>
+              <div class="sal-result-value" id="r-seniority-daily">—</div>
+            </div>
+            <div class="sal-result-item highlight">
+              <div class="sal-result-label">حقوق ماهانه با سنوات</div>
+              <div class="sal-result-value" id="r-base-with-sen">—</div>
+            </div>
+            <div class="sal-result-item">
+              <div class="sal-result-label">حق تأهل</div>
+              <div class="sal-result-value" id="r-marriage">—</div>
+            </div>
+            <div class="sal-result-item">
+              <div class="sal-result-label">حق اولاد</div>
+              <div class="sal-result-value" id="r-children">—</div>
+            </div>
+            <div class="sal-result-item">
+              <div class="sal-result-label">حق مسکن</div>
+              <div class="sal-result-value" id="r-housing">—</div>
+            </div>
+            <div class="sal-result-item">
+              <div class="sal-result-label">حق خواربار</div>
+              <div class="sal-result-value" id="r-food">—</div>
+            </div>
+            <div class="sal-result-item">
+              <div class="sal-result-label">اضافه‌کاری</div>
+              <div class="sal-result-value" id="r-overtime">—</div>
+            </div>
+            <div class="sal-result-item">
+              <div class="sal-result-label">ماموریت</div>
+              <div class="sal-result-value" id="r-mission">—</div>
+            </div>
+            <div class="sal-result-item">
+              <div class="sal-result-label">پورسانت</div>
+              <div class="sal-result-value" id="r-commission">—</div>
+            </div>
+            <div class="sal-result-item highlight">
+              <div class="sal-result-label">جمع کل مستمر و غیرمستمر</div>
+              <div class="sal-result-value" id="r-gross">—</div>
+            </div>
+            <div class="sal-result-item highlight">
+              <div class="sal-result-label">مزایای مشمول بیمه</div>
+              <div class="sal-result-value" id="r-insurable">—</div>
+            </div>
+          </div>
+
+          <!-- کسورات -->
+          <div class="sal-section-title" style="margin-top:22px;">کسورات</div>
+          <div class="sal-result-grid">
+            <div class="sal-result-item deduct">
+              <div class="sal-result-label">بیمه سهم کارگر (۷٪)</div>
+              <div class="sal-result-value" id="r-ins-worker">—</div>
+            </div>
+            <div class="sal-result-item deduct">
+              <div class="sal-result-label">بیمه سهم کارفرما (۲۰٪)</div>
+              <div class="sal-result-value" id="r-ins-employer">—</div>
+            </div>
+            <div class="sal-result-item deduct">
+              <div class="sal-result-label">بیمه بیکاری (۳٪)</div>
+              <div class="sal-result-value" id="r-ins-unemployment">—</div>
+            </div>
+            <div class="sal-result-item deduct">
+              <div class="sal-result-label">جمع بیمه کل</div>
+              <div class="sal-result-value" id="r-ins-total">—</div>
+            </div>
+            <div class="sal-result-item deduct">
+              <div class="sal-result-label">مالیات</div>
+              <div class="sal-result-value" id="r-tax">—</div>
+            </div>
+            <div class="sal-result-item deduct">
+              <div class="sal-result-label">بیمه تکمیلی</div>
+              <div class="sal-result-value" id="r-supplement">—</div>
+            </div>
+            <div class="sal-result-item deduct">
+              <div class="sal-result-label">مساعده</div>
+              <div class="sal-result-value" id="r-advance">—</div>
+            </div>
+            <div class="sal-result-item deduct">
+              <div class="sal-result-label">جمع کسورات</div>
+              <div class="sal-result-value" id="r-deductions">—</div>
+            </div>
+          </div>
+
+          <!-- خالص -->
+          <div class="sal-result-grid" style="margin-top:10px;">
+            <div class="sal-result-item net">
+              <div class="sal-result-label">💵 خالص پرداختی</div>
+              <div class="sal-result-value" id="r-net">—</div>
+              <div class="sal-note" id="r-employer-cost"></div>
+            </div>
+          </div>
+
+          <!-- دکمه چاپ/PDF -->
+          <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;">
+            <button class="btn" id="sal-print-btn" type="button">🖨️ چاپ / ذخیره PDF</button>
+            <button class="btn secondary" id="sal-reset-btn" type="button">🔄 محاسبه مجدد</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+        <section id="panel-contact" class="panel">
       <div class="card">
         <h2>ارتباط با ما</h2>
         <p class="lede">سوال، پیشنهاد یا مشکلی داشتی، از این راه‌ها در دسترسیم.</p>
@@ -1994,242 +2143,6 @@
 
   renderInvoiceItems();
 
-  /* ---------------- PAYSLIP BUILDER ---------------- */
-  const PS_DAILY_WAGE = 5541850;   // حقوق روزانه پایه - مصوبه شورای عالی کار ۱۴۰۵
-  const PS_HOUSING = 30000000;     // حق مسکن ماهانه - ثابت ۱۴۰۵
-  const PS_FOOD = 22000000;        // حق خواربار ماهانه - ثابت ۱۴۰۵
-  const PS_OT_RATE = 1058471;      // نرخ هر ساعت اضافه‌کاری - ثابت ۱۴۰۵
-
-  let psDeductions = [];
-
-  function renderPsDeductions(){
-    const tbody = document.getElementById('ps-ded-tbody');
-    tbody.innerHTML = '';
-    if(psDeductions.length === 0){
-      tbody.innerHTML = '<tr class="empty-row"><td colspan="4">هنوز کسری ثبت نشده.</td></tr>';
-    }else{
-      psDeductions.forEach((d, i) => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td class="num">${toFaDigits(i+1)}</td>
-          <td>${escapeHtml(d.desc)}</td>
-          <td class="amount-cell num">${fmtRial(d.amount)}</td>
-          <td></td>`;
-        const del = document.createElement('button');
-        del.className = 'iconbtn'; del.type = 'button'; del.textContent = '✕'; del.title = 'حذف';
-        del.addEventListener('click', () => { psDeductions.splice(i,1); renderPsDeductions(); });
-        tr.lastElementChild.appendChild(del);
-        tbody.appendChild(tr);
-      });
-    }
-    psCompute();
-  }
-
-  function psDeductionTotal(){
-    return psDeductions.reduce((s,d) => s + Number(d.amount||0), 0);
-  }
-
-  function psCompute(){
-    const workdays = Math.max(parseFloat(document.getElementById('ps-workdays').value) || 0, 0);
-    const otHours = Math.max(parseFloat(document.getElementById('ps-ot-hours').value) || 0, 0);
-    const otMinutes = Math.max(parseFloat(document.getElementById('ps-ot-minutes').value) || 0, 0);
-
-    const base = Math.round(PS_DAILY_WAGE * workdays);
-    const otDecimalHours = otHours + (otMinutes / 60);
-    const otAmount = Math.round(otDecimalHours * PS_OT_RATE);
-    const gross = base + PS_HOUSING + PS_FOOD + otAmount;
-    const dedTotal = psDeductionTotal();
-    const net = Math.max(gross - dedTotal, 0);
-
-    document.getElementById('ps-base-out').textContent = fmtRial(base);
-    document.getElementById('ps-housing-out').textContent = fmtRial(PS_HOUSING);
-    document.getElementById('ps-food-out').textContent = fmtRial(PS_FOOD);
-    document.getElementById('ps-ot-out').textContent = fmtRial(otAmount);
-    document.getElementById('ps-gross-out').textContent = fmtRial(gross);
-    document.getElementById('ps-ded-total').textContent = fmtRial(dedTotal);
-    document.getElementById('ps-ded-out').textContent = fmtRial(dedTotal);
-    document.getElementById('ps-net-out').textContent = fmtRial(net) + ' ریال';
-    document.getElementById('ps-net-words').textContent = net > 0
-      ? ('به حروف: ' + numberToFaWords(net) + ' ریال')
-      : '';
-
-    return { workdays, otHours, otMinutes, base, otDecimalHours, otAmount, gross, dedTotal, net };
-  }
-
-  ['ps-workdays','ps-ot-hours','ps-ot-minutes'].forEach(id => {
-    document.getElementById(id).addEventListener('input', psCompute);
-  });
-
-  document.getElementById('ps-ded-add').addEventListener('click', () => {
-    const desc = document.getElementById('ps-ded-desc').value.trim();
-    const amount = parseFloat(document.getElementById('ps-ded-amount').value);
-    if(!desc || isNaN(amount) || amount < 0){
-      setStatus('ps-status', 'عنوان کسر و مبلغ رو درست وارد کن.', true);
-      return;
-    }
-    psDeductions.push({ desc, amount });
-    renderPsDeductions();
-    setStatus('ps-status','');
-    document.getElementById('ps-ded-desc').value = '';
-    document.getElementById('ps-ded-amount').value = '';
-    document.getElementById('ps-ded-desc').focus();
-  });
-
-  document.getElementById('ps-clear').addEventListener('click', () => {
-    if(psDeductions.length === 0) return;
-    if(confirm('همه‌ی کسورات پاک بشه؟')){
-      psDeductions = [];
-      renderPsDeductions();
-    }
-  });
-
-  function buildPayslipHTML(totals){
-    const g = id => document.getElementById(id).value.trim();
-    const name = g('ps-name') || '—';
-    const code = g('ps-code');
-    const period = g('ps-period');
-
-    const otLabel = `${toFaDigits(totals.otHours)} ساعت و ${toFaDigits(totals.otMinutes)} دقیقه`;
-
-    const dedRows = psDeductions.length
-      ? psDeductions.map((d,i) => `
-        <tr>
-          <td style="border:1px solid #333;padding:4px 6px;text-align:center;">${toFaDigits(i+1)}</td>
-          <td style="border:1px solid #333;padding:4px 6px;">${escapeHtml(d.desc)}</td>
-          <td style="border:1px solid #333;padding:4px 6px;text-align:center;">${fmtRial(d.amount)}</td>
-        </tr>`).join('')
-      : `<tr><td colspan="3" style="border:1px solid #333;padding:6px;text-align:center;color:#666;">بدون کسورات</td></tr>`;
-
-    return `
-        <table style="width:100%;border-collapse:collapse;margin-bottom:5mm;">
-          <tr>
-            <td style="width:50%;text-align:center;vertical-align:middle;font-size:18px;font-weight:800;">فیش حقوقی</td>
-            <td style="width:50%;vertical-align:middle;text-align:left;font-size:9.5px;line-height:1.9;">
-              ${period ? 'دوره: ' + escapeHtml(period) + '<br>' : ''}
-              ${code ? 'شماره پرسنلی: ' + escapeHtml(code) : ''}
-            </td>
-          </tr>
-        </table>
-
-        <div style="border:1px solid #333;border-radius:10px;overflow:hidden;margin-bottom:4mm;">
-          <table style="width:100%;border-collapse:collapse;font-size:10px;">
-            <tr>
-              <td style="background:#1e3a5f;color:#fff;padding:6px 8px;width:14%;text-align:center;font-weight:700;">کارمند</td>
-              <td style="padding:6px 8px;line-height:1.9;">نام و نام خانوادگی: ${escapeHtml(name)}</td>
-            </tr>
-          </table>
-        </div>
-
-        <div style="border:1px solid #333;border-radius:10px;overflow:hidden;">
-          <table style="width:100%;border-collapse:collapse;font-size:10px;">
-            <thead>
-              <tr style="background:#1e3a5f;color:#fff;">
-                <th style="padding:6px 5px;border-bottom:1px solid #333;" colspan="2">شرح حقوق و مزایا</th>
-                <th style="padding:6px 5px;border-bottom:1px solid #333;border-inline-start:1px solid rgba(255,255,255,.3);">مبلغ (ریال)</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td colspan="2" style="border:1px solid #333;padding:5px 8px;">حقوق پایه (${toFaDigits(totals.workdays)} روز × ${fmtRial(PS_DAILY_WAGE)} ریال)</td>
-                <td style="border:1px solid #333;padding:5px 8px;text-align:center;">${fmtRial(totals.base)}</td>
-              </tr>
-              <tr>
-                <td colspan="2" style="border:1px solid #333;padding:5px 8px;">حق مسکن</td>
-                <td style="border:1px solid #333;padding:5px 8px;text-align:center;">${fmtRial(PS_HOUSING)}</td>
-              </tr>
-              <tr>
-                <td colspan="2" style="border:1px solid #333;padding:5px 8px;">حق خواربار</td>
-                <td style="border:1px solid #333;padding:5px 8px;text-align:center;">${fmtRial(PS_FOOD)}</td>
-              </tr>
-              <tr>
-                <td colspan="2" style="border:1px solid #333;padding:5px 8px;">اضافه‌کاری (${otLabel} × ${fmtRial(PS_OT_RATE)} ریال)</td>
-                <td style="border:1px solid #333;padding:5px 8px;text-align:center;">${fmtRial(totals.otAmount)}</td>
-              </tr>
-            </tbody>
-            <tfoot>
-              <tr style="font-weight:700;background:#eef3fb;">
-                <td colspan="2" style="padding:6px 5px;border-top:1px solid #333;">جمع ناخالص</td>
-                <td style="padding:6px 5px;text-align:center;border-top:1px solid #333;border-inline-start:1px solid #333;">${fmtRial(totals.gross)}</td>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
-
-        <div style="border:1px solid #333;border-radius:10px;overflow:hidden;margin-top:4mm;">
-          <table style="width:100%;border-collapse:collapse;font-size:10px;">
-            <thead>
-              <tr style="background:#7a2020;color:#fff;">
-                <th style="padding:6px 5px;border-bottom:1px solid #333;">ردیف</th>
-                <th style="padding:6px 5px;border-bottom:1px solid #333;border-inline-start:1px solid rgba(255,255,255,.3);">عنوان کسر</th>
-                <th style="padding:6px 5px;border-bottom:1px solid #333;border-inline-start:1px solid rgba(255,255,255,.3);">مبلغ (ریال)</th>
-              </tr>
-            </thead>
-            <tbody>${dedRows}</tbody>
-            <tfoot>
-              <tr style="font-weight:700;background:#eef3fb;">
-                <td colspan="2" style="padding:6px 5px;border-top:1px solid #333;">جمع کسورات</td>
-                <td style="padding:6px 5px;text-align:center;border-top:1px solid #333;border-inline-start:1px solid #333;">${fmtRial(totals.dedTotal)}</td>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
-
-        <div style="border:1px solid #333;border-radius:10px;overflow:hidden;width:62%;margin-inline-start:auto;margin-top:4mm;">
-          <table style="width:100%;border-collapse:collapse;font-size:10.5px;">
-            <tr style="font-weight:800;background:#eef3fb;"><td style="padding:6px 8px;">خالص قابل پرداخت</td><td style="padding:6px 8px;text-align:center;border-inline-start:1px solid #ddd;">${fmtRial(totals.net)}</td></tr>
-          </table>
-        </div>
-
-        <div style="margin-top:4mm;font-size:10px;">مبلغ به حروف: ${totals.net > 0 ? numberToFaWords(totals.net) + ' ریال' : '—'}</div>
-
-        <table style="width:100%;margin-top:14mm;font-size:10.5px;">
-          <tr>
-            <td style="text-align:center;width:50%;">امضاء کارمند</td>
-            <td style="text-align:center;width:50%;">امضاء واحد مالی</td>
-          </tr>
-        </table>`;
-  }
-
-  document.getElementById('ps-build').addEventListener('click', async () => {
-    const name = document.getElementById('ps-name').value.trim();
-    if(!name){
-      setStatus('ps-status', 'نام و نام خانوادگی کارمند رو وارد کن.', true);
-      return;
-    }
-    try{
-      setStatus('ps-status', 'در حال ساخت PDF...');
-      const totals = psCompute();
-
-      const container = document.createElement('div');
-      container.className = 'pdf-export-content';
-      container.setAttribute('dir','rtl');
-      container.style.cssText = 'width:148mm; min-height:210mm; box-sizing:border-box; padding:8mm; background:#fff; color:#111; font-family:Vazirmatn,sans-serif; font-size:11px; border-radius:14px; box-shadow:0 10px 30px rgba(0,0,0,.15);';
-      container.innerHTML = buildPayslipHTML(totals);
-      mountForCapture(container);
-
-      if(document.fonts && document.fonts.ready) await document.fonts.ready;
-      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
-
-      const code = document.getElementById('ps-code').value.trim();
-      await window.html2pdf().set({
-        margin: 0,
-        filename: 'فیش-حقوقی' + (code ? '-' + code : '') + '.pdf',
-        html2canvas: { scale: 3, useCORS:true, letterRendering:false, scrollX:0, scrollY:0 },
-        jsPDF: { unit:'mm', format:'a5', orientation:'portrait' },
-        pagebreak: { mode:['css','avoid-all'] }
-      }).from(container).save();
-
-      container.remove();
-      setStatus('ps-status','');
-      stamp(document.getElementById('ps-build'), 'PDF فیش حقوقی ساخته و دانلود شد');
-    }catch(err){
-      console.error(err);
-      setStatus('ps-status', 'مشکلی پیش اومد: ' + err.message, true);
-    }
-  });
-
-  renderPsDeductions();
-
   /* ================= Date converter ================= */
   const dcJalali = setupJalaliDatePicker('dc-j-day','dc-j-month','dc-j-year');
   const GREGORIAN_MONTHS = ['ژانویه','فوریه','مارس','آوریل','مه','ژوئن','ژوئیه','اوت','سپتامبر','اکتبر','نوامبر','دسامبر'];
@@ -2450,6 +2363,249 @@
 
 
 })();
+
+  /* ═══════════════════════════════════════════════════
+     SALARY CALCULATOR — 1405
+     جداول: پایه سنوات، نرخ بیمه، مالیات
+  ═══════════════════════════════════════════════════ */
+  (function() {
+
+    // ─── جدول پایه سنوات (روزانه تومان) ─────────────────
+    // کلید = سال کارکرد (تا پایان 1404)
+    const SENIORITY_TABLE = {
+      0: 0,
+      1: 166667,
+      2: 302969,
+      3: 436949,
+      4: 600404,
+      5: 798186,
+      6: 980143,
+      7: 1143905,
+      8: 1275730,
+      9: 1384264,
+      10: 1504089,
+      11: 1583019,
+      12: 1673004,
+      13: 1725649,
+      14: 1761036,
+      15: 1793460,
+      16: 1821216,
+      17: 1850646,
+      18: 1870314,
+      19: 1891001,
+      20: 1912667,
+    };
+
+    // ─── جدول مالیات سالانه 1405 ──────────────────────
+    // بر اساس جدول مالیاتی مندرج در اکسل
+    const TAX_BRACKETS = [
+      { from: 0,           to: 400000000,    rate: 0.00 },
+      { from: 400000001,   to: 800000000,    rate: 0.10 },
+      { from: 800000001,   to: 1000000000,   rate: 0.15 },
+      { from: 1000000001,  to: 1200000000,   rate: 0.20 },
+      { from: 1200000001,  to: 1400000000,   rate: 0.25 },
+      { from: 1400000001,  to: 9999999999,   rate: 0.30 },
+    ];
+
+    // نرخ‌های بیمه تأمین اجتماعی
+    const INS_WORKER       = 0.07;   // کارگر
+    const INS_EMPLOYER     = 0.20;   // کارفرما
+    const INS_UNEMPLOYMENT = 0.03;   // بیکاری
+
+    // حق تأهل ماهانه (قانون کار 1405)
+    const MARRIAGE_ALLOWANCE = 0;    // در اکسل ۰ — محاسبه پویا در صورت نیاز
+
+    // حق اولاد = ۳ × حداقل دستمزد روزانه × تعداد فرزند
+    const MIN_DAILY_WAGE_1405 = 3463656; // تومان
+
+    function toPersianNumber(n) {
+      return Math.round(n).toLocaleString('fa-IR');
+    }
+
+    function calcTax(annualIncome) {
+      let tax = 0;
+      for (const b of TAX_BRACKETS) {
+        if (annualIncome <= b.from) break;
+        const taxable = Math.min(annualIncome, b.to) - b.from;
+        tax += taxable * b.rate;
+      }
+      return tax;
+    }
+
+    function getSeniority(hireYear) {
+      const yearsWorked = Math.max(0, 1404 - hireYear);
+      if (yearsWorked >= 20) return SENIORITY_TABLE[20];
+      return SENIORITY_TABLE[yearsWorked] || 0;
+    }
+
+    function calculate() {
+      const monthDays   = parseInt(document.getElementById('sal-month').value) || 31;
+      const dailyBase   = parseFloat(document.getElementById('sal-daily-base').value) || 0;
+      const workDays    = parseFloat(document.getElementById('sal-work-days').value) || monthDays;
+      const hireYear    = parseInt(document.getElementById('sal-hire-year').value) || 1405;
+      const marital     = parseInt(document.getElementById('sal-marital').value) || 1;
+      const children    = parseInt(document.getElementById('sal-children').value) || 0;
+      const housing     = parseFloat(document.getElementById('sal-housing').value) || 0;
+      const food        = parseFloat(document.getElementById('sal-food').value) || 0;
+      const mission     = parseFloat(document.getElementById('sal-mission').value) || 0;
+      const commission  = parseFloat(document.getElementById('sal-commission').value) || 0;
+      const supplement  = parseFloat(document.getElementById('sal-supplement').value) || 0;
+      const advance     = parseFloat(document.getElementById('sal-advance').value) || 0;
+      const otHours     = parseFloat(document.getElementById('sal-ot-hours').value) || 0;
+      const name        = document.getElementById('sal-name').value || 'کارمند';
+
+      if (dailyBase <= 0) {
+        alert('لطفاً حقوق پایه روزانه را وارد کنید.');
+        return;
+      }
+
+      // ─── پایه سنوات روزانه ────────────────────────────
+      const seniorityDaily = getSeniority(hireYear);
+
+      // ─── حقوق ماهانه ─────────────────────────────────
+      const dailyWithSen    = dailyBase + seniorityDaily;
+      const monthlyBase     = dailyBase * workDays;
+      const monthlyWithSen  = dailyWithSen * workDays;
+
+      // ─── حق تأهل ──────────────────────────────────────
+      // قانون: حق تأهل = حداقل دستمزد روزانه × ۱۰ = ماهانه
+      const marriageAllowance = marital === 2 ? MIN_DAILY_WAGE_1405 * 10 : 0;
+
+      // ─── حق اولاد ──────────────────────────────────────
+      // هر فرزند = ۳ × حداقل دستمزد روزانه
+      const childAllowance = children * 3 * MIN_DAILY_WAGE_1405;
+
+      // ─── اضافه‌کاری ─────────────────────────────────────
+      // نرخ = (حقوق روزانه با سنوات / ۸) × ۱.۴
+      const otRate     = (dailyWithSen / 8) * 1.4;
+      const otAmount   = otHours * otRate;
+
+      // ─── جمع مستمر ────────────────────────────────────
+      // مشمول بیمه: حقوق+سنوات + مسکن + خواربار + اولاد + تأهل
+      const insurable = monthlyWithSen + housing + food + marriageAllowance + childAllowance;
+
+      // جمع کل (مستمر + غیرمستمر)
+      const grossTotal = insurable + otAmount + mission + commission;
+
+      // ─── بیمه ─────────────────────────────────────────
+      const insWorker       = insurable * INS_WORKER;
+      const insEmployer     = insurable * INS_EMPLOYER;
+      const insUnemployment = insurable * INS_UNEMPLOYMENT;
+      const insTotal        = insWorker + insEmployer + insUnemployment;
+
+      // ─── مالیات ───────────────────────────────────────
+      // درآمد سالانه مشمول مالیات = grossTotal × ۱۲ - معافیت
+      // معافیت سالانه ۱۴۰۵: ۴۰۰ میلیون تومان
+      const ANNUAL_EXEMPTION = 400000000;
+      const annualGross      = grossTotal * 12;
+      const annualTaxable    = Math.max(0, annualGross - ANNUAL_EXEMPTION);
+      const annualTax        = calcTax(annualTaxable + ANNUAL_EXEMPTION) - calcTax(ANNUAL_EXEMPTION);
+      const monthlyTax       = Math.max(0, annualTax / 12);
+
+      // ─── کسورات و خالص ──────────────────────────────
+      const deductions = insWorker + monthlyTax + supplement + advance;
+      const netPay     = grossTotal - deductions;
+      const totalCostEmployer = grossTotal + insEmployer + insUnemployment;
+
+      // ─── نمایش نتایج ─────────────────────────────────
+      function set(id, val) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = toPersianNumber(val) + ' تومان';
+      }
+
+      document.getElementById('sal-out-name').textContent = name;
+      set('r-base-monthly',    monthlyBase);
+      set('r-seniority-daily', seniorityDaily);
+      set('r-base-with-sen',   monthlyWithSen);
+      set('r-marriage',        marriageAllowance);
+      set('r-children',        childAllowance);
+      set('r-housing',         housing);
+      set('r-food',            food);
+      set('r-overtime',        otAmount);
+      set('r-mission',         mission);
+      set('r-commission',      commission);
+      set('r-gross',           grossTotal);
+      set('r-insurable',       insurable);
+      set('r-ins-worker',      insWorker);
+      set('r-ins-employer',    insEmployer);
+      set('r-ins-unemployment',insUnemployment);
+      set('r-ins-total',       insTotal);
+      set('r-tax',             monthlyTax);
+      set('r-supplement',      supplement);
+      set('r-advance',         advance);
+      set('r-deductions',      deductions);
+      set('r-net',             netPay);
+
+      document.getElementById('r-employer-cost').textContent =
+        '💼 هزینه کل کارفرما: ' + toPersianNumber(totalCostEmployer) + ' تومان';
+
+      document.getElementById('sal-output').classList.add('visible');
+      document.getElementById('sal-output').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // ─── ایجاد رویدادها ────────────────────────────────
+    document.addEventListener('DOMContentLoaded', function() {
+
+      const calcBtn = document.getElementById('sal-calc-btn');
+      if (calcBtn) calcBtn.addEventListener('click', calculate);
+
+      const resetBtn = document.getElementById('sal-reset-btn');
+      if (resetBtn) resetBtn.addEventListener('click', function() {
+        document.getElementById('sal-output').classList.remove('visible');
+        document.getElementById('sal-daily-base').focus();
+      });
+
+      const printBtn = document.getElementById('sal-print-btn');
+      if (printBtn) printBtn.addEventListener('click', function() {
+        const name = document.getElementById('sal-name').value || 'کارمند';
+        const net  = document.getElementById('r-net').textContent;
+        const gross = document.getElementById('r-gross').textContent;
+        const w = window.open('', '_blank');
+        w.document.write(`
+          <html dir="rtl"><head>
+          <meta charset="utf-8">
+          <title>فیش حقوقی ${name}</title>
+          <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap" rel="stylesheet">
+          <style>
+            body { font-family:'Vazirmatn',sans-serif; background:#fff; color:#111; padding:40px; direction:rtl; }
+            h1 { font-size:20px; font-weight:900; border-bottom:2px solid #333; padding-bottom:10px; }
+            table { width:100%; border-collapse:collapse; margin-top:20px; }
+            th,td { border:1px solid #ccc; padding:8px 12px; text-align:right; font-size:13px; }
+            th { background:#f3f4f6; font-weight:700; }
+            .net-row td { background:#dcfce7; font-weight:900; font-size:15px; }
+            .deduct-row td { background:#fee2e2; }
+            @media print { body { padding:20px; } }
+          </style></head><body>
+          <h1>فیش حقوقی — ${name}</h1>
+          <p style="font-size:12px;color:#666;">تاریخ چاپ: ${new Date().toLocaleDateString('fa-IR')}</p>
+          <table>
+            <tr><th>شرح</th><th>مبلغ (تومان)</th></tr>
+            <tr><td>حقوق ماهانه با سنوات</td><td>${document.getElementById('r-base-with-sen').textContent}</td></tr>
+            <tr><td>حق تأهل</td><td>${document.getElementById('r-marriage').textContent}</td></tr>
+            <tr><td>حق اولاد</td><td>${document.getElementById('r-children').textContent}</td></tr>
+            <tr><td>حق مسکن</td><td>${document.getElementById('r-housing').textContent}</td></tr>
+            <tr><td>حق خواربار</td><td>${document.getElementById('r-food').textContent}</td></tr>
+            <tr><td>اضافه‌کاری</td><td>${document.getElementById('r-overtime').textContent}</td></tr>
+            <tr><td>ماموریت</td><td>${document.getElementById('r-mission').textContent}</td></tr>
+            <tr><td>پورسانت</td><td>${document.getElementById('r-commission').textContent}</td></tr>
+            <tr><th>جمع کل ناخالص</th><th>${gross}</th></tr>
+            <tr class="deduct-row"><td>بیمه سهم کارگر (۷٪)</td><td>${document.getElementById('r-ins-worker').textContent}</td></tr>
+            <tr class="deduct-row"><td>مالیات</td><td>${document.getElementById('r-tax').textContent}</td></tr>
+            <tr class="deduct-row"><td>بیمه تکمیلی</td><td>${document.getElementById('r-supplement').textContent}</td></tr>
+            <tr class="deduct-row"><td>مساعده</td><td>${document.getElementById('r-advance').textContent}</td></tr>
+            <tr class="deduct-row"><th>جمع کسورات</th><th>${document.getElementById('r-deductions').textContent}</th></tr>
+            <tr class="net-row"><td>💵 خالص پرداختی</td><td>${net}</td></tr>
+          </table>
+          <p style="margin-top:20px;font-size:11px;color:#888;">${document.getElementById('r-employer-cost').textContent}</p>
+          <script>window.print();<\/script>
+          </body></html>
+        `);
+        w.document.close();
+      });
+    });
+
+  })();
+
 </script>
 </body>
 </html>
