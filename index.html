@@ -505,6 +505,7 @@
     <button data-tab="word" role="tab" aria-selected="false"><span class="ico">📄</span> ورد به PDF</button>
     <button data-tab="text" role="tab" aria-selected="false"><span class="ico">📝</span> متن به PDF</button>
     <button data-tab="cash" role="tab" aria-selected="false"><span class="ico">💵</span> ثبت تنخواه</button>
+    <button data-tab="salary" role="tab" aria-selected="false"><span class="ico">💰</span> حقوق و دستمزد</button>
     <button data-tab="invoice" role="tab" aria-selected="false"><span class="ico">🧮</span> ساخت فاکتور</button>
     <button data-tab="dateconv" role="tab" aria-selected="false"><span class="ico">📅</span> تبدیل تاریخ</button>
     <button data-tab="translate" role="tab" aria-selected="false"><span class="ico">🌐</span> مترجم</button>
@@ -566,6 +567,11 @@
           <div class="ico">🧮</div>
           <h3>ساخت فاکتور</h3>
           <p>فاکتور فروش رسمی با محاسبه‌ی خودکار جمع، مالیات و مبلغ نهایی بساز.</p>
+        </button>
+        <button class="tool-card" data-goto="salary">
+          <div class="ico">💰</div>
+          <h3>حقوق و دستمزد</h3>
+          <p>فیش حقوقی ماهانه رو با بیمه، مالیات، اضافه‌کار و عیدی محاسبه کن.</p>
         </button>
         <button class="tool-card" data-goto="contact">
           <div class="ico">📬</div>
@@ -759,6 +765,159 @@
           <button class="btn ghost" id="cash-clear">پاک کردن همه</button>
         </div>
         <div class="status" id="cash-status"></div>
+      </div>
+    </section>
+
+    <!-- ---------------- SALARY CALCULATOR ---------------- -->
+    <section id="panel-salary" class="panel">
+      <div class="card">
+        <h2>💰 محاسبه حقوق و دستمزد</h2>
+        <p class="lede">فیلدها رو پر کن تا فیش حقوقی ماهانه — با احتساب پایه سنوات، حق اولاد و تاهل، مسکن، خواربار، اضافه‌کاری، عیدی، بیمه تأمین اجتماعی و مالیات حقوق — محاسبه بشه. شش ماه اول سال (فروردین تا شهریور) ۳۱ روزه و شش ماه دوم (مهر تا اسفند) ۳۰ روزه در نظر گرفته می‌شه.</p>
+
+        <h3 style="margin:0 0 12px; font-size:14.5px; color:var(--stamp);">مشخصات و ماه محاسبه</h3>
+        <div class="row">
+          <div class="field" style="flex:2 1 200px;">
+            <label for="sal-name">نام کارمند (اختیاری)</label>
+            <input type="text" id="sal-name" placeholder="مثلاً: ترابی">
+          </div>
+          <div class="field" style="flex:1 1 160px;">
+            <label for="sal-month">ماه</label>
+            <select id="sal-month"></select>
+          </div>
+          <div class="field" style="flex:1 1 140px;">
+            <label for="sal-daysinmonth">روزهای این ماه</label>
+            <input type="text" id="sal-daysinmonth" class="num" readonly>
+          </div>
+          <div class="field" style="flex:1 1 140px;">
+            <label for="sal-workdays">روزهای کارکرد در ماه</label>
+            <input type="number" id="sal-workdays" min="0" step="1" value="31">
+          </div>
+        </div>
+
+        <h3 style="margin:18px 0 12px; font-size:14.5px; color:var(--stamp);">حقوق پایه و سنوات</h3>
+        <div class="row">
+          <div class="field" style="flex:1 1 200px;">
+            <label for="sal-daily-wage">حقوق روزانه پایه (بدون پایه سنوات) — ریال</label>
+            <input type="number" id="sal-daily-wage" min="0" step="1000" value="5541850">
+          </div>
+          <div class="field" style="flex:1 1 200px;">
+            <label for="sal-service-years">سابقه کار نزد همین کارفرما (سال)</label>
+            <select id="sal-service-years"></select>
+          </div>
+          <div class="field" style="flex:1 1 160px;">
+            <label for="sal-senior-base">پایه سنوات روزانه (خودکار) — ریال</label>
+            <input type="text" id="sal-senior-base" class="num" readonly>
+          </div>
+        </div>
+
+        <h3 style="margin:18px 0 12px; font-size:14.5px; color:var(--stamp);">مزایا و کسورات</h3>
+        <div class="row">
+          <div class="field" style="flex:1 1 160px;">
+            <label for="sal-marital">وضعیت تاهل</label>
+            <select id="sal-marital">
+              <option value="1">مجرد</option>
+              <option value="2">متاهل</option>
+            </select>
+          </div>
+          <div class="field" style="flex:1 1 140px;">
+            <label for="sal-children">تعداد فرزند</label>
+            <input type="number" id="sal-children" min="0" step="1" value="0">
+          </div>
+          <div class="field" style="flex:1 1 180px;">
+            <label for="sal-housing">حق مسکن ماهانه — ریال</label>
+            <input type="number" id="sal-housing" min="0" step="1000" value="30000000">
+          </div>
+          <div class="field" style="flex:1 1 180px;">
+            <label for="sal-food">حق خواربار ماهانه — ریال</label>
+            <input type="number" id="sal-food" min="0" step="1000" value="22000000">
+          </div>
+        </div>
+        <div class="row">
+          <div class="field" style="flex:1 1 160px;">
+            <label for="sal-ot-hours">ساعت اضافه‌کاری</label>
+            <input type="number" id="sal-ot-hours" min="0" step="0.5" value="0">
+          </div>
+          <div class="field" style="flex:1 1 200px;">
+            <label for="sal-ot-rate">نرخ ساعتی اضافه‌کاری — ریال</label>
+            <input type="number" id="sal-ot-rate" min="0" step="1000" value="0">
+          </div>
+          <div class="field" style="flex:1 1 160px;">
+            <label for="sal-mission">حق ماموریت — ریال</label>
+            <input type="number" id="sal-mission" min="0" step="1000" value="0">
+          </div>
+          <div class="field" style="flex:1 1 160px;">
+            <label for="sal-commission">پورسانت — ریال</label>
+            <input type="number" id="sal-commission" min="0" step="1000" value="0">
+          </div>
+        </div>
+        <div class="row">
+          <div class="field" style="flex:1 1 200px;">
+            <label for="sal-suppins">بیمه تکمیلی (کسر می‌شود) — ریال</label>
+            <input type="number" id="sal-suppins" min="0" step="1000" value="0">
+          </div>
+          <div class="field" style="flex:1 1 200px;">
+            <label for="sal-advance">مساعده (کسر می‌شود) — ریال</label>
+            <input type="number" id="sal-advance" min="0" step="1000" value="0">
+          </div>
+          <div class="field" style="flex:1 1 220px;">
+            <label for="sal-yeardays">روزهای کارکرد در سال (برای عیدی و سنوات)</label>
+            <input type="number" id="sal-yeardays" min="0" max="365" step="1" value="365">
+          </div>
+        </div>
+
+        <details style="margin:8px 0 18px;">
+          <summary style="cursor:pointer; color:var(--stamp); font-weight:700; font-size:13.5px;">تنظیمات پیشرفته (ضرایب و نرخ‌های قانونی)</summary>
+          <div class="row" style="margin-top:14px;">
+            <div class="field" style="flex:1 1 220px;">
+              <label for="sal-min-daily">حداقل دستمزد روزانه مصوب — مبنای حق اولاد/عیدی/سقف بیمه (ریال)</label>
+              <input type="number" id="sal-min-daily" min="0" step="1000" value="3463656">
+            </div>
+            <div class="field" style="flex:1 1 200px;">
+              <label for="sal-marriage-allow">حق تاهل ماهانه پایه (ریال)</label>
+              <input type="number" id="sal-marriage-allow" min="0" step="1000" value="5000000">
+            </div>
+            <div class="field" style="flex:1 1 200px;">
+              <label for="sal-eydi-exempt">سقف معافیت مالیات عیدی (ریال)</label>
+              <input type="number" id="sal-eydi-exempt" min="0" step="1000" value="240000000">
+            </div>
+          </div>
+          <div class="row">
+            <div class="field" style="flex:1 1 140px;">
+              <label for="sal-ins-emp">نرخ بیمه سهم کارگر (٪)</label>
+              <input type="number" id="sal-ins-emp" min="0" step="0.5" value="7">
+            </div>
+            <div class="field" style="flex:1 1 140px;">
+              <label for="sal-ins-emr">نرخ بیمه سهم کارفرما (٪)</label>
+              <input type="number" id="sal-ins-emr" min="0" step="0.5" value="20">
+            </div>
+            <div class="field" style="flex:1 1 140px;">
+              <label for="sal-ins-unemp">نرخ بیمه بیکاری (٪)</label>
+              <input type="number" id="sal-ins-unemp" min="0" step="0.5" value="3">
+            </div>
+            <div class="field" style="flex:1 1 220px;">
+              <label for="sal-ins-cap-mult">ضریب سقف حقوق مشمول بیمه (× حداقل دستمزد روزانه)</label>
+              <input type="number" id="sal-ins-cap-mult" min="0" step="0.5" value="7">
+            </div>
+          </div>
+          <p style="margin:4px 0 0; color:var(--ink-soft); font-size:12.5px;">مالیات ماهانه حقوق طبق جدول پلکانی: تا ۴۰۰,۰۰۰,۰۰۰ ریال معاف؛ مازاد تا ۸۰۰ میلیون ۱۰٪؛ تا ۱ میلیارد ۱۵٪؛ تا ۱٫۲ میلیارد ۲۰٪؛ تا ۱٫۴ میلیارد ۲۵٪؛ مازاد بر آن ۳۰٪ — دقیقاً مطابق جدول مالیات حقوق فایل اکسل شما.</p>
+        </details>
+
+        <button class="btn" id="sal-calc">💰 محاسبه حقوق ماهانه</button>
+        <div class="status" id="sal-status"></div>
+      </div>
+
+      <div class="card" id="sal-result-card" style="display:none;">
+        <h2>فیش حقوق ماهانه<span id="sal-result-name"></span></h2>
+        <div style="overflow-x:auto;">
+          <table>
+            <tbody id="sal-breakdown-tbody"></tbody>
+          </table>
+        </div>
+
+        <div style="margin-top:18px; font-size:15.5px;">
+          <div>خالص پرداختی ماهانه: <strong class="num" id="sal-net-display"></strong></div>
+          <div style="color:var(--ink-soft); font-size:13px; margin-top:4px;" id="sal-net-words"></div>
+        </div>
       </div>
     </section>
 
@@ -2094,6 +2253,164 @@
   loadPrayerTimes();
   setInterval(loadPrayerTimes, 60 * 60 * 1000);
 
+  /* ================= Salary Calculator ================= */
+  // جدول پایه سنوات (index = سال سابقه، مقدار = پایه سنوات روزانه به ریال) — عیناً از فایل اکسل شما
+  const SENIORITY_TABLE = [0,166667,302969,436949,600404,798186,980143,1143905,1275730,1384264,
+    1504089,1583019,1673004,1725649,1761036,1793460,1821216,1850646,1870314,1891001,1912667];
+
+  function daysInJalaliSalaryMonth(m){ return m <= 6 ? 31 : 30; }
+
+  function calcMonthlyTax(AB){
+    const b1=400000000, b2=800000000, b3=1000000000, b4=1200000000, b5=1400000000;
+    if(AB<=b1) return 0;
+    if(AB<=b2) return (AB-b1)*0.10;
+    if(AB<=b3) return (AB-b2)*0.15 + (b2-b1)*0.10;
+    if(AB<=b4) return (AB-b3)*0.20 + (b3-b2)*0.15 + (b2-b1)*0.10;
+    if(AB<=b5) return (AB-b4)*0.25 + (b4-b3)*0.20 + (b3-b2)*0.15 + (b2-b1)*0.10;
+    return (AB-b5)*0.30 + (b5-b4)*0.25 + (b4-b3)*0.20 + (b3-b2)*0.15 + (b2-b1)*0.10;
+  }
+
+  function calcSalary(inp){
+    const seniorityBase = SENIORITY_TABLE[inp.serviceYears] || 0;
+    const F = inp.dailyWage + seniorityBase;
+    const I = F * inp.workDays;
+    const K = inp.marital===2 ? (inp.marriageAllow * inp.workDays / inp.daysInMonth) : 0;
+    const M = Math.ceil(inp.children * inp.minDaily * 3 * inp.workDays / inp.daysInMonth);
+    const N = Math.round(inp.housing * inp.workDays / inp.daysInMonth);
+    const O = Math.round(inp.food * inp.workDays / inp.daysInMonth);
+    const S = inp.otHours * inp.otRate;
+    const T = inp.mission, U = inp.commission, V = inp.suppIns, W = inp.advance, B = inp.yearDays;
+
+    const P = Math.ceil(Math.min(3*inp.minDaily*30*B/365, F*2*30*B/365));
+    const Q = (B>0 && P>inp.eydiExempt) ? (P-inp.eydiExempt)*0.10 : 0;
+    const R = F*30*B/365;
+
+    const X = I+M+N+K+O;
+    const Y = X+S+T+U;
+    const insCap = inp.minDaily * inp.workDays * inp.insCapMult;
+    const rawInsurable = I+N+O+U+S+K;
+    const AA = (rawInsurable < insCap) ? rawInsurable : insCap;
+    const AD = Math.floor(AA * inp.insEmpRate/100);
+    const AE = Math.ceil(AA * inp.insEmrRate/100);
+    const AF = Math.ceil(AA * inp.insUnempRate/100);
+    const AG = AD+AE+AF;
+    const AB = I+U+S-V+M+O+K+N-AD;
+    const AC = I+M+N+T+U+S+O+K;
+    const AH = calcMonthlyTax(AB);
+    const AI = AH+AD+W+V;
+    const AJ = AC+P-Q+R-AI;
+    const AK = F>0 ? (inp.eydiExempt+AD+V) : 0;
+
+    return {seniorityBase,F,I,K,M,N,O,S,T,U,V,W,B,P,Q,R,X,Y,Z:N+O+K,AA,AB,AC,AD,AE,AF,AG,AH,AI,AJ,AK};
+  }
+
+  (function initSalaryTab(){
+    const monthSel = document.getElementById('sal-month');
+    JALALI_MONTHS.forEach((name,i) => {
+      monthSel.insertAdjacentHTML('beforeend', `<option value="${i+1}">${name} (${toFaDigits(daysInJalaliSalaryMonth(i+1))} روزه)</option>`);
+    });
+    const yearsSel = document.getElementById('sal-service-years');
+    SENIORITY_TABLE.forEach((val,y) => {
+      yearsSel.insertAdjacentHTML('beforeend', `<option value="${y}">${toFaDigits(y)} سال${y>0 ? ' — ' + toFaDigits(val.toLocaleString('fa-IR')) + ' ریال/روز' : ''}</option>`);
+    });
+
+    const daysInMonthEl = document.getElementById('sal-daysinmonth');
+    const workDaysEl = document.getElementById('sal-workdays');
+    const seniorBaseEl = document.getElementById('sal-senior-base');
+
+    function syncMonth(){
+      const m = Number(monthSel.value);
+      const d = daysInJalaliSalaryMonth(m);
+      daysInMonthEl.value = toFaDigits(d) + ' روز';
+      if(!workDaysEl.dataset.touched || Number(workDaysEl.value) > d){
+        workDaysEl.value = d;
+      }
+      workDaysEl.max = d;
+    }
+    monthSel.addEventListener('change', syncMonth);
+    workDaysEl.addEventListener('input', () => { workDaysEl.dataset.touched = '1'; });
+    syncMonth();
+
+    function syncSeniorBase(){
+      const y = Number(yearsSel.value);
+      seniorBaseEl.value = fmtRial(SENIORITY_TABLE[y]||0) + ' ریال';
+    }
+    yearsSel.addEventListener('change', syncSeniorBase);
+    syncSeniorBase();
+
+    function num(id){ return Number(document.getElementById(id).value) || 0; }
+
+    document.getElementById('sal-calc').addEventListener('click', () => {
+      const daysInMonth = daysInJalaliSalaryMonth(Number(monthSel.value));
+      let workDays = num('sal-workdays');
+      if(workDays > daysInMonth){ workDays = daysInMonth; workDaysEl.value = daysInMonth; }
+      if(workDays < 0){ setStatus('sal-status', 'روزهای کارکرد نمی‌تونه منفی باشه.', true); return; }
+
+      const inp = {
+        dailyWage: num('sal-daily-wage'),
+        minDaily: num('sal-min-daily'),
+        workDays, daysInMonth,
+        serviceYears: Number(yearsSel.value),
+        marital: Number(document.getElementById('sal-marital').value),
+        children: num('sal-children'),
+        housing: num('sal-housing'),
+        food: num('sal-food'),
+        otHours: num('sal-ot-hours'),
+        otRate: num('sal-ot-rate'),
+        mission: num('sal-mission'),
+        commission: num('sal-commission'),
+        suppIns: num('sal-suppins'),
+        advance: num('sal-advance'),
+        yearDays: num('sal-yeardays'),
+        marriageAllow: num('sal-marriage-allow'),
+        eydiExempt: num('sal-eydi-exempt'),
+        insEmpRate: num('sal-ins-emp'),
+        insEmrRate: num('sal-ins-emr'),
+        insUnempRate: num('sal-ins-unemp'),
+        insCapMult: num('sal-ins-cap-mult'),
+      };
+
+      if(inp.dailyWage <= 0){ setStatus('sal-status', 'حقوق روزانه پایه رو وارد کن.', true); return; }
+
+      const r = calcSalary(inp);
+      const rows = [
+        ['حقوق پایه ماهانه (با پایه سنوات)', r.I],
+        ['حق مسکن', r.N],
+        ['حق خواربار', r.O],
+        ['حق اولاد', r.M],
+        ['حق تاهل', r.K],
+        ['اضافه‌کاری', r.S],
+        ['حق ماموریت', r.T],
+        ['پورسانت', r.U],
+        ['جمع ناخالص مستمر این ماه', r.Y],
+        ['سنوات این ماه', r.R],
+        ['عیدی (پیش از مالیات)', r.P],
+        ['مالیات عیدی', -r.Q],
+        ['بیمه سهم کارگر (کسر می‌شود)', -r.AD],
+        ['بیمه تکمیلی (کسر می‌شود)', -r.V],
+        ['مالیات حقوق (کسر می‌شود)', -r.AH],
+        ['مساعده (کسر می‌شود)', -r.W],
+        ['بیمه سهم کارفرما (اطلاعاتی، از حقوق کسر نمی‌شود)', r.AE],
+        ['بیمه بیکاری کارفرما (اطلاعاتی)', r.AF],
+        ['معافیت مالیاتی محاسبه‌شده', r.AK],
+      ];
+      const tbody = document.getElementById('sal-breakdown-tbody');
+      tbody.innerHTML = rows.map(([label,val]) => `
+        <tr>
+          <td>${escapeHtml(label)}</td>
+          <td class="amount-cell num" style="text-align:left;">${val<0?'−':''}${fmtRial(Math.abs(Math.round(val)))} ریال</td>
+        </tr>`).join('') +
+        `<tr class="total-row"><td>خالص پرداختی ماهانه</td><td class="amount-cell num" style="text-align:left;">${fmtRial(Math.round(r.AJ))} ریال</td></tr>`;
+
+      const name = document.getElementById('sal-name').value.trim();
+      document.getElementById('sal-result-name').textContent = name ? ' — ' + name : '';
+      document.getElementById('sal-net-display').textContent = fmtRial(Math.round(r.AJ)) + ' ریال';
+      document.getElementById('sal-net-words').textContent = r.AJ > 0 ? ('به حروف: ' + numberToFaWords(Math.round(r.AJ)) + ' ریال') : '';
+      document.getElementById('sal-result-card').style.display = '';
+      setStatus('sal-status', 'محاسبه انجام شد.', false);
+      document.getElementById('sal-result-card').scrollIntoView({behavior:'smooth', block:'start'});
+    });
+  })();
 
 })();
 </script>
