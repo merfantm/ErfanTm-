@@ -1075,8 +1075,10 @@
             </select>
           </div>
           <div class="field">
-            <label for="sal-daily-base">حقوق پایه روزانه ۱۴۰۵ (تومان)</label>
-            <input type="number" id="sal-daily-base" placeholder="مثلاً: 3463656" min="0" step="1000">
+            <label for="sal-daily-base">حقوق پایه روزانه ۱۴۰۵ (ریال)</label>
+            <input type="number" id="sal-daily-base" value="5541850" readonly
+              style="background:rgba(255,255,255,.02);cursor:not-allowed;color:var(--ink-soft,#aaa);">
+            <small style="font-size:11px;color:var(--ink-soft,#888);margin-top:4px;display:block;">🔒 مقدار ثابت طبق جدول ۱۴۰۵</small>
           </div>
           <div class="field">
             <label for="sal-work-days">روزهای کارکرد</label>
@@ -1108,12 +1110,16 @@
         <div class="sal-section-title">مزایا و حقوق جانبی</div>
         <div class="sal-grid">
           <div class="field">
-            <label for="sal-housing">حق مسکن (تومان/ماه)</label>
-            <input type="number" id="sal-housing" value="30000000" min="0" step="1000">
+            <label for="sal-housing">حق مسکن (ریال/ماه)</label>
+            <input type="number" id="sal-housing" value="30000000" readonly
+              style="background:rgba(255,255,255,.02);cursor:not-allowed;color:var(--ink-soft,#aaa);">
+            <small style="font-size:11px;color:var(--ink-soft,#888);margin-top:4px;display:block;">🔒 مقدار ثابت</small>
           </div>
           <div class="field">
-            <label for="sal-food">حق خواربار (تومان/ماه)</label>
-            <input type="number" id="sal-food" value="22000000" min="0" step="1000">
+            <label for="sal-food">حق خواربار (ریال/ماه)</label>
+            <input type="number" id="sal-food" value="22000000" readonly
+              style="background:rgba(255,255,255,.02);cursor:not-allowed;color:var(--ink-soft,#aaa);">
+            <small style="font-size:11px;color:var(--ink-soft,#888);margin-top:4px;display:block;">🔒 مقدار ثابت</small>
           </div>
           <div class="field">
             <label for="sal-mission">ماموریت (تومان)</label>
@@ -1135,17 +1141,26 @@
 
         <!-- ── اضافه‌کاری ── -->
         <div class="sal-section-title">اضافه‌کاری</div>
-        <div class="sal-overtimebox">
+        <div class="sal-overtimebox" style="grid-template-columns:1fr 1fr 1fr;">
           <div class="field" style="margin:0">
             <label for="sal-ot-hours">ساعت اضافه‌کاری</label>
-            <input type="number" id="sal-ot-hours" value="0" min="0" max="200" step="0.5">
+            <input type="number" id="sal-ot-hours" value="0" min="0" max="500" step="1"
+              placeholder="ساعت">
+          </div>
+          <div class="field" style="margin:0">
+            <label for="sal-ot-mins">دقیقه اضافه‌کاری</label>
+            <input type="number" id="sal-ot-mins" value="0" min="0" max="59" step="1"
+              placeholder="دقیقه">
           </div>
           <div class="field" style="margin:0">
             <label>نرخ اضافه‌کاری</label>
-            <div style="padding:11px 14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:10px;font-size:13px;color:var(--ink-soft,#aaa);">
-              ۱/۴۰ حقوق روزانه × ۱.۴
+            <div style="padding:11px 14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:10px;font-size:12px;color:var(--ink-soft,#aaa);line-height:1.5;">
+              (حقوق روزانه ÷ ۸) × ۱.۴<br>به ازای هر ساعت
             </div>
           </div>
+        </div>
+        <div style="margin-top:8px;font-size:12px;color:var(--ink-soft,#999);padding-right:4px;">
+          جمع اضافه‌کاری: <span id="sal-ot-preview" style="font-weight:700;color:var(--ink,#eee);">—</span>
         </div>
 
         <!-- ── دکمه محاسبه ── -->
@@ -2452,6 +2467,8 @@
       const supplement  = parseFloat(document.getElementById('sal-supplement').value) || 0;
       const advance     = parseFloat(document.getElementById('sal-advance').value) || 0;
       const otHours     = parseFloat(document.getElementById('sal-ot-hours').value) || 0;
+      const otMins      = parseFloat(document.getElementById('sal-ot-mins').value) || 0;
+      const otTotalHours = otHours + (otMins / 60);  // دقیق به ساعت اعشاری
       const name        = document.getElementById('sal-name').value || 'کارمند';
 
       if (dailyBase <= 0) {
@@ -2478,7 +2495,7 @@
       // ─── اضافه‌کاری ─────────────────────────────────────
       // نرخ = (حقوق روزانه با سنوات / ۸) × ۱.۴
       const otRate     = (dailyWithSen / 8) * 1.4;
-      const otAmount   = otHours * otRate;
+      const otAmount   = otTotalHours * otRate;
 
       // ─── جمع مستمر ────────────────────────────────────
       // مشمول بیمه: حقوق+سنوات + مسکن + خواربار + اولاد + تأهل
@@ -2510,9 +2527,19 @@
       // ─── نمایش نتایج ─────────────────────────────────
       function set(id, val) {
         const el = document.getElementById(id);
-        if (el) el.textContent = toPersianNumber(val) + ' تومان';
+        if (el) el.textContent = toPersianNumber(val) + ' ریال';
       }
 
+      const calcBtn = document.getElementById('sal-calc-btn');
+      if (calcBtn) calcBtn.addEventListener('click', calculate);
+
+      const resetBtn = document.getElementById('sal-reset-btn');
+      if (resetBtn) resetBtn.addEventListener('click', function() {
+        document.getElementById('sal-output').classList.remove('visible');
+        document.getElementById('sal-ot-hours').focus();
+      });
+      set('r-seniority-daily', seniorityDaily);
+      set('r-base-with-sen',   monthlyWithSen);
       document.getElementById('sal-out-name').textContent = name;
       set('r-base-monthly',    monthlyBase);
       set('r-seniority-daily', seniorityDaily);
@@ -2537,7 +2564,7 @@
       set('r-net',             netPay);
 
       document.getElementById('r-employer-cost').textContent =
-        '💼 هزینه کل کارفرما: ' + toPersianNumber(totalCostEmployer) + ' تومان';
+        '💼 هزینه کل کارفرما: ' + toPersianNumber(totalCostEmployer) + ' ریال';
 
       document.getElementById('sal-output').classList.add('visible');
       document.getElementById('sal-output').scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -2546,7 +2573,29 @@
     // ─── ایجاد رویدادها ────────────────────────────────
     document.addEventListener('DOMContentLoaded', function() {
 
-      const calcBtn = document.getElementById('sal-calc-btn');
+      // ─── پیش‌نمایش زنده اضافه‌کاری ─────────────────────
+      function updateOtPreview() {
+        const dailyBase  = parseFloat(document.getElementById('sal-daily-base').value) || 0;
+        const hireYear   = parseInt(document.getElementById('sal-hire-year').value) || 1405;
+        const senDaily   = getSeniority(hireYear);
+        const dailyWith  = dailyBase + senDaily;
+        const otH        = parseFloat(document.getElementById('sal-ot-hours').value) || 0;
+        const otM        = parseFloat(document.getElementById('sal-ot-mins').value) || 0;
+        const totalH     = otH + (otM / 60);
+        const rate       = (dailyWith / 8) * 1.4;
+        const amount     = totalH * rate;
+        const preview    = document.getElementById('sal-ot-preview');
+        if (preview) {
+          preview.textContent = totalH > 0
+            ? toPersianNumber(amount) + ' ریال'
+            : '—';
+        }
+      }
+
+      ['sal-ot-hours','sal-ot-mins','sal-hire-year'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', updateOtPreview);
+      });
       if (calcBtn) calcBtn.addEventListener('click', calculate);
 
       const resetBtn = document.getElementById('sal-reset-btn');
