@@ -56,25 +56,39 @@
     min-height:100vh;
   }
 
-  /* ---------- Ambient animated glow blobs (subtle motion, not distracting) ---------- */
-  body::before, body::after{
-    content:""; position:fixed; z-index:-1; border-radius:50%; pointer-events:none;
-    filter:blur(90px);
+  /* ---------- Ambient animated aurora background (blurry, layered motion) ---------- */
+  .bg-aurora{ position:fixed; inset:0; z-index:-2; overflow:hidden; pointer-events:none; }
+  .bg-aurora .blob{ position:absolute; border-radius:50%; filter:blur(100px); will-change:transform; }
+  .bg-aurora .blob-1{
+    width:560px; height:560px; top:-180px; inset-inline-start:-140px;
+    background: radial-gradient(circle, rgba(47,243,208,.5), transparent 70%);
+    animation: auroraDrift1 22s ease-in-out infinite alternate;
   }
-  body::before{
-    width:520px; height:520px; top:-180px; inset-inline-end:-140px;
-    background: radial-gradient(circle, rgba(47,243,208,.35), transparent 70%);
-    animation: floatBlobA 17s ease-in-out infinite alternate;
+  .bg-aurora .blob-2{
+    width:500px; height:500px; top:22%; inset-inline-end:-160px;
+    background: radial-gradient(circle, rgba(34,211,238,.42), transparent 70%);
+    animation: auroraDrift2 27s ease-in-out infinite alternate;
   }
-  body::after{
-    width:480px; height:480px; bottom:-200px; inset-inline-start:-160px;
-    background: radial-gradient(circle, rgba(34,211,238,.28), transparent 70%);
-    animation: floatBlobB 21s ease-in-out infinite alternate;
+  .bg-aurora .blob-3{
+    width:520px; height:520px; bottom:-220px; inset-inline-start:26%;
+    background: radial-gradient(circle, rgba(139,92,246,.32), transparent 70%);
+    animation: auroraDrift3 31s ease-in-out infinite alternate;
   }
-  @keyframes floatBlobA{ from{ transform:translate(0,0) scale(1); } to{ transform:translate(-50px,70px) scale(1.18); } }
-  @keyframes floatBlobB{ from{ transform:translate(0,0) scale(1); } to{ transform:translate(60px,-50px) scale(1.12); } }
+  .bg-aurora .blob-4{
+    width:380px; height:380px; top:55%; inset-inline-start:-120px;
+    background: radial-gradient(circle, rgba(47,243,208,.28), transparent 70%);
+    animation: auroraDrift4 25s ease-in-out infinite alternate;
+  }
+  @keyframes auroraDrift1{ from{ transform:translate(0,0) scale(1); } to{ transform:translate(90px,70px) scale(1.18); } }
+  @keyframes auroraDrift2{ from{ transform:translate(0,0) scale(1); } to{ transform:translate(-80px,60px) scale(1.12); } }
+  @keyframes auroraDrift3{ from{ transform:translate(0,0) scale(1); } to{ transform:translate(60px,-80px) scale(1.2); } }
+  @keyframes auroraDrift4{ from{ transform:translate(0,0) scale(1); } to{ transform:translate(50px,-40px) scale(1.15); } }
+  @media (prefers-reduced-motion: reduce){
+    .bg-aurora .blob{ animation:none !important; }
+  }
 
   .num{ font-family:'JetBrains Mono','Vazirmatn',monospace; font-weight:700; letter-spacing:.02em; }
+  .ico-svg{ width:58%; height:58%; display:block; color:#0B3A34; }
 
   a{ color: var(--stamp); }
 
@@ -116,24 +130,32 @@
   .brand-drawer{
     position:absolute; top:50%; right:100%;
     margin-inline-end:14px;
-    transform:translateY(-50%) translateX(16px) scale(.92);
+    width:76px; height:76px;
+    transform:translateY(-50%);
     transform-origin: right center;
     background: var(--glass-bg);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border:1px solid var(--glass-border);
-    border-radius:16px;
+    border-radius:50%;
     box-shadow: var(--shadow);
-    padding:14px 16px;
-    min-width:190px;
+    padding:0;
+    overflow:hidden;
     opacity:0; visibility:hidden; pointer-events:none;
-    transition: opacity .28s cubic-bezier(.16,1,.3,1), transform .28s cubic-bezier(.16,1,.3,1), visibility .28s;
+    transition:
+      opacity .34s cubic-bezier(.16,1,.3,1),
+      width .34s cubic-bezier(.16,1,.3,1),
+      height .34s cubic-bezier(.16,1,.3,1),
+      border-radius .34s cubic-bezier(.16,1,.3,1),
+      padding .3s ease, visibility .34s;
     z-index:50;
   }
   .brand-drawer.open{
     opacity:1; visibility:visible; pointer-events:auto;
-    transform:translateY(-50%) translateX(0) scale(1);
+    width:212px; height:158px; border-radius:20px; padding:14px 16px;
   }
+  .brand-drawer > *{ opacity:0; white-space:nowrap; transition:opacity .16s ease; }
+  .brand-drawer.open > *{ opacity:1; transition-delay:.16s; }
   .brand-drawer h4{ margin:0 0 10px; font-size:13px; color:var(--stamp); font-weight:800; }
   .brand-drawer-link{
     display:flex; align-items:center; gap:8px;
@@ -143,15 +165,19 @@
   }
   .brand-drawer-link:hover{ background:rgba(255,255,255,.10); transform:translateX(-3px); }
   .brand-drawer-link + .brand-drawer-link{ margin-top:4px; }
+  .brand-drawer-link .ico-svg{ width:16px; height:16px; color:var(--stamp); }
   .brand-drawer::after{
     content:""; position:absolute; top:50%; right:-6px; transform:translateY(-50%) rotate(45deg);
     width:12px; height:12px; background:var(--card);
     border-inline-end:1px solid var(--glass-border);
     border-block-end:1px solid var(--glass-border);
+    opacity:0; transition:opacity .2s ease .1s;
   }
+  .brand-drawer.open::after{ opacity:1; }
   @media (max-width:480px){
     .brand-drawer{
       position:fixed; top:auto; bottom:16px; left:16px; right:16px;
+      width:auto; height:auto;
       margin:0; transform:translateY(20px) scale(.96); transform-origin:center bottom;
     }
     .brand-drawer.open{ transform:translateY(0) scale(1); }
@@ -535,9 +561,56 @@
   @media (prefers-reduced-motion: reduce){
     *{ animation:none !important; transition:none !important; }
   }
+  /* ---------- Mobile refinements ---------- */
+  @media (max-width: 640px){
+    .site-header{ padding:22px 14px 14px; gap:12px; }
+    .site-header h1{ font-size:clamp(22px,7vw,30px); }
+    .site-header p{ font-size:13px; }
+    .app-shell{ padding:0 12px 40px; gap:14px; }
+    .card{ padding:16px; border-radius:16px; }
+    .card h2{ font-size:18px; }
+    .card .lede{ font-size:13.5px; margin-bottom:16px; }
+    .tool-grid{ grid-template-columns:1fr; }
+    .row{ gap:10px; }
+    .row > .field{ flex:1 1 100%; }
+    input[type=text], input[type=number], input[type=date], textarea, select{
+      font-size:16px; padding:12px 12px;
+    }
+    .btn{ width:100%; justify-content:center; padding:13px 18px; }
+    table{ font-size:12.5px; }
+  }
+  @media (max-width: 400px){
+    .brand-stamp{ width:64px; height:64px; }
+  }
 </style>
 </head>
 <body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+<defs>
+  <symbol id="ico-home" viewBox="0 0 24 24"><path d="M4 11.5 12 4l8 7.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 10v9a1 1 0 0 0 1 1h3v-5h4v5h3a1 1 0 0 0 1-1v-9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="ico-image" viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="8.5" cy="9.5" r="1.6" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M4 16.5 9 12l3.5 3.2L16 12l4.5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="ico-receipt" viewBox="0 0 24 24"><path d="M5.5 3.5h13v17l-2.3-1.6-2.2 1.6-2.2-1.6-2.2 1.6-2.2-1.6-1.9 1.6z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M8.2 8h7.6M8.2 11.3h7.6M8.2 14.6h4.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+  <symbol id="ico-doc" viewBox="0 0 24 24"><path d="M7 3.5h7l4 4v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-16a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M14 3.5v4h4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M8.5 12.5h7M8.5 15.6h7M8.5 18.5h4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
+  <symbol id="ico-text" viewBox="0 0 24 24"><path d="M4.5 6h15M4.5 11h15M4.5 16h9.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></symbol>
+  <symbol id="ico-cash" viewBox="0 0 24 24"><rect x="2.8" y="6.5" width="18.4" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="2.6" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M5.5 9v0M18.5 15v0" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+  <symbol id="ico-invoice" viewBox="0 0 24 24"><rect x="4.5" y="3.5" width="15" height="17" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M8 8h8M8 11.3h8M8 14.6h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="16.3" cy="17" r="2.3" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M15.3 17h2M16.3 16v2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></symbol>
+  <symbol id="ico-salary" viewBox="0 0 24 24"><ellipse cx="12" cy="7" rx="7" ry="3" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M5 7v4c0 1.7 3.1 3 7 3s7-1.3 7-3V7" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M5 11v4c0 1.7 3.1 3 7 3s7-1.3 7-3v-4" fill="none" stroke="currentColor" stroke-width="1.7"/></symbol>
+  <symbol id="ico-calendar" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M3.5 9.5h17M8 3v3.6M16 3v3.6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="8.2" cy="13.3" r="1" fill="currentColor" stroke="none"/><circle cx="12" cy="13.3" r="1" fill="currentColor" stroke="none"/><circle cx="15.8" cy="13.3" r="1" fill="currentColor" stroke="none"/><circle cx="8.2" cy="16.8" r="1" fill="currentColor" stroke="none"/><circle cx="12" cy="16.8" r="1" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="ico-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M3.5 12h17M12 3.5c2.6 2.3 4 5.3 4 8.5s-1.4 6.2-4 8.5c-2.6-2.3-4-5.3-4-8.5s1.4-6.2 4-8.5z" fill="none" stroke="currentColor" stroke-width="1.6"/></symbol>
+  <symbol id="ico-book" viewBox="0 0 24 24"><path d="M12 6.2c-1.8-1.5-4.2-2.1-7.5-2.1v13.4c3.3 0 5.7.6 7.5 2.1 1.8-1.5 4.2-2.1 7.5-2.1V4.1c-3.3 0-5.7.6-7.5 2.1z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 6.2v13.4" stroke="currentColor" stroke-width="1.5"/></symbol>
+  <symbol id="ico-mail" viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M4 7l8 6 8-6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="ico-plane" viewBox="0 0 24 24"><path d="M21 3 3 10.5l6.5 2.3L12.5 20 21 3z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9.5 12.8 21 3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></symbol>
+  <symbol id="ico-camera" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="13.5" r="4" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M8.5 7 9.7 4.5h4.6L15.5 7" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></symbol>
+</defs>
+</svg>
+
+<div class="bg-aurora" aria-hidden="true">
+  <span class="blob blob-1"></span>
+  <span class="blob blob-2"></span>
+  <span class="blob blob-3"></span>
+  <span class="blob blob-4"></span>
+</div>
 
 <header class="site-header">
   <div class="brand-wrap">
@@ -547,10 +620,10 @@
     <div class="brand-drawer" id="brand-drawer" role="menu" aria-hidden="true">
       <h4>ارتباط با ما</h4>
       <a class="brand-drawer-link" href="https://t.me/merfantm" target="_blank" rel="noopener noreferrer" role="menuitem">
-        <span>✈️</span> تلگرام
+        <svg class="ico-svg"><use href="#ico-plane"></use></svg> تلگرام
       </a>
       <a class="brand-drawer-link" href="https://www.instagram.com/m.erfantm?igsh=MW43bW56eG02MW9jdg==" target="_blank" rel="noopener noreferrer" role="menuitem">
-        <span>📸</span> اینستاگرام
+        <svg class="ico-svg"><use href="#ico-camera"></use></svg> اینستاگرام
       </a>
     </div>
   </div>
@@ -563,18 +636,18 @@
 <div class="app-shell">
 
   <nav class="tool-nav" role="tablist" aria-label="ابزارها">
-    <button data-tab="intro" role="tab" aria-selected="true"><span class="ico">🏠</span> خانه</button>
-    <button data-tab="image" role="tab" aria-selected="false"><span class="ico">🖼</span> عکس به PDF</button>
-    <button data-tab="receipt" role="tab" aria-selected="false"><span class="ico">🧾</span> رسید به PDF</button>
-    <button data-tab="word" role="tab" aria-selected="false"><span class="ico">📄</span> ورد به PDF</button>
-    <button data-tab="text" role="tab" aria-selected="false"><span class="ico">📝</span> متن به PDF</button>
-    <button data-tab="cash" role="tab" aria-selected="false"><span class="ico">💵</span> ثبت تنخواه</button>
-    <button data-tab="invoice" role="tab" aria-selected="false"><span class="ico">🧮</span> ساخت فاکتور</button>
-    <button data-tab="salary" role="tab" aria-selected="false"><span class="ico">💰</span> حقوق و دستمزد</button>
-    <button data-tab="dateconv" role="tab" aria-selected="false"><span class="ico">📅</span> تبدیل تاریخ</button>
-    <button data-tab="translate" role="tab" aria-selected="false"><span class="ico">🌐</span> مترجم</button>
-    <button data-tab="hafez" role="tab" aria-selected="false"><span class="ico">📖</span> فال حافظ</button>
-    <button data-tab="contact" role="tab" aria-selected="false"><span class="ico">📬</span> ارتباط با ما</button>
+    <button data-tab="intro" role="tab" aria-selected="true"><span class="ico"><svg class="ico-svg"><use href="#ico-home"></use></svg></span> خانه</button>
+    <button data-tab="image" role="tab" aria-selected="false"><span class="ico"><svg class="ico-svg"><use href="#ico-image"></use></svg></span> عکس به PDF</button>
+    <button data-tab="receipt" role="tab" aria-selected="false"><span class="ico"><svg class="ico-svg"><use href="#ico-receipt"></use></svg></span> رسید به PDF</button>
+    <button data-tab="word" role="tab" aria-selected="false"><span class="ico"><svg class="ico-svg"><use href="#ico-doc"></use></svg></span> ورد به PDF</button>
+    <button data-tab="text" role="tab" aria-selected="false"><span class="ico"><svg class="ico-svg"><use href="#ico-text"></use></svg></span> متن به PDF</button>
+    <button data-tab="cash" role="tab" aria-selected="false"><span class="ico"><svg class="ico-svg"><use href="#ico-cash"></use></svg></span> ثبت تنخواه</button>
+    <button data-tab="invoice" role="tab" aria-selected="false"><span class="ico"><svg class="ico-svg"><use href="#ico-invoice"></use></svg></span> ساخت فاکتور</button>
+    <button data-tab="salary" role="tab" aria-selected="false"><span class="ico"><svg class="ico-svg"><use href="#ico-salary"></use></svg></span> حقوق و دستمزد</button>
+    <button data-tab="dateconv" role="tab" aria-selected="false"><span class="ico"><svg class="ico-svg"><use href="#ico-calendar"></use></svg></span> تبدیل تاریخ</button>
+    <button data-tab="translate" role="tab" aria-selected="false"><span class="ico"><svg class="ico-svg"><use href="#ico-globe"></use></svg></span> مترجم</button>
+    <button data-tab="hafez" role="tab" aria-selected="false"><span class="ico"><svg class="ico-svg"><use href="#ico-book"></use></svg></span> فال حافظ</button>
+    <button data-tab="contact" role="tab" aria-selected="false"><span class="ico"><svg class="ico-svg"><use href="#ico-mail"></use></svg></span> ارتباط با ما</button>
   </nav>
 
   <main class="tool-panels">
@@ -603,57 +676,57 @@
       <p style="margin:0 0 4px; color:var(--ink-soft); font-size:13.5px;">همه‌چیز همین‌جا توی مرورگرت اجرا می‌شه، بدون سرور و بدون خارج شدن فایل از دستگاهت.</p>
       <div class="tool-grid">
         <button class="tool-card" data-goto="image">
-          <div class="ico">🖼</div>
+          <div class="ico"><svg class="ico-svg"><use href="#ico-image"></use></svg></div>
           <h3>عکس به PDF</h3>
           <p>چند عکس رو انتخاب کن، ترتیبشون رو بچین و یک PDF بساز.</p>
         </button>
         <button class="tool-card" data-goto="receipt">
-          <div class="ico">🧾</div>
+          <div class="ico"><svg class="ico-svg"><use href="#ico-receipt"></use></svg></div>
           <h3>رسید کارتخوان به PDF</h3>
           <p>چند رسید رو کنار هم توی یک صفحه جا بده و چاپ کن.</p>
         </button>
         <button class="tool-card" data-goto="word">
-          <div class="ico">📄</div>
+          <div class="ico"><svg class="ico-svg"><use href="#ico-doc"></use></svg></div>
           <h3>ورد به PDF</h3>
           <p>فایل Word رو بده تا به PDF قابل‌اشتراک تبدیلش کنیم.</p>
         </button>
         <button class="tool-card" data-goto="text">
-          <div class="ico">📝</div>
+          <div class="ico"><svg class="ico-svg"><use href="#ico-text"></use></svg></div>
           <h3>متن به PDF</h3>
           <p>یه متن فارسی یا انگلیسی بنویس و PDF مرتب تحویل بگیر.</p>
         </button>
         <button class="tool-card" data-goto="cash">
-          <div class="ico">💵</div>
+          <div class="ico"><svg class="ico-svg"><use href="#ico-cash"></use></svg></div>
           <h3>ثبت تنخواه</h3>
           <p>هزینه‌ها رو ردیف به ردیف ثبت کن و خروجی Excel بگیر.</p>
         </button>
         <button class="tool-card" data-goto="invoice">
-          <div class="ico">🧮</div>
+          <div class="ico"><svg class="ico-svg"><use href="#ico-invoice"></use></svg></div>
           <h3>ساخت فاکتور</h3>
           <p>فاکتور فروش رسمی با محاسبه‌ی خودکار جمع، مالیات و مبلغ نهایی بساز.</p>
         </button>
         <button class="tool-card" data-goto="salary">
-          <div class="ico">💰</div>
+          <div class="ico"><svg class="ico-svg"><use href="#ico-salary"></use></svg></div>
           <h3>حقوق و دستمزد</h3>
           <p>فیلدها رو پر کن تا حقوق خالص ماهانه، بیمه و مالیات دقیق حساب بشه.</p>
         </button>
         <button class="tool-card" data-goto="contact">
-          <div class="ico">📬</div>
+          <div class="ico"><svg class="ico-svg"><use href="#ico-mail"></use></svg></div>
           <h3>ارتباط با ما</h3>
           <p>از طریق تلگرام یا اینستاگرام در دسترسیم.</p>
         </button>
         <button class="tool-card" data-goto="dateconv">
-          <div class="ico">📅</div>
+          <div class="ico"><svg class="ico-svg"><use href="#ico-calendar"></use></svg></div>
           <h3>تبدیل تاریخ</h3>
           <p>تاریخ شمسی به میلادی و برعکس، آنی و دقیق.</p>
         </button>
         <button class="tool-card" data-goto="translate">
-          <div class="ico">🌐</div>
+          <div class="ico"><svg class="ico-svg"><use href="#ico-globe"></use></svg></div>
           <h3>مترجم</h3>
           <p>یه متن رو بین فارسی، انگلیسی و چند زبان دیگه ترجمه کن.</p>
         </button>
         <button class="tool-card" data-goto="hafez">
-          <div class="ico">📖</div>
+          <div class="ico"><svg class="ico-svg"><use href="#ico-book"></use></svg></div>
           <h3>فال حافظ</h3>
           <p>یه نیت کن و فال بگیر؛ یه غزل از دیوان حافظ برات میاد.</p>
         </button>
@@ -985,6 +1058,22 @@
         <h2>💰 محاسبه حقوق و دستمزد</h2>
         <p class="lede">فیلدهای زیر رو پر کن تا حقوق خالص پرداختی، بیمه و مالیات ماهانه‌ت دقیقاً طبق ضوابط سال ۱۴۰۵ محاسبه بشه. حقوق روزانه پایه، مسکن، خواربار و نرخ اضافه‌کاری در سیستم ثابت و از پیش تنظیم شده‌اند.</p>
 
+        <h3 style="margin:0 0 12px; font-size:14.5px; color:var(--stamp);">مشخصات فیش (اختیاری)</h3>
+        <div class="row">
+          <div class="field" style="flex:2 1 220px;">
+            <label for="sal-emp-name">نام و نام خانوادگی</label>
+            <input type="text" id="sal-emp-name" placeholder="مثلاً: علی ترابی">
+          </div>
+          <div class="field" style="flex:1 1 160px;">
+            <label for="sal-emp-code">کد پرسنلی</label>
+            <input type="text" id="sal-emp-code" placeholder="۱۰۲">
+          </div>
+          <div class="field" style="flex:2 1 220px;">
+            <label for="sal-company-name">نام شرکت</label>
+            <input type="text" id="sal-company-name" placeholder="نام شرکت شما">
+          </div>
+        </div>
+
         <h3 style="margin:0 0 12px; font-size:14.5px; color:var(--stamp);">ماه و روزهای کارکرد</h3>
         <div class="row">
           <div class="field" style="flex:1 1 200px;">
@@ -1052,7 +1141,6 @@
 
         <div style="margin-top:6px; display:flex; gap:10px; flex-wrap:wrap;">
           <button class="btn" id="sal-calc">💰 محاسبه حقوق</button>
-          <button class="btn ghost" id="sal-load-example" type="button">بارگذاری نمونه اکسل (تست)</button>
         </div>
         <div class="status" id="sal-status"></div>
       </div>
@@ -1088,6 +1176,10 @@
           محاسبات طبق فایل اکسل شرکت انجام شده: عیدی و سنوات پایان‌سال در این ابزار ماهانه محاسبه نمی‌شود.
           سقف معافیت مالیاتی به‌صورت پلکانی و طبق جدول مالیات حقوق ۱۴۰۵ اعمال شده است.
         </p>
+        <div style="margin-top:16px; display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="btn" id="sal-print">🖨 چاپ / دانلود فیش حقوقی</button>
+        </div>
+        <div class="status" id="sal-print-status"></div>
       </div>
     </section>
 
@@ -1185,12 +1277,12 @@
         <p class="lede">سوال، پیشنهاد یا مشکلی داشتی، از این راه‌ها در دسترسیم.</p>
         <div class="tool-grid">
           <a class="tool-card" href="https://t.me/merfantm" target="_blank" rel="noopener noreferrer">
-            <div class="ico">✈️</div>
+            <div class="ico"><svg class="ico-svg"><use href="#ico-plane"></use></svg></div>
             <h3>تلگرام</h3>
             <p>t.me/merfantm</p>
           </a>
           <a class="tool-card" href="https://www.instagram.com/m.erfantm?igsh=MW43bW56eG02MW9jdg==" target="_blank" rel="noopener noreferrer">
-            <div class="ico">📸</div>
+            <div class="ico"><svg class="ico-svg"><use href="#ico-camera"></use></svg></div>
             <h3>اینستاگرام</h3>
             <p>m.erfantm@</p>
           </a>
@@ -2195,6 +2287,8 @@
       };
     }
 
+    let lastInp = null, lastResult = null;
+
     function runCalc(){
       const inp = readInputs();
       if(inp.workedDays > inp.monthDays){
@@ -2202,6 +2296,8 @@
         return;
       }
       const r = calcSalary(inp);
+      lastInp = inp;
+      lastResult = r;
       document.getElementById('sal-r-daily').textContent = fmtRial2(r.F);
       document.getElementById('sal-r-monthly').textContent = fmtRial2(r.I);
       document.getElementById('sal-r-marriage').textContent = fmtRial2(r.K);
@@ -2227,22 +2323,149 @@
 
     document.getElementById('sal-calc').addEventListener('click', runCalc);
 
-    // بارگذاری مقادیر نمونه از فایل اکسل برای تست صحت محاسبات
-    document.getElementById('sal-load-example').addEventListener('click', () => {
-      monthSel.value = 1; syncMonthDays();
-      workedDaysInput.dataset.touched = '1';
-      workedDaysInput.value = 31;
-      yearsSel.value = 1;
-      document.getElementById('sal-marital').value = 1;
-      document.getElementById('sal-children').value = 0;
-      document.getElementById('sal-ot-hour').value = 41;
-      document.getElementById('sal-ot-min').value = 14;
-      document.getElementById('sal-commission').value = 55000000;
-      document.getElementById('sal-mission').value = 0;
-      document.getElementById('sal-supp-insurance').value = 0;
-      document.getElementById('sal-advance').value = 0;
-      runCalc();
-      setStatus('sal-status', 'مقادیر نمونه بارگذاری شد؛ خالص پرداختی باید ۳۰۴,۶۷۵,۷۳۳ ریال باشه (مطابق اکسل).', false);
+    // ---- فیش حقوقی قابل‌چاپ (PDF) ----
+    function payRow(label, value, opts){
+      opts = opts || {};
+      if(opts.skipZero && !value) return '';
+      const valColor = opts.negative ? '#B3261E' : '#16332F';
+      return `
+        <tr>
+          <td style="padding:7px 12px;font-size:11px;color:#44514F;border-bottom:1px solid #E7EEEC;">${label}</td>
+          <td style="padding:7px 12px;font-size:11.5px;font-weight:700;color:${valColor};text-align:left;border-bottom:1px solid #E7EEEC;font-family:'JetBrains Mono',monospace;">${fmtRial2(opts.negative ? -Math.abs(value) : value)}</td>
+        </tr>`;
+    }
+
+    function buildPayslipHTML(inp, r){
+      const empName = document.getElementById('sal-emp-name').value.trim() || '—';
+      const empCode = document.getElementById('sal-emp-code').value.trim();
+      const companyName = document.getElementById('sal-company-name').value.trim() || 'نام شرکت';
+      const monthName = JALALI_MONTHS[Number(monthSel.value) - 1];
+      const now = new Date();
+      const [jy] = gregorianToJalali(now.getFullYear(), now.getMonth()+1, now.getDate());
+      const todayStr = `${toFaDigits(now.getDate())} / ${toFaDigits(now.getMonth()+1)} / ${toFaDigits(now.getFullYear())}`;
+
+      const earnRows = [
+        payRow('حقوق ماهانه (با سنوات)', r.I),
+        payRow('حق تاهل', r.K, {skipZero:true}),
+        payRow('حق اولاد', r.M, {skipZero:true}),
+        payRow('مسکن', r.N),
+        payRow('خواربار', r.O),
+        payRow('اضافه‌کاری', r.S, {skipZero:true}),
+        payRow('پورسانت', r.U, {skipZero:true}),
+        payRow('حق ماموریت', r.T, {skipZero:true}),
+      ].join('');
+
+      const deductRows = [
+        payRow('بیمه سهم کارگر (۷٪)', r.AD),
+        payRow('مالیات حقوق', r.AH, {skipZero:true}),
+        payRow('بیمه تکمیلی', r.V, {skipZero:true}),
+        payRow('مساعده دریافتی', r.W, {skipZero:true}),
+      ].join('');
+
+      return `
+        <div style="font-family:'Vazirmatn',sans-serif; color:#16332F;">
+
+          <div style="display:flex; align-items:center; justify-content:space-between; padding-bottom:14px; border-bottom:3px solid #0FBBA0;">
+            <div>
+              <div style="font-size:19px; font-weight:800; color:#0A2E29;">${escapeHtml(companyName)}</div>
+              <div style="font-size:11.5px; color:#5B6E6A; margin-top:3px;">فیش حقوقی — ${monthName} ${toFaDigits(jy)}</div>
+            </div>
+            <div style="text-align:left; font-size:10.5px; color:#5B6E6A;">
+              <div>تاریخ صدور: ${todayStr}</div>
+              ${empCode ? `<div>کد پرسنلی: ${toFaDigits(escapeHtml(empCode))}</div>` : ''}
+            </div>
+          </div>
+
+          <div style="margin-top:16px; border:1px solid #DCEAE7; border-radius:14px; overflow:hidden; background:#F6FBFA;">
+            <table style="width:100%; border-collapse:collapse;">
+              <tr>
+                <td style="padding:10px 14px; font-size:11px; color:#5B6E6A; width:25%;">نام و نام خانوادگی</td>
+                <td style="padding:10px 14px; font-size:12.5px; font-weight:700; width:25%;">${escapeHtml(empName)}</td>
+                <td style="padding:10px 14px; font-size:11px; color:#5B6E6A; width:25%; border-inline-start:1px solid #DCEAE7;">سابقه کار</td>
+                <td style="padding:10px 14px; font-size:12.5px; font-weight:700; width:25%;">${toFaDigits(inp.yearsOfService)} سال</td>
+              </tr>
+              <tr style="border-top:1px solid #DCEAE7;">
+                <td style="padding:10px 14px; font-size:11px; color:#5B6E6A;">روزهای کارکرد</td>
+                <td style="padding:10px 14px; font-size:12.5px; font-weight:700;">${toFaDigits(inp.workedDays)} از ${toFaDigits(inp.monthDays)} روز</td>
+                <td style="padding:10px 14px; font-size:11px; color:#5B6E6A; border-inline-start:1px solid #DCEAE7;">وضعیت تاهل</td>
+                <td style="padding:10px 14px; font-size:12.5px; font-weight:700;">${inp.marital === 2 ? 'متاهل' : 'مجرد'}${inp.children ? ' — ' + toFaDigits(inp.children) + ' فرزند' : ''}</td>
+              </tr>
+            </table>
+          </div>
+
+          <div style="display:flex; gap:14px; margin-top:16px;">
+            <div style="flex:1; border:1px solid #DCEAE7; border-radius:14px; overflow:hidden;">
+              <div style="background:#0FBBA0; color:#fff; font-size:12px; font-weight:800; padding:9px 14px;">مزایا و حقوق</div>
+              <table style="width:100%; border-collapse:collapse;">${earnRows}</table>
+            </div>
+            <div style="flex:1; border:1px solid #F2D7D2; border-radius:14px; overflow:hidden;">
+              <div style="background:#C9564A; color:#fff; font-size:12px; font-weight:800; padding:9px 14px;">کسورات</div>
+              <table style="width:100%; border-collapse:collapse;">${deductRows}</table>
+            </div>
+          </div>
+
+          <div style="display:flex; gap:14px; margin-top:14px;">
+            <div style="flex:1; border-radius:14px; background:#EAF7F4; border:1px solid #CFEDE6; padding:12px 16px;">
+              <div style="font-size:11px; color:#5B6E6A;">جمع مزایا و حقوق (ناخالص)</div>
+              <div style="font-size:15px; font-weight:800; color:#0A2E29; margin-top:4px; font-family:'JetBrains Mono',monospace;">${fmtRial2(r.AC)}</div>
+            </div>
+            <div style="flex:1; border-radius:14px; background:#FBEEEC; border:1px solid #F2D7D2; padding:12px 16px;">
+              <div style="font-size:11px; color:#5B6E6A;">جمع کسورات</div>
+              <div style="font-size:15px; font-weight:800; color:#8C332B; margin-top:4px; font-family:'JetBrains Mono',monospace;">${fmtRial2(r.AI)}</div>
+            </div>
+          </div>
+
+          <div style="margin-top:16px; border-radius:16px; background:linear-gradient(135deg,#0FBBA0,#0A8F79); padding:18px 20px; display:flex; align-items:center; justify-content:space-between;">
+            <div>
+              <div style="font-size:12.5px; color:#EAFBF7; font-weight:700;">خالص پرداختی</div>
+              <div style="font-size:10.5px; color:#CFF3EA; margin-top:4px;">${r.AJ > 0 ? numberToFaWords(Math.round(r.AJ)) + ' ریال' : '—'}</div>
+            </div>
+            <div style="font-size:22px; font-weight:800; color:#fff; font-family:'JetBrains Mono',monospace;">${fmtRial2(r.AJ)}</div>
+          </div>
+
+          <table style="width:100%; margin-top:40px; font-size:10.5px; color:#5B6E6A;">
+            <tr>
+              <td style="text-align:center; width:50%;">امضاء کارمند</td>
+              <td style="text-align:center; width:50%;">امضاء مدیر مالی</td>
+            </tr>
+          </table>
+        </div>`;
+    }
+
+    document.getElementById('sal-print').addEventListener('click', async () => {
+      if(!lastResult){
+        setStatus('sal-print-status', 'اول روی «محاسبه حقوق» بزن تا فیش ساخته بشه.', true);
+        return;
+      }
+      try{
+        setStatus('sal-print-status', 'در حال ساخت فیش حقوقی...');
+        const container = document.createElement('div');
+        container.className = 'pdf-export-content';
+        container.setAttribute('dir','rtl');
+        container.style.cssText = 'width:190mm; min-height:277mm; box-sizing:border-box; padding:14mm; background:#fff; color:#16332F; font-family:Vazirmatn,sans-serif; font-size:11px;';
+        container.innerHTML = buildPayslipHTML(lastInp, lastResult);
+        mountForCapture(container);
+
+        if(document.fonts && document.fonts.ready) await document.fonts.ready;
+        await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+        const empName = document.getElementById('sal-emp-name').value.trim();
+        const monthName = JALALI_MONTHS[Number(monthSel.value) - 1];
+        await window.html2pdf().set({
+          margin: 0,
+          filename: 'فیش-حقوقی' + (empName ? '-' + empName : '') + '-' + monthName + '.pdf',
+          html2canvas: { scale: 3, useCORS:true, letterRendering:false, scrollX:0, scrollY:0 },
+          jsPDF: { unit:'mm', format:'a4', orientation:'portrait' },
+          pagebreak: { mode:['css','avoid-all'] }
+        }).from(container).save();
+
+        container.remove();
+        setStatus('sal-print-status','');
+        stamp(document.getElementById('sal-print'), 'فیش حقوقی ساخته و دانلود شد');
+      }catch(err){
+        console.error(err);
+        setStatus('sal-print-status', 'مشکلی پیش اومد: ' + err.message, true);
+      }
     });
   })();
 
