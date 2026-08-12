@@ -17,16 +17,16 @@
 
 <style>
   :root{
-    --bg-0:#0A1620;
-    --bg-1:#0D1E29;
-    --paper:#0F212B;
-    --card:#12242F;
-    --ink:#F3FAFA;
-    --ink-soft:#9FBAC2;
-    --rule: rgba(255,255,255,.14);
-    --stamp:#2FF3D0;
-    --stamp-2:#22D3EE;
-    --stamp-dark:#0FBBA0;
+    --bg-0:#05080B;
+    --bg-1:#070C11;
+    --paper:#080D13;
+    --card:#0B1319;
+    --ink:#F5F1E8;
+    --ink-soft:#9A9488;
+    --rule: rgba(255,255,255,.10);
+    --stamp:#F2E9D6;
+    --stamp-2:#FFFBF0;
+    --stamp-dark:#B9A87F;
     --danger:#FF7A6E;
     --green:#F0F6F6;
     --green-dark:#C3D2D3;
@@ -40,14 +40,16 @@
       0 0 0 1px rgba(255,255,255,.03);
   }
 
-  *{box-sizing:border-box;}
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  button, a{ outline:none; }
+  button:focus-visible, a:focus-visible{ outline:2px solid var(--stamp); outline-offset:2px; }
   html,body{margin:0;padding:0;}
   body{
     position:relative; isolation:isolate; overflow-x:hidden;
     background:
-      radial-gradient(1100px 620px at 10% -10%, rgba(47,243,208,.22), transparent 60%),
-      radial-gradient(900px 560px at 105% 6%, rgba(34,211,238,.16), transparent 55%),
-      radial-gradient(700px 500px at 50% 120%, rgba(47,243,208,.10), transparent 60%),
+      radial-gradient(1100px 620px at 10% -10%, rgba(242,233,214,.10), transparent 60%),
+      radial-gradient(900px 560px at 105% 6%, rgba(255,255,255,.05), transparent 55%),
+      radial-gradient(700px 500px at 50% 120%, rgba(242,233,214,.06), transparent 60%),
       linear-gradient(180deg, var(--bg-0) 0%, var(--bg-1) 100%);
     background-attachment: fixed;
     color:var(--ink);
@@ -61,22 +63,22 @@
   .bg-aurora .blob{ position:absolute; border-radius:50%; filter:blur(100px); will-change:transform; }
   .bg-aurora .blob-1{
     width:560px; height:560px; top:-180px; inset-inline-start:-140px;
-    background: radial-gradient(circle, rgba(47,243,208,.5), transparent 70%);
+    background: radial-gradient(circle, rgba(242,233,214,.20), transparent 70%);
     animation: auroraDrift1 22s ease-in-out infinite alternate;
   }
   .bg-aurora .blob-2{
     width:500px; height:500px; top:22%; inset-inline-end:-160px;
-    background: radial-gradient(circle, rgba(34,211,238,.42), transparent 70%);
+    background: radial-gradient(circle, rgba(255,255,255,.06), transparent 70%);
     animation: auroraDrift2 27s ease-in-out infinite alternate;
   }
   .bg-aurora .blob-3{
     width:520px; height:520px; bottom:-220px; inset-inline-start:26%;
-    background: radial-gradient(circle, rgba(139,92,246,.32), transparent 70%);
+    background: radial-gradient(circle, rgba(90,70,140,.14), transparent 70%);
     animation: auroraDrift3 31s ease-in-out infinite alternate;
   }
   .bg-aurora .blob-4{
     width:380px; height:380px; top:55%; inset-inline-start:-120px;
-    background: radial-gradient(circle, rgba(47,243,208,.28), transparent 70%);
+    background: radial-gradient(circle, rgba(242,233,214,.12), transparent 70%);
     animation: auroraDrift4 25s ease-in-out infinite alternate;
   }
   @keyframes auroraDrift1{ from{ transform:translate(0,0) scale(1); } to{ transform:translate(90px,70px) scale(1.18); } }
@@ -109,12 +111,12 @@
     flex:0 0 auto;
     width:76px; height:76px; border-radius:50%;
     overflow:hidden;
-    border:2px solid rgba(47,243,208,.7);
+    border:2px solid rgba(242,233,214,.65);
     background:#000;
     box-shadow:
-      0 0 0 4px rgba(47,243,208,.10),
+      0 0 0 4px rgba(242,233,214,.10),
       0 10px 22px -8px rgba(0,0,0,.75),
-      0 0 30px -2px rgba(47,243,208,.6);
+      0 0 30px -2px rgba(242,233,214,.5);
     user-select:none;
     animation: glowRing 3.2s ease-in-out infinite;
     transition: transform .2s ease;
@@ -122,8 +124,8 @@
   .brand-stamp:hover{ transform:scale(1.06); }
   .brand-stamp:focus-visible{ outline:2px solid var(--stamp); outline-offset:3px; }
   @keyframes glowRing{
-    0%,100%{ box-shadow:0 0 0 4px rgba(47,243,208,.10), 0 10px 22px -8px rgba(0,0,0,.75), 0 0 22px -2px rgba(47,243,208,.45); }
-    50%{ box-shadow:0 0 0 6px rgba(47,243,208,.16), 0 10px 22px -8px rgba(0,0,0,.75), 0 0 38px 2px rgba(47,243,208,.75); }
+    0%,100%{ box-shadow:0 0 0 4px rgba(242,233,214,.10), 0 10px 22px -8px rgba(0,0,0,.75), 0 0 22px -2px rgba(242,233,214,.35); }
+    50%{ box-shadow:0 0 0 6px rgba(242,233,214,.16), 0 10px 22px -8px rgba(0,0,0,.75), 0 0 38px 2px rgba(242,233,214,.6); }
   }
   .brand-stamp img{ width:100%; height:100%; object-fit:cover; display:block; pointer-events:none; }
 
@@ -186,7 +188,7 @@
   .site-header h1{
     margin:0; font-size:clamp(26px,4vw,38px); font-weight:800; letter-spacing:.05em;
     font-family:'JetBrains Mono','Vazirmatn',sans-serif;
-    background: linear-gradient(90deg, #FFFFFF 0%, #2FF3D0 45%, #22D3EE 75%, #B8FBF0 100%);
+    background: linear-gradient(90deg, #FFFFFF 0%, #F2E9D6 45%, #FFFBF0 75%, #B8FBF0 100%);
     background-size: 200% auto;
     -webkit-background-clip:text; background-clip:text; color:transparent;
     animation: shineText 5s linear infinite;
@@ -224,32 +226,32 @@
   }
   .tool-nav .nav-item{
     all:unset; cursor:pointer; position:relative; box-sizing:border-box;
-    display:flex; align-items:center; gap:8px;
+    display:flex; align-items:center; gap:8px; flex:0 0 auto;
     padding:9px 15px; border-radius:999px;
     font-size:13.5px; font-weight:700; color:var(--ink-soft);
     white-space:nowrap; border:1px solid transparent;
-    transition: background .18s ease, color .18s ease, transform .18s ease;
+    transition: background .18s ease, color .18s ease;
   }
   .tool-nav .nav-item:hover{ background:rgba(255,255,255,.08); color:var(--ink); }
   .tool-nav .nav-item[aria-selected="true"]{
-    background: linear-gradient(180deg, #4FFCE0 0%, #1FD6BC 55%, #109E8B 100%);
-    color:#05241F; font-weight:800;
+    background: linear-gradient(180deg, #FFFBF0 0%, #F2E9D6 55%, #D8C9A3 100%);
+    color:#2A2318; font-weight:800;
     border-color: rgba(255,255,255,.5);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 8px 16px -8px rgba(47,243,208,.7);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 8px 16px -8px rgba(242,233,214,.7);
   }
   .tool-nav .nav-item .ico{
     display:inline-flex; align-items:center; justify-content:center;
     width:24px; height:24px; border-radius:8px; flex:0 0 auto;
     background:
       radial-gradient(circle at 30% 25%, rgba(255,255,255,.85), rgba(255,255,255,.08) 45%, transparent 75%),
-      linear-gradient(160deg, rgba(47,243,208,.4), rgba(34,211,238,.16));
+      linear-gradient(160deg, rgba(242,233,214,.4), rgba(255,251,240,.16));
     border:1px solid rgba(255,255,255,.3);
     box-shadow: inset 0 1px 1px rgba(255,255,255,.55), inset 0 -2px 4px rgba(0,0,0,.22);
   }
   .tool-nav .nav-item[aria-selected="true"] .ico{
     background:
       radial-gradient(circle at 30% 25%, rgba(255,255,255,.95), rgba(255,255,255,.2) 45%, transparent 75%),
-      linear-gradient(160deg, #ffffff, #bdf5ec);
+      linear-gradient(160deg, #ffffff, #F2E9D6);
   }
 
   .nav-group{ position:relative; }
@@ -261,13 +263,13 @@
     white-space:nowrap; transition: background .18s ease, color .18s ease;
   }
   .nav-group-btn:hover{ background:rgba(255,255,255,.08); color:var(--ink); }
-  .nav-group-btn.group-active{ background:rgba(47,243,208,.14); color:var(--stamp); }
+  .nav-group-btn.group-active{ background:rgba(242,233,214,.14); color:var(--stamp); }
   .nav-group-btn .ico{
     display:inline-flex; align-items:center; justify-content:center;
     width:24px; height:24px; border-radius:8px; flex:0 0 auto;
     background:
       radial-gradient(circle at 30% 25%, rgba(255,255,255,.85), rgba(255,255,255,.08) 45%, transparent 75%),
-      linear-gradient(160deg, rgba(47,243,208,.4), rgba(34,211,238,.16));
+      linear-gradient(160deg, rgba(242,233,214,.4), rgba(255,251,240,.16));
     border:1px solid rgba(255,255,255,.3);
     box-shadow: inset 0 1px 1px rgba(255,255,255,.55), inset 0 -2px 4px rgba(0,0,0,.22);
   }
@@ -301,20 +303,20 @@
   }
   .nav-dropdown button:hover{ background:rgba(255,255,255,.08); color:var(--ink); }
   .nav-dropdown button[aria-selected="true"]{
-    background:linear-gradient(180deg,#4FFCE0,#1FD6BC); color:#05241F; font-weight:800;
+    background:linear-gradient(180deg,#FFFBF0,#F2E9D6); color:#2A2318; font-weight:800;
   }
   .nav-dropdown .ico{
     display:inline-flex; align-items:center; justify-content:center;
     width:22px; height:22px; border-radius:7px; flex:0 0 auto;
     background:
       radial-gradient(circle at 30% 25%, rgba(255,255,255,.85), rgba(255,255,255,.08) 45%, transparent 75%),
-      linear-gradient(160deg, rgba(47,243,208,.4), rgba(34,211,238,.16));
+      linear-gradient(160deg, rgba(242,233,214,.4), rgba(255,251,240,.16));
     border:1px solid rgba(255,255,255,.3);
   }
   .nav-dropdown button[aria-selected="true"] .ico{
     background:
       radial-gradient(circle at 30% 25%, rgba(255,255,255,.95), rgba(255,255,255,.2) 45%, transparent 75%),
-      linear-gradient(160deg, #ffffff, #bdf5ec);
+      linear-gradient(160deg, #ffffff, #F2E9D6);
   }
 
   @media (max-width:760px){
@@ -363,7 +365,7 @@
   select option{ background:#0F212B; color:var(--ink); }
   input:focus, textarea:focus, select:focus{
     border-color: var(--stamp); background:rgba(255,255,255,.09);
-    box-shadow: inset 0 1px 4px rgba(0,0,0,.35), 0 0 0 3px rgba(47,243,208,.22);
+    box-shadow: inset 0 1px 4px rgba(0,0,0,.35), 0 0 0 3px rgba(242,233,214,.22);
   }
   textarea{ resize:vertical; min-height:160px; line-height:1.9; }
 
@@ -374,14 +376,14 @@
   .btn{
     all:unset; cursor:pointer; display:inline-flex; align-items:center; gap:8px;
     position:relative; overflow:hidden;
-    background: linear-gradient(180deg, #4FFCE0 0%, #1FD6BC 55%, #109E8B 100%);
-    color:#05241F; font-weight:800; font-size:14.5px;
+    background: linear-gradient(180deg, #FFFBF0 0%, #F2E9D6 55%, #D8C9A3 100%);
+    color:#2A2318; font-weight:800; font-size:14.5px;
     padding:12px 22px; border-radius:12px;
     border:1px solid rgba(255,255,255,.4);
     box-shadow:
       inset 0 1px 0 rgba(255,255,255,.65),
       inset 0 -10px 16px -6px rgba(0,0,0,.28),
-      0 12px 26px -10px rgba(47,243,208,.7),
+      0 12px 26px -10px rgba(242,233,214,.7),
       0 2px 0 rgba(0,0,0,.35);
     transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
   }
@@ -391,8 +393,8 @@
     transform: skewX(-20deg); transition: left .55s ease; pointer-events:none;
   }
   .btn:hover::after{ left:120%; }
-  .btn:hover{ filter:brightness(1.08); transform:translateY(-2px); box-shadow: inset 0 1px 0 rgba(255,255,255,.65), inset 0 -10px 16px -6px rgba(0,0,0,.28), 0 18px 34px -10px rgba(47,243,208,.85), 0 2px 0 rgba(0,0,0,.35); }
-  .btn:active{ transform:translateY(1px) scale(.985); box-shadow: inset 0 2px 8px rgba(0,0,0,.4), 0 4px 10px -6px rgba(47,243,208,.55); }
+  .btn:hover{ filter:brightness(1.08); transform:translateY(-2px); box-shadow: inset 0 1px 0 rgba(255,255,255,.65), inset 0 -10px 16px -6px rgba(0,0,0,.28), 0 18px 34px -10px rgba(242,233,214,.85), 0 2px 0 rgba(0,0,0,.35); }
+  .btn:active{ transform:translateY(1px) scale(.985); box-shadow: inset 0 2px 8px rgba(0,0,0,.4), 0 4px 10px -6px rgba(242,233,214,.55); }
   .btn:disabled{ opacity:.5; cursor:not-allowed; filter:grayscale(.35); }
   .btn.secondary{
     background: linear-gradient(180deg, #2E3D42 0%, #131E22 100%); color:var(--ink);
@@ -423,9 +425,9 @@
     background: rgba(255,255,255,.03);
     transition: border-color .2s ease, background .2s ease, transform .2s ease;
   }
-  .dropzone:hover{ transform:translateY(-2px); border-color: rgba(47,243,208,.5); }
-  .dropzone.drag{ border-color:var(--stamp); background:rgba(47,243,208,.10); animation: dashPulse 1.1s ease-in-out infinite; }
-  @keyframes dashPulse{ 0%,100%{ box-shadow:0 0 0 0 rgba(47,243,208,.35); } 50%{ box-shadow:0 0 0 10px rgba(47,243,208,0); } }
+  .dropzone:hover{ transform:translateY(-2px); border-color: rgba(242,233,214,.5); }
+  .dropzone.drag{ border-color:var(--stamp); background:rgba(242,233,214,.10); animation: dashPulse 1.1s ease-in-out infinite; }
+  @keyframes dashPulse{ 0%,100%{ box-shadow:0 0 0 0 rgba(242,233,214,.35); } 50%{ box-shadow:0 0 0 10px rgba(242,233,214,0); } }
   .dropzone strong{ color:var(--ink); }
 
   .filelist{ list-style:none; margin:16px 0 0; padding:0; display:flex; flex-direction:column; gap:8px; }
@@ -450,9 +452,9 @@
   .stamp-badge{
     display:inline-flex; align-items:center; gap:8px; margin-top:16px;
     border:2px solid var(--stamp); color: var(--stamp); font-weight:800;
-    background: rgba(47,243,208,.10); backdrop-filter: blur(10px);
+    background: rgba(242,233,214,.10); backdrop-filter: blur(10px);
     padding:9px 16px; border-radius:9px; transform:rotate(-4deg) scale(.6); opacity:0;
-    box-shadow: 0 0 24px -4px rgba(47,243,208,.75);
+    box-shadow: 0 0 24px -4px rgba(242,233,214,.75);
     transition: all .35s cubic-bezier(.2,1.4,.4,1);
   }
   .stamp-badge.show{ transform:rotate(-4deg) scale(1); opacity:1; animation: pulseGlow 2s ease-in-out .35s infinite; }
@@ -491,27 +493,77 @@
   .hero h2{ margin:0 0 10px; font-size:26px; font-weight:800; max-width:620px; }
   .hero p{ margin:0; color:var(--ink-soft); max-width:560px; font-size:15px; }
 
-  /* ---------- Prayer times widget ---------- */
-  .prayer-widget{ position:relative; z-index:1; max-width:380px; }
+  /* ---------- Hero grid: prayer card (right) facing clock card (left) ---------- */
+  .hero-grid{
+    position:relative; z-index:1;
+    display:flex; align-items:stretch; gap:14px; flex-wrap:wrap;
+  }
+  .hero-card{
+    flex:1 1 220px;
+    background: rgba(255,255,255,.035);
+    border:1px solid var(--glass-border); border-radius:14px;
+    padding:14px 16px;
+  }
+
+  /* ---------- Prayer times widget (compact/modern) ---------- */
+  .pt-card{ display:flex; flex-direction:column; }
   .pt-header{
     display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:6px;
-    margin-bottom:8px;
+    margin-bottom:6px; padding-bottom:8px; border-bottom:1px solid var(--rule);
   }
-  .pt-city{ font-weight:800; font-size:12.5px; }
-  .pt-date{ font-size:10.5px; color:var(--ink-soft); }
-  .pt-grid{
-    display:grid; grid-template-columns:repeat(auto-fit,minmax(88px,1fr)); gap:6px;
+  .pt-city{ display:flex; align-items:center; gap:5px; font-weight:700; font-size:11.5px; color:var(--ink-soft); }
+  .pt-date{ font-size:10px; color:var(--ink-soft); font-family:'JetBrains Mono','Vazirmatn',monospace; }
+  .pt-list{ display:flex; flex-direction:column; }
+  .pt-row{
+    display:flex; align-items:center; gap:9px;
+    padding:6.5px 1px; border-bottom:1px solid var(--rule);
+    font-size:12px;
   }
-  .pt-item{
-    display:flex; flex-direction:column; align-items:center; gap:2px; text-align:center;
-    background: rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.16);
-    border-radius:10px; padding:8px 6px;
-    backdrop-filter: blur(10px);
-  }
-  .pt-ico{ font-size:15px; }
-  .pt-label{ font-size:9.5px; color:var(--ink-soft); font-weight:600; }
+  .pt-row:last-child{ border-bottom:none; }
+  .pt-ico-modern{ width:15px; height:15px; flex:0 0 auto; color:var(--stamp); opacity:.85; }
+  .pt-label{ flex:1; font-size:11.5px; color:var(--ink-soft); font-weight:600; }
   .pt-value{ font-size:12px; font-weight:800; font-family:'JetBrains Mono','Vazirmatn',monospace; }
-  .pt-status{ margin-top:6px; font-size:10px; color:var(--ink-soft); text-align:left; }
+  .pt-status{ margin-top:8px; font-size:9.5px; color:var(--ink-soft); text-align:center; }
+
+  /* ---------- Analog + digital clock (compact card) ---------- */
+  .clock-card{
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:10px; text-align:center;
+  }
+  .clock-face-wrap{
+    position:relative; width:104px; height:104px;
+    filter: drop-shadow(0 10px 18px rgba(0,0,0,.6));
+  }
+  .clock-face-wrap svg{ width:100%; height:100%; display:block; overflow:visible; }
+  .clock-ring{ fill:#111417; stroke:#2a2f34; stroke-width:2; }
+  .clock-ring-inner{ fill:#1b1e22; }
+  .clock-tick{ stroke:#5c6a72; stroke-width:2; stroke-linecap:round; }
+  .clock-tick.glow{
+    stroke:#7fd6e8; stroke-width:3.4; stroke-linecap:round;
+    filter: drop-shadow(0 0 4px rgba(127,214,232,.9)) drop-shadow(0 0 9px rgba(127,214,232,.55));
+  }
+  .clock-hand{ stroke-linecap:round; }
+  .clock-hand-hour{
+    stroke:#8fe0ef; stroke-width:5;
+    filter: drop-shadow(0 0 5px rgba(143,224,239,.9)) drop-shadow(0 0 10px rgba(143,224,239,.5));
+  }
+  .clock-hand-minute{
+    stroke:#8fe0ef; stroke-width:4;
+    filter: drop-shadow(0 0 5px rgba(143,224,239,.9)) drop-shadow(0 0 10px rgba(143,224,239,.5));
+  }
+  .clock-hand-second{ stroke:#0d1013; stroke-width:1.6; }
+  .clock-hub{ fill:#0d1013; stroke:#3a3f44; stroke-width:1.2; }
+  .clock-digital{
+    font-family:'JetBrains Mono','Vazirmatn',monospace;
+    font-size:19px; font-weight:700; letter-spacing:.05em;
+    color:var(--ink); line-height:1;
+    text-shadow: 0 0 12px rgba(143,224,239,.3);
+  }
+  .clock-digital .cd-sec{ font-size:12px; font-weight:600; color:var(--ink-soft); margin-inline-start:3px; }
+  .clock-date{ font-size:10px; color:var(--ink-soft); letter-spacing:.02em; }
+  @media (max-width:620px){
+    .hero-grid{ flex-direction:column; }
+  }
   .tool-grid{
     display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; margin-top:22px;
   }
@@ -542,15 +594,15 @@
   }
   .tool-card:hover::after{ left:130%; }
   .tool-card:hover{
-    transform:translateY(-6px) scale(1.015); border-color: rgba(47,243,208,.6);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.18), 0 26px 46px -18px rgba(47,243,208,.45);
+    transform:translateY(-6px) scale(1.015); border-color: rgba(242,233,214,.6);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.18), 0 26px 46px -18px rgba(242,233,214,.45);
   }
   .tool-card .ico{
     display:inline-flex; align-items:center; justify-content:center;
     width:52px; height:52px; border-radius:16px; font-size:26px;
     background:
       radial-gradient(circle at 30% 25%, rgba(255,255,255,.85), rgba(255,255,255,.1) 45%, transparent 75%),
-      linear-gradient(160deg, rgba(47,243,208,.42), rgba(34,211,238,.18));
+      linear-gradient(160deg, rgba(242,233,214,.42), rgba(255,251,240,.18));
     border:1px solid rgba(255,255,255,.38);
     box-shadow:
       inset 0 2px 2px rgba(255,255,255,.6),
@@ -558,7 +610,7 @@
       0 8px 16px -6px rgba(0,0,0,.55);
     transition: transform .25s ease, box-shadow .25s ease;
   }
-  .tool-card:hover .ico{ transform: scale(1.15) rotate(-6deg); box-shadow: inset 0 2px 2px rgba(255,255,255,.75), inset 0 -6px 10px rgba(0,0,0,.22), 0 12px 22px -8px rgba(47,243,208,.55); }
+  .tool-card:hover .ico{ transform: scale(1.15) rotate(-6deg); box-shadow: inset 0 2px 2px rgba(255,255,255,.75), inset 0 -6px 10px rgba(0,0,0,.22), 0 12px 22px -8px rgba(242,233,214,.55); }
   .tool-card h3{ margin:12px 0 5px; font-size:16px; font-weight:800; }
   .tool-card p{ margin:0; font-size:13px; color:var(--ink-soft); }
 
@@ -629,8 +681,8 @@
     padding:1.4px;
     background: conic-gradient(from var(--beam-angle),
       transparent 0deg, transparent 260deg,
-      rgba(124,252,234,.9) 300deg, rgba(47,243,208,1) 325deg,
-      rgba(34,211,238,.9) 345deg, transparent 360deg);
+      rgba(247,240,222,.9) 300deg, rgba(242,233,214,1) 325deg,
+      rgba(255,251,240,.9) 345deg, transparent 360deg);
     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
@@ -649,7 +701,7 @@
     content:""; position:absolute; inset:0; border-radius:inherit;
     background:
       radial-gradient(circle at 25% 20%, rgba(255,255,255,.4), transparent 45%),
-      linear-gradient(120deg, rgba(47,243,208,.3), rgba(34,211,238,.14) 35%, rgba(124,252,234,.28) 65%, rgba(47,243,208,.3));
+      linear-gradient(120deg, rgba(242,233,214,.3), rgba(255,251,240,.14) 35%, rgba(247,240,222,.28) 65%, rgba(242,233,214,.3));
     background-size:100% 100%, 220% 220%;
     mix-blend-mode:overlay;
     opacity:.85;
@@ -657,7 +709,7 @@
     pointer-events:none; z-index:1;
   }
   @keyframes liquidShift{ 0%,100%{ background-position:0% 50%, 0% 50%; } 50%{ background-position:0% 50%, 100% 50%; } }
-  .tool-nav .nav-item, .nav-group-btn{ position:relative; overflow:hidden; }
+  .tool-nav .nav-item, .nav-group-btn{ position:relative; overflow:hidden; contain:paint; }
   .btn-ripple{
     position:absolute; border-radius:50%; z-index:3;
     background: radial-gradient(circle, rgba(255,255,255,.6), rgba(255,255,255,0) 70%);
@@ -696,6 +748,12 @@
   <symbol id="ico-mail" viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M4 7l8 6 8-6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="ico-plane" viewBox="0 0 24 24"><path d="M21 3 3 10.5l6.5 2.3L12.5 20 21 3z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9.5 12.8 21 3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></symbol>
   <symbol id="ico-camera" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="13.5" r="4" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M8.5 7 9.7 4.5h4.6L15.5 7" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></symbol>
+  <symbol id="ico-sunrise" viewBox="0 0 24 24"><path d="M12 4v3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M5 11.5 7 9.5M19 11.5l-2-2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="14" r="4" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3 19h18M2 15.5h4M18 15.5h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
+  <symbol id="ico-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.6" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 3v2.6M12 18.4V21M4.2 12H1.6M22.4 12h-2.6M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M18.4 5.6l-1.8 1.8M7.4 16.6l-1.8 1.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+  <symbol id="ico-noon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 7.2V12l3.2 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="ico-sunset" viewBox="0 0 24 24"><path d="M9.5 6 12 3.6 14.5 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="14" r="4" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3 19h18M2 15.5h4M18 15.5h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
+  <symbol id="ico-dusk" viewBox="0 0 24 24"><path d="M12 20V4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="1 3.4"/><circle cx="12" cy="12" r="4.4" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M3 19h18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+  <symbol id="ico-moon" viewBox="0 0 24 24"><path d="M19.5 14.2A8.2 8.2 0 1 1 9.8 4.5a6.6 6.6 0 0 0 9.7 9.7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></symbol>
 </defs>
 </svg>
 
@@ -772,20 +830,38 @@
     <!-- ---------------- INTRO ---------------- -->
     <section id="panel-intro" class="panel active">
       <div class="hero">
-        <div class="prayer-widget" id="prayer-widget">
-          <div class="pt-header">
-            <span class="pt-city">🕌 اوقات شرعی یزد</span>
-            <span class="pt-date" id="pt-date"></span>
+        <div class="hero-grid">
+          <div class="hero-card pt-card" id="prayer-widget">
+            <div class="pt-header">
+              <span class="pt-city"><svg class="ico-svg" style="width:15px;height:15px;color:var(--stamp)"><use href="#ico-noon"></use></svg> اوقات شرعی یزد</span>
+              <span class="pt-date" id="pt-date"></span>
+            </div>
+            <div class="pt-list" id="pt-grid">
+              <div class="pt-row"><svg class="ico-svg pt-ico-modern"><use href="#ico-sunrise"></use></svg><span class="pt-label">اذان صبح</span><span class="pt-value" id="pt-fajr">--:--</span></div>
+              <div class="pt-row"><svg class="ico-svg pt-ico-modern"><use href="#ico-sun"></use></svg><span class="pt-label">طلوع آفتاب</span><span class="pt-value" id="pt-sunrise">--:--</span></div>
+              <div class="pt-row"><svg class="ico-svg pt-ico-modern"><use href="#ico-noon"></use></svg><span class="pt-label">اذان ظهر</span><span class="pt-value" id="pt-dhuhr">--:--</span></div>
+              <div class="pt-row"><svg class="ico-svg pt-ico-modern"><use href="#ico-sunset"></use></svg><span class="pt-label">غروب آفتاب</span><span class="pt-value" id="pt-sunset">--:--</span></div>
+              <div class="pt-row"><svg class="ico-svg pt-ico-modern"><use href="#ico-dusk"></use></svg><span class="pt-label">اذان مغرب</span><span class="pt-value" id="pt-maghrib">--:--</span></div>
+              <div class="pt-row"><svg class="ico-svg pt-ico-modern"><use href="#ico-moon"></use></svg><span class="pt-label">نیمه‌شب شرعی</span><span class="pt-value" id="pt-midnight">--:--</span></div>
+            </div>
+            <div class="pt-status" id="pt-status"></div>
           </div>
-          <div class="pt-grid" id="pt-grid">
-            <div class="pt-item"><span class="pt-ico">🌅</span><span class="pt-label">اذان صبح</span><span class="pt-value" id="pt-fajr">--:--</span></div>
-            <div class="pt-item"><span class="pt-ico">☀️</span><span class="pt-label">طلوع آفتاب</span><span class="pt-value" id="pt-sunrise">--:--</span></div>
-            <div class="pt-item"><span class="pt-ico">🕛</span><span class="pt-label">اذان ظهر</span><span class="pt-value" id="pt-dhuhr">--:--</span></div>
-            <div class="pt-item"><span class="pt-ico">🌇</span><span class="pt-label">غروب آفتاب</span><span class="pt-value" id="pt-sunset">--:--</span></div>
-            <div class="pt-item"><span class="pt-ico">🌆</span><span class="pt-label">اذان مغرب</span><span class="pt-value" id="pt-maghrib">--:--</span></div>
-            <div class="pt-item"><span class="pt-ico">🌙</span><span class="pt-label">نیمه‌شب شرعی</span><span class="pt-value" id="pt-midnight">--:--</span></div>
+
+          <div class="hero-card clock-card" id="clock-wrap">
+            <div class="clock-face-wrap">
+              <svg viewBox="0 0 200 200">
+                <circle class="clock-ring" cx="100" cy="100" r="96"/>
+                <circle class="clock-ring-inner" cx="100" cy="100" r="88"/>
+                <g id="clock-ticks"></g>
+                <line id="clock-hour" class="clock-hand clock-hand-hour" x1="100" y1="100" x2="100" y2="58"/>
+                <line id="clock-minute" class="clock-hand clock-hand-minute" x1="100" y1="100" x2="100" y2="36"/>
+                <line id="clock-second" class="clock-hand clock-hand-second" x1="100" y1="112" x2="100" y2="30"/>
+                <circle class="clock-hub" cx="100" cy="100" r="5.5"/>
+              </svg>
+            </div>
+            <div class="clock-digital"><span id="clock-hm">--:--</span><span class="cd-sec" id="clock-s">--</span></div>
+            <div class="clock-date" id="clock-date"></div>
           </div>
-          <div class="pt-status" id="pt-status"></div>
         </div>
       </div>
 
@@ -1441,9 +1517,9 @@
     document.addEventListener('keydown', (e) => { if(e.key === 'Escape') closeDrawer(); });
   })();
 
-  /* ================= Liquid metal ripple (buttons + nav options) ================= */
+  /* ================= Liquid metal ripple (buttons only — nav items excluded to avoid mobile paint glitches) ================= */
   document.addEventListener('click', function(e){
-    const target = e.target.closest('.btn, .tool-nav .nav-item, .nav-group-btn');
+    const target = e.target.closest('.btn');
     if(!target) return;
     const rect = target.getBoundingClientRect();
     const size = Math.max(rect.width, rect.height) * 1.6;
@@ -2538,7 +2614,7 @@
       return `
         <div style="font-family:'Vazirmatn',sans-serif; color:#16332F;">
 
-          <div style="display:flex; align-items:center; justify-content:space-between; padding-bottom:14px; border-bottom:3px solid #0FBBA0;">
+          <div style="display:flex; align-items:center; justify-content:space-between; padding-bottom:14px; border-bottom:3px solid #B9A87F;">
             <div>
               <div style="font-size:19px; font-weight:800; color:#0A2E29;">${escapeHtml(companyName)}</div>
               <div style="font-size:11.5px; color:#5B6E6A; margin-top:3px;">فیش حقوقی — ${monthName} ${toFaDigits(jy)}</div>
@@ -2568,7 +2644,7 @@
 
           <div style="display:flex; gap:14px; margin-top:16px;">
             <div style="flex:1; border:1px solid #DCEAE7; border-radius:14px; overflow:hidden;">
-              <div style="background:#0FBBA0; color:#fff; font-size:12px; font-weight:800; padding:9px 14px;">مزایا و حقوق</div>
+              <div style="background:#B9A87F; color:#fff; font-size:12px; font-weight:800; padding:9px 14px;">مزایا و حقوق</div>
               <table style="width:100%; border-collapse:collapse;">${earnRows}</table>
             </div>
             <div style="flex:1; border:1px solid #F2D7D2; border-radius:14px; overflow:hidden;">
@@ -2588,7 +2664,7 @@
             </div>
           </div>
 
-          <div style="margin-top:16px; border-radius:16px; background:linear-gradient(135deg,#0FBBA0,#0A8F79); padding:18px 20px; display:flex; align-items:center; justify-content:space-between;">
+          <div style="margin-top:16px; border-radius:16px; background:linear-gradient(135deg,#B9A87F,#8A7A55); padding:18px 20px; display:flex; align-items:center; justify-content:space-between;">
             <div>
               <div style="font-size:12.5px; color:#EAFBF7; font-weight:700;">خالص پرداختی</div>
               <div style="font-size:10.5px; color:#CFF3EA; margin-top:4px;">${r.AJ > 0 ? numberToFaWords(Math.round(r.AJ)) + ' ریال' : '—'}</div>
@@ -2859,6 +2935,63 @@
   }
   loadPrayerTimes();
   setInterval(loadPrayerTimes, 60 * 60 * 1000);
+
+  /* ================= Analog + digital clock ================= */
+  (function initClock(){
+    const ticksEl = document.getElementById('clock-ticks');
+    if(!ticksEl) return;
+    const CX = 100, CY = 100;
+    for(let i = 0; i < 12; i++){
+      const angle = (i * 30) * Math.PI / 180;
+      const outerR = 88, innerR = 76;
+      const x1 = CX + outerR * Math.sin(angle);
+      const y1 = CY - outerR * Math.cos(angle);
+      const x2 = CX + innerR * Math.sin(angle);
+      const y2 = CY - innerR * Math.cos(angle);
+      const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+      line.setAttribute('x1', x1.toFixed(2));
+      line.setAttribute('y1', y1.toFixed(2));
+      line.setAttribute('x2', x2.toFixed(2));
+      line.setAttribute('y2', y2.toFixed(2));
+      line.setAttribute('class', 'clock-tick glow');
+      ticksEl.appendChild(line);
+    }
+
+    const hourHand = document.getElementById('clock-hour');
+    const minHand = document.getElementById('clock-minute');
+    const secHand = document.getElementById('clock-second');
+    const hmEl = document.getElementById('clock-hm');
+    const sEl = document.getElementById('clock-s');
+    const dateEl = document.getElementById('clock-date');
+
+    function setHand(el, angleDeg, len, baseY){
+      el.setAttribute('transform', `rotate(${angleDeg} ${CX} ${CY})`);
+    }
+
+    function tick(){
+      const now = new Date();
+      const h = now.getHours(), m = now.getMinutes(), s = now.getSeconds();
+      const hourAngle = (h % 12) * 30 + m * 0.5;
+      const minAngle = m * 6 + s * 0.1;
+      const secAngle = s * 6;
+      setHand(hourHand, hourAngle);
+      setHand(minHand, minAngle);
+      setHand(secHand, secAngle);
+
+      const hh = String(h).padStart(2,'0');
+      const mm = String(m).padStart(2,'0');
+      const ss = String(s).padStart(2,'0');
+      hmEl.textContent = toFaDigits(`${hh}:${mm}`);
+      sEl.textContent = toFaDigits(ss);
+
+      if(dateEl && (s === 0 || !dateEl.textContent)){
+        const [jy, jm, jd] = gregorianToJalali(now.getFullYear(), now.getMonth()+1, now.getDate());
+        dateEl.textContent = `${toFaDigits(jd)} ${JALALI_MONTHS[jm-1]} ${toFaDigits(jy)}`;
+      }
+    }
+    tick();
+    setInterval(tick, 1000);
+  })();
 
 
 })();
