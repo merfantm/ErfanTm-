@@ -492,26 +492,26 @@
   .hero p{ margin:0; color:var(--ink-soft); max-width:560px; font-size:15px; }
 
   /* ---------- Prayer times widget ---------- */
-  .prayer-widget{ position:relative; z-index:1; }
+  .prayer-widget{ position:relative; z-index:1; max-width:380px; }
   .pt-header{
     display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:6px;
-    margin-bottom:12px;
+    margin-bottom:8px;
   }
-  .pt-city{ font-weight:800; font-size:16px; }
-  .pt-date{ font-size:12.5px; color:var(--ink-soft); }
+  .pt-city{ font-weight:800; font-size:12.5px; }
+  .pt-date{ font-size:10.5px; color:var(--ink-soft); }
   .pt-grid{
-    display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:10px;
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(88px,1fr)); gap:6px;
   }
   .pt-item{
-    display:flex; flex-direction:column; align-items:center; gap:4px; text-align:center;
+    display:flex; flex-direction:column; align-items:center; gap:2px; text-align:center;
     background: rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.16);
-    border-radius:14px; padding:14px 10px;
+    border-radius:10px; padding:8px 6px;
     backdrop-filter: blur(10px);
   }
-  .pt-ico{ font-size:22px; }
-  .pt-label{ font-size:12px; color:var(--ink-soft); font-weight:600; }
-  .pt-value{ font-size:16px; font-weight:800; font-family:'JetBrains Mono','Vazirmatn',monospace; }
-  .pt-status{ margin-top:10px; font-size:11.5px; color:var(--ink-soft); text-align:left; }
+  .pt-ico{ font-size:15px; }
+  .pt-label{ font-size:9.5px; color:var(--ink-soft); font-weight:600; }
+  .pt-value{ font-size:12px; font-weight:800; font-family:'JetBrains Mono','Vazirmatn',monospace; }
+  .pt-status{ margin-top:6px; font-size:10px; color:var(--ink-soft); text-align:left; }
   .tool-grid{
     display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; margin-top:22px;
   }
@@ -619,6 +619,63 @@
   @media (max-width: 400px){
     .brand-stamp{ width:64px; height:64px; }
   }
+  /* ---------- Border beam: animated glowing ring around every card/box ---------- */
+  @property --beam-angle{
+    syntax:'<angle>'; inherits:false; initial-value:0deg;
+  }
+  .card, .tool-card, .tool-nav{ isolation:isolate; }
+  .card::before, .tool-card::before, .tool-nav::before{
+    content:""; position:absolute; inset:0; border-radius:inherit;
+    padding:1.4px;
+    background: conic-gradient(from var(--beam-angle),
+      transparent 0deg, transparent 260deg,
+      rgba(124,252,234,.9) 300deg, rgba(47,243,208,1) 325deg,
+      rgba(34,211,238,.9) 345deg, transparent 360deg);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events:none; z-index:4;
+    animation: beamSpin 5s linear infinite;
+  }
+  @keyframes beamSpin{ to{ --beam-angle:360deg; } }
+  @media (prefers-reduced-motion: reduce){
+    .card::before, .tool-card::before, .tool-nav::before{ animation:none; }
+  }
+
+  /* ---------- Liquid metal shine: applied to every button / nav option ---------- */
+  .btn, .tool-nav .nav-item, .nav-group-btn{ isolation:isolate; }
+  .btn > *, .tool-nav .nav-item > *, .nav-group-btn > *{ position:relative; z-index:2; }
+  .btn::before, .tool-nav .nav-item::before, .nav-group-btn::before{
+    content:""; position:absolute; inset:0; border-radius:inherit;
+    background:
+      radial-gradient(circle at 25% 20%, rgba(255,255,255,.4), transparent 45%),
+      linear-gradient(120deg, rgba(47,243,208,.3), rgba(34,211,238,.14) 35%, rgba(124,252,234,.28) 65%, rgba(47,243,208,.3));
+    background-size:100% 100%, 220% 220%;
+    mix-blend-mode:overlay;
+    opacity:.85;
+    animation: liquidShift 6s ease-in-out infinite;
+    pointer-events:none; z-index:1;
+  }
+  @keyframes liquidShift{ 0%,100%{ background-position:0% 50%, 0% 50%; } 50%{ background-position:0% 50%, 100% 50%; } }
+  .tool-nav .nav-item, .nav-group-btn{ position:relative; overflow:hidden; }
+  .btn-ripple{
+    position:absolute; border-radius:50%; z-index:3;
+    background: radial-gradient(circle, rgba(255,255,255,.6), rgba(255,255,255,0) 70%);
+    transform:scale(0); opacity:.9; pointer-events:none;
+    animation: rippleGrow .65s ease-out forwards;
+  }
+  @keyframes rippleGrow{ to{ transform:scale(1); opacity:0; } }
+  @media (prefers-reduced-motion: reduce){
+    .btn::before, .tool-nav .nav-item::before, .nav-group-btn::before{ animation:none; }
+    .btn-ripple{ animation:none; display:none; }
+  }
+
+  /* ---------- Contact page: smaller option tiles ---------- */
+  .tool-grid-compact{ grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; }
+  .tool-grid-compact .tool-card{ padding:14px; }
+  .tool-grid-compact .tool-card .ico{ width:38px; height:38px; border-radius:12px; }
+  .tool-grid-compact .tool-card h3{ font-size:13.5px; margin:8px 0 3px; }
+  .tool-grid-compact .tool-card p{ font-size:11.5px; }
 </style>
 </head>
 <body>
@@ -1335,7 +1392,7 @@
       <div class="card">
         <h2>ارتباط با ما</h2>
         <p class="lede">سوال، پیشنهاد یا مشکلی داشتی، از این راه‌ها در دسترسیم.</p>
-        <div class="tool-grid">
+        <div class="tool-grid tool-grid-compact">
           <a class="tool-card" href="https://t.me/merfantm" target="_blank" rel="noopener noreferrer">
             <div class="ico"><svg class="ico-svg"><use href="#ico-plane"></use></svg></div>
             <h3>تلگرام</h3>
@@ -1383,6 +1440,21 @@
     });
     document.addEventListener('keydown', (e) => { if(e.key === 'Escape') closeDrawer(); });
   })();
+
+  /* ================= Liquid metal ripple (buttons + nav options) ================= */
+  document.addEventListener('click', function(e){
+    const target = e.target.closest('.btn, .tool-nav .nav-item, .nav-group-btn');
+    if(!target) return;
+    const rect = target.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height) * 1.6;
+    const ripple = document.createElement('span');
+    ripple.className = 'btn-ripple';
+    ripple.style.width = ripple.style.height = size + 'px';
+    ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+    ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+    target.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 650);
+  });
 
   /* ================= Tab navigation ================= */
   const navButtons = document.querySelectorAll('.tool-nav [data-tab]');
