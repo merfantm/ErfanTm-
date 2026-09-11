@@ -31,13 +31,14 @@
     --green:#F0F6F6;
     --green-dark:#C3D2D3;
     --gold:#C9D4D6;
-    --radius:16px;
-    --glass-bg: linear-gradient(160deg, rgba(255,255,255,.10), rgba(255,255,255,.03));
-    --glass-border: rgba(255,255,255,.22);
+    --radius:22px;
+    --glass-bg: linear-gradient(160deg, rgba(255,255,255,.11), rgba(255,255,255,.025));
+    --glass-border: rgba(255,255,255,.18);
     --shadow:
-      inset 0 1px 0 rgba(255,255,255,.14),
-      0 24px 48px -22px rgba(0,0,0,.75),
+      inset 0 1px 0 rgba(255,255,255,.16),
+      0 30px 60px -24px rgba(0,0,0,.7),
       0 0 0 1px rgba(255,255,255,.03);
+    --ease-soft: cubic-bezier(.19,1,.22,1);
   }
 
   /* Persian fonts used only for the "فاکتور اختصاصی" PDF export, to
@@ -110,42 +111,6 @@
     .bg-aurora .blob{ animation:none !important; }
   }
 
-  /* ---------- Site mode (seasonal weather effects) ---------- */
-  #site-fx-canvas{
-    position:fixed; inset:0; width:100vw; height:100vh;
-    pointer-events:none; z-index:9997;
-  }
-  .site-mode-wrap{ position:fixed; top:16px; left:16px; z-index:1000; }
-  .site-mode-btn{
-    all:unset; cursor:pointer; display:inline-flex; align-items:center; gap:6px;
-    padding:9px 14px; border-radius:999px; font-size:12.5px; font-weight:700; color:var(--ink);
-    background: var(--glass-bg); border:1px solid var(--glass-border);
-    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-    box-shadow: 0 8px 20px -8px rgba(0,0,0,.6);
-    transition: background .2s ease, transform .2s ease;
-  }
-  .site-mode-btn:hover{ background: rgba(255,255,255,.1); transform:translateY(-1px); }
-  .site-mode-ico{ font-size:15px; line-height:1; }
-  .site-mode-menu{
-    position:absolute; top:calc(100% + 8px); left:0;
-    min-width:150px; background: var(--card); border:1px solid var(--glass-border); border-radius:14px;
-    padding:8px; box-shadow: 0 20px 40px -16px rgba(0,0,0,.75);
-    display:flex; flex-direction:column; gap:2px;
-    opacity:0; visibility:hidden; transform:translateY(-8px) scale(.97);
-    transition: opacity .22s ease, transform .22s cubic-bezier(.16,1,.3,1), visibility .22s;
-    z-index:1001;
-  }
-  .site-mode-wrap.open .site-mode-menu{ opacity:1; visibility:visible; transform:translateY(0) scale(1); }
-  .site-mode-option{
-    all:unset; cursor:pointer; box-sizing:border-box; display:block; width:100%;
-    padding:9px 12px; border-radius:9px; font-size:13px; font-weight:600; color:var(--ink);
-    transition: background .15s ease;
-  }
-  .site-mode-option:hover{ background: rgba(255,255,255,.08); }
-  .site-mode-option[aria-selected="true"]{
-    background: linear-gradient(135deg,#5B8DFF,#8B5CF6); color:#fff; font-weight:800;
-  }
-
   .num{ font-family:'JetBrains Mono','Vazirmatn',monospace; font-weight:700; letter-spacing:.02em; }
   .ico-svg{ width:58%; height:58%; display:block; color:rgba(255,255,255,.92); }
 
@@ -155,28 +120,37 @@
   @keyframes riseIn{ from{ opacity:0; transform:translateY(14px); } to{ opacity:1; transform:none; } }
   @keyframes popIn{ from{ opacity:0; transform:translateY(10px) scale(.94); } to{ opacity:1; transform:none; } }
 
-  /* ---------- Header ---------- */
+  /* ---------- Header (unified glass pill: brand + nav in one bar) ---------- */
   .site-header{
-    display:flex; align-items:center; gap:18px;
-    max-width:1100px; margin:0 auto; padding:34px 20px 18px;
-    animation: riseIn .5s cubic-bezier(.16,1,.3,1);
+    display:flex; align-items:center; flex-wrap:wrap; gap:14px 20px;
+    max-width:1160px; margin:14px auto 22px; padding:10px 20px 10px 14px;
+    border-radius:999px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(34px) saturate(210%);
+    -webkit-backdrop-filter: blur(34px) saturate(210%);
+    border:1px solid var(--glass-border);
+    box-shadow:var(--shadow);
+    position:sticky; top:14px; z-index:60;
+    animation: riseIn .55s var(--ease-soft);
+    transition: box-shadow .3s ease, border-color .3s ease;
   }
   .brand-wrap{ position:relative; flex:0 0 auto; }
+  .brand-name{ flex:0 0 auto; }
   .brand-stamp{
     all:unset; cursor:pointer; box-sizing:border-box;
     display:block; position:relative; z-index:2;
     flex:0 0 auto;
-    width:92px; height:92px; border-radius:50%;
+    width:52px; height:52px; border-radius:50%;
     overflow:hidden;
     border:2px solid rgba(124,111,240,.65);
     background:#000;
     box-shadow:
-      0 0 0 4px rgba(124,111,240,.10),
-      0 10px 22px -8px rgba(0,0,0,.75),
-      0 0 30px -2px rgba(124,111,240,.5);
+      0 0 0 3px rgba(124,111,240,.10),
+      0 6px 14px -6px rgba(0,0,0,.75),
+      0 0 20px -2px rgba(124,111,240,.5);
     user-select:none;
     animation: glowRing 3.2s ease-in-out infinite;
-    transition: transform .2s ease;
+    transition: transform .3s var(--ease-soft);
   }
   .brand-stamp:hover{ transform:scale(1.06); }
   .brand-stamp:focus-visible{ outline:2px solid var(--stamp); outline-offset:3px; }
@@ -189,12 +163,12 @@
   .brand-drawer{
     position:absolute; top:50%; right:100%;
     margin-inline-end:14px;
-    width:92px; height:92px;
+    width:52px; height:52px;
     transform:translateY(-50%);
     transform-origin: right center;
     background: var(--glass-bg);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
     border:1px solid var(--glass-border);
     border-radius:50%;
     box-shadow: var(--shadow);
@@ -202,11 +176,11 @@
     overflow:hidden;
     opacity:0; visibility:hidden; pointer-events:none;
     transition:
-      opacity .34s cubic-bezier(.16,1,.3,1),
-      width .34s cubic-bezier(.16,1,.3,1),
-      height .34s cubic-bezier(.16,1,.3,1),
-      border-radius .34s cubic-bezier(.16,1,.3,1),
-      padding .3s ease, visibility .34s;
+      opacity .3s var(--ease-soft),
+      width .3s var(--ease-soft),
+      height .3s var(--ease-soft),
+      border-radius .3s var(--ease-soft),
+      padding .3s ease, visibility .3s;
     z-index:50;
   }
   .brand-drawer.open{
@@ -245,7 +219,7 @@
     .brand-drawer::after{ display:none; }
   }
   .site-header h1{
-    margin:0; font-size:clamp(26px,4vw,38px); font-weight:800; letter-spacing:.05em;
+    margin:0; font-size:clamp(18px,2.4vw,22px); font-weight:800; letter-spacing:.06em;
     font-family:'JetBrains Mono','Vazirmatn',sans-serif;
     background: linear-gradient(90deg, #FFFFFF 0%, #7C6FF0 45%, #4F8CFF 75%, #B8FBF0 100%);
     background-size: 200% auto;
@@ -267,21 +241,9 @@
     max-width:1100px; margin:0 auto; padding:0 20px 60px;
   }
 
-  .tool-nav-wrap{
-    position:sticky; top:14px; z-index:40;
-    display:flex; justify-content:center;
-    padding:0 16px 18px;
-  }
   .tool-nav{
     display:flex; flex-direction:row; flex-wrap:wrap; align-items:center;
-    justify-content:center; gap:4px; max-width:100%;
-    background: var(--glass-bg);
-    backdrop-filter: blur(28px) saturate(200%);
-    -webkit-backdrop-filter: blur(28px) saturate(200%);
-    border:1px solid var(--glass-border);
-    border-radius:999px;
-    padding:8px; box-shadow:var(--shadow);
-    animation: riseIn .55s cubic-bezier(.16,1,.3,1) .05s both;
+    justify-content:center; gap:4px; flex:1 1 auto; min-width:0;
   }
   .tool-nav .nav-item{
     all:unset; cursor:pointer; position:relative; box-sizing:border-box;
@@ -364,8 +326,8 @@
   }
 
   @media (max-width:760px){
-    .tool-nav-wrap{ position:static; padding:0 10px 16px; }
-    .tool-nav{ gap:3px; padding:6px; }
+    .site-header{ position:static; border-radius:26px; padding:12px 14px; margin:10px auto 16px; justify-content:center; }
+    .tool-nav{ gap:3px; justify-content:center; }
     .tool-nav .nav-item, .nav-group-btn{ padding:8px 11px; font-size:12.5px; }
     .nav-dropdown{ min-width:180px; }
   }
@@ -678,17 +640,19 @@
     .clock-weekday{ font-size:19px; }
   }
   .tool-grid{
-    display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; margin-top:22px;
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:12px; margin-top:22px;
   }
   .tool-card{
-    all:unset; cursor:pointer; display:block; position:relative; overflow:hidden;
+    all:unset; cursor:pointer; position:relative; overflow:hidden;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; gap:2px;
     background: var(--glass-bg);
-    backdrop-filter: blur(24px) saturate(200%);
-    -webkit-backdrop-filter: blur(24px) saturate(200%);
+    backdrop-filter: blur(30px) saturate(210%);
+    -webkit-backdrop-filter: blur(30px) saturate(210%);
     border:1px solid var(--glass-border);
-    border-radius:var(--radius); padding:20px; box-shadow:var(--shadow);
-    opacity:0; animation: popIn .5s cubic-bezier(.16,1,.3,1) forwards;
-    transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+    border-radius:18px; padding:18px 10px; box-shadow:var(--shadow);
+    opacity:0; animation: popIn .5s var(--ease-soft) forwards;
+    transition: transform .3s var(--ease-soft), border-color .3s ease, box-shadow .3s var(--ease-soft);
   }
   .tool-card:nth-child(1){ animation-delay:.10s; }
   .tool-card:nth-child(2){ animation-delay:.18s; }
@@ -712,18 +676,17 @@
   }
   .tool-card .ico{
     display:inline-flex; align-items:center; justify-content:center;
-    width:52px; height:52px; border-radius:14px; font-size:26px;
+    width:46px; height:46px; border-radius:13px; font-size:22px;
     background: linear-gradient(150deg, #6C63E8, #4F63D6);
     box-shadow: 0 8px 16px -6px rgba(0,0,0,.55);
-    transition: transform .25s ease, box-shadow .25s ease;
+    transition: transform .3s var(--ease-soft), box-shadow .3s var(--ease-soft);
   }
   .tool-card:hover .ico{ transform: scale(1.08) rotate(-4deg); box-shadow: 0 12px 22px -8px rgba(124,111,240,.6); }
   .ico.ico-flat-blue{ background: linear-gradient(150deg, #4C8CF0, #3560C9) !important; border-color:transparent !important; }
   .ico.ico-flat-purple{ background: linear-gradient(150deg, #8B6EF0, #6440C9) !important; border-color:transparent !important; }
   .ico.ico-flat-teal{ background: linear-gradient(150deg, #34C4B8, #1E8E8A) !important; border-color:transparent !important; }
   .ico.ico-flat-muted{ background: linear-gradient(150deg, #3B4256, #262B3B) !important; border-color:transparent !important; }
-  .tool-card h3{ margin:12px 0 5px; font-size:16px; font-weight:800; }
-  .tool-card p{ margin:0; font-size:13px; color:var(--ink-soft); }
+  .tool-card h3{ margin:10px 0 0; font-size:13.5px; font-weight:800; line-height:1.4; }
 
   .jalali-date{ display:flex; gap:6px; }
   .jalali-date select{ width:auto; flex:1 1 0; min-width:0; padding-inline:6px; }
@@ -763,9 +726,8 @@
   }
   /* ---------- Mobile refinements ---------- */
   @media (max-width: 640px){
-    .site-header{ padding:22px 14px 14px; gap:12px; }
-    .site-header h1{ font-size:clamp(22px,7vw,30px); }
-    .site-header p{ font-size:13px; }
+    .site-header{ padding:10px 14px; gap:10px 14px; }
+    .site-header h1{ font-size:18px; }
     .app-shell{ padding:0 12px 40px; gap:14px; }
     .card{ padding:16px; border-radius:16px; }
     .card h2{ font-size:18px; }
@@ -834,28 +796,13 @@
   }
 
   /* ---------- Contact page: smaller option tiles ---------- */
-  .tool-grid-compact{ grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; }
-  .tool-grid-compact .tool-card{ padding:14px; }
+  .tool-grid-compact{ grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:10px; }
+  .tool-grid-compact .tool-card{ padding:14px 10px; }
   .tool-grid-compact .tool-card .ico{ width:38px; height:38px; border-radius:12px; }
-  .tool-grid-compact .tool-card h3{ font-size:13.5px; margin:8px 0 3px; }
-  .tool-grid-compact .tool-card p{ font-size:11.5px; }
+  .tool-grid-compact .tool-card h3{ font-size:13px; margin:8px 0 0; }
 </style>
 </head>
 <body>
-
-<canvas id="site-fx-canvas" aria-hidden="true"></canvas>
-
-<div class="site-mode-wrap" id="site-mode-wrap">
-  <button type="button" class="site-mode-btn" id="site-mode-btn" aria-haspopup="true" aria-expanded="false">
-    <span class="site-mode-ico">🎨</span> <span>حالت سایت</span>
-  </button>
-  <div class="site-mode-menu" id="site-mode-menu" role="menu" aria-hidden="true">
-    <button type="button" class="site-mode-option" data-mode="spring" role="menuitem" aria-selected="false">🌸 بهار</button>
-    <button type="button" class="site-mode-option" data-mode="summer" role="menuitem" aria-selected="false">☀️ تابستان</button>
-    <button type="button" class="site-mode-option" data-mode="autumn" role="menuitem" aria-selected="false">🍂 پاییز</button>
-    <button type="button" class="site-mode-option" data-mode="winter" role="menuitem" aria-selected="false">❄️ زمستان</button>
-  </div>
-</div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
 <defs>
@@ -881,6 +828,8 @@
   <symbol id="ico-dusk" viewBox="0 0 24 24"><path d="M12 20V4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="1 3.4"/><circle cx="12" cy="12" r="4.4" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M3 19h18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
   <symbol id="ico-moon" viewBox="0 0 24 24"><path d="M19.5 14.2A8.2 8.2 0 1 1 9.8 4.5a6.6 6.6 0 0 0 9.7 9.7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></symbol>
   <symbol id="ico-heart" viewBox="0 0 24 24"><path d="M12 20.2s-7.5-4.6-9.8-9C.6 7.6 2.6 4 6.2 4c2 0 3.5 1.1 4.3 2.6C11.3 5.1 12.8 4 14.8 4c3.6 0 5.6 3.6 4 7.2-2.3 4.4-9.8 9-9.8 9z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></symbol>
+  <symbol id="ico-idcard" viewBox="0 0 24 24"><rect x="2.8" y="5" width="18.4" height="14" rx="2.4" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="8.3" cy="11" r="2.1" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5.3 16c.5-1.6 1.7-2.4 3-2.4s2.5.8 3 2.4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M14 9.5h5M14 12.5h5M14 15.5h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
+  <symbol id="ico-search" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M15.5 15.5 20 20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
 </defs>
 </svg>
 
@@ -908,13 +857,8 @@
       </div>
     </div>
   </div>
-  <div>
-    <h1>TM</h1>
-  </div>
-</header>
+  <div class="brand-name"><h1>TM</h1></div>
 
-
-<div class="tool-nav-wrap">
   <nav class="tool-nav" role="tablist" aria-label="ابزارها">
     <button class="nav-item" data-tab="intro" role="tab" aria-selected="true"><span class="ico"><svg class="ico-svg"><use href="#ico-home"></use></svg></span> <span>خانه</span></button>
 
@@ -948,10 +892,21 @@
       </div>
     </div>
 
+    <div class="nav-group">
+      <button type="button" class="nav-group-btn" aria-haspopup="true" aria-expanded="false">
+        <span class="ico ico-flat-blue"><svg class="ico-svg"><use href="#ico-search"></use></svg></span>
+        <span>استعلام</span>
+        <svg class="chev" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="nav-dropdown">
+        <button data-tab="nationalid" role="tab" aria-selected="false"><span class="ico ico-flat-blue"><svg class="ico-svg"><use href="#ico-idcard"></use></svg></span> استعلام کد ملی</button>
+      </div>
+    </div>
+
     <button class="nav-item" data-tab="hafez" role="tab" aria-selected="false"><span class="ico ico-flat-purple"><svg class="ico-svg"><use href="#ico-book"></use></svg></span> <span>فال حافظ</span></button>
     <button class="nav-item" data-tab="contact" role="tab" aria-selected="false"><span class="ico ico-flat-blue"><svg class="ico-svg"><use href="#ico-mail"></use></svg></span> <span>ارتباط با ما</span></button>
   </nav>
-</div>
+</header>
 
 <div class="app-shell">
 
@@ -1015,57 +970,50 @@
         <button class="tool-card" data-goto="image">
           <div class="ico ico-flat-blue"><svg class="ico-svg"><use href="#ico-image"></use></svg></div>
           <h3>عکس به PDF</h3>
-          <p>چند عکس رو انتخاب کن، ترتیبشون رو بچین و یک PDF بساز.</p>
         </button>
         <button class="tool-card" data-goto="receipt">
           <div class="ico ico-flat-teal"><svg class="ico-svg"><use href="#ico-receipt"></use></svg></div>
           <h3>رسید کارتخوان به PDF</h3>
-          <p>چند رسید رو کنار هم توی یک صفحه جا بده و چاپ کن.</p>
         </button>
         <button class="tool-card" data-goto="word">
           <div class="ico ico-flat-purple"><svg class="ico-svg"><use href="#ico-doc"></use></svg></div>
           <h3>ورد به PDF</h3>
-          <p>فایل Word رو بده تا به PDF قابل‌اشتراک تبدیلش کنیم.</p>
         </button>
         <button class="tool-card" data-goto="text">
           <div class="ico ico-flat-blue"><svg class="ico-svg"><use href="#ico-text"></use></svg></div>
           <h3>متن به PDF</h3>
-          <p>یه متن فارسی یا انگلیسی بنویس و PDF مرتب تحویل بگیر.</p>
         </button>
         <button class="tool-card" data-goto="cash">
           <div class="ico ico-flat-muted"><svg class="ico-svg"><use href="#ico-cash"></use></svg></div>
           <h3>ثبت تنخواه</h3>
-          <p>هزینه‌ها رو ردیف به ردیف ثبت کن و خروجی Excel بگیر.</p>
         </button>
         <button class="tool-card" data-goto="invoice">
           <div class="ico ico-flat-teal"><svg class="ico-svg"><use href="#ico-invoice"></use></svg></div>
           <h3>ساخت فاکتور</h3>
-          <p>فاکتور فروش رسمی با محاسبه‌ی خودکار جمع، مالیات و مبلغ نهایی بساز.</p>
         </button>
         <button class="tool-card" data-goto="salary">
           <div class="ico ico-flat-purple"><svg class="ico-svg"><use href="#ico-salary"></use></svg></div>
           <h3>حقوق و دستمزد</h3>
-          <p>فیلدها رو پر کن تا حقوق خالص ماهانه، بیمه و مالیات دقیق حساب بشه.</p>
+        </button>
+        <button class="tool-card" data-goto="nationalid">
+          <div class="ico ico-flat-blue"><svg class="ico-svg"><use href="#ico-idcard"></use></svg></div>
+          <h3>استعلام کد ملی</h3>
         </button>
         <button class="tool-card" data-goto="contact">
           <div class="ico ico-flat-blue"><svg class="ico-svg"><use href="#ico-mail"></use></svg></div>
           <h3>ارتباط با ما</h3>
-          <p>از طریق تلگرام یا اینستاگرام در دسترسیم.</p>
         </button>
         <button class="tool-card" data-goto="dateconv">
           <div class="ico ico-flat-purple"><svg class="ico-svg"><use href="#ico-calendar"></use></svg></div>
           <h3>تبدیل تاریخ</h3>
-          <p>تاریخ شمسی به میلادی و برعکس، آنی و دقیق.</p>
         </button>
         <button class="tool-card" data-goto="translate">
           <div class="ico ico-flat-blue"><svg class="ico-svg"><use href="#ico-globe"></use></svg></div>
           <h3>مترجم</h3>
-          <p>یه متن رو بین فارسی، انگلیسی و چند زبان دیگه ترجمه کن.</p>
         </button>
         <button class="tool-card" data-goto="hafez">
           <div class="ico ico-flat-purple"><svg class="ico-svg"><use href="#ico-book"></use></svg></div>
           <h3>فال حافظ</h3>
-          <p>یه نیت کن و فال بگیر؛ یه غزل از دیوان حافظ برات میاد.</p>
         </button>
       </div>
     </section>
@@ -1607,6 +1555,21 @@
       </div>
     </section>
 
+    <!-- ---------------- NATIONAL ID INQUIRY ---------------- -->
+    <section id="panel-nationalid" class="panel">
+      <div class="card">
+        <h2>🪪 استعلام کد ملی</h2>
+        <p class="lede">کد ملی ۱۰ رقمی رو وارد کن تا صحت ساختاری اون بررسی بشه؛ بر اساس الگوریتم رسمی رقم کنترلی کد ملی ایران، کاملاً داخل همین مرورگر و بدون ارسال اطلاعات به هیچ سروری.</p>
+        <div class="field" style="max-width:280px;">
+          <label for="ni-input">کد ملی</label>
+          <input type="text" id="ni-input" inputmode="numeric" maxlength="10" placeholder="مثلاً 0012345678" autocomplete="off" style="direction:ltr; text-align:center; letter-spacing:.08em; font-family:'JetBrains Mono','Vazirmatn',monospace;">
+        </div>
+        <button class="btn" id="ni-go" type="button">بررسی صحت کد ملی</button>
+        <div id="ni-result" style="margin-top:18px;"></div>
+        <div class="status" id="ni-status"></div>
+      </div>
+    </section>
+
     <!-- ---------------- DATE CONVERTER ---------------- -->
     <section id="panel-dateconv" class="panel">
       <div class="card">
@@ -1703,12 +1666,10 @@
           <a class="tool-card" href="https://t.me/merfantm" target="_blank" rel="noopener noreferrer">
             <div class="ico"><svg class="ico-svg"><use href="#ico-plane"></use></svg></div>
             <h3>تلگرام</h3>
-            <p>t.me/merfantm</p>
           </a>
           <a class="tool-card" href="https://www.instagram.com/m.erfantm?igsh=MW43bW56eG02MW9jdg==" target="_blank" rel="noopener noreferrer">
             <div class="ico"><svg class="ico-svg"><use href="#ico-camera"></use></svg></div>
             <h3>اینستاگرام</h3>
-            <p>m.erfantm@</p>
           </a>
         </div>
       </div>
@@ -1818,6 +1779,57 @@
   });
   document.addEventListener('click', closeAllNavGroups);
   document.addEventListener('keydown', (e) => { if(e.key === 'Escape') closeAllNavGroups(); });
+
+  /* ================= National ID inquiry (استعلام کد ملی) ================= */
+  (function initNationalId(){
+    const input = document.getElementById('ni-input');
+    const btn = document.getElementById('ni-go');
+    const result = document.getElementById('ni-result');
+    if(!input || !btn || !result) return;
+
+    input.addEventListener('input', () => {
+      input.value = input.value.replace(/[^0-9]/g, '').slice(0, 10);
+    });
+
+    function checkNationalId(raw){
+      const code = String(raw || '').trim();
+      if(!/^\d{10}$/.test(code)){
+        return { valid:false, reason:'کد ملی باید دقیقاً ۱۰ رقم باشد.' };
+      }
+      if(/^(\d)\1{9}$/.test(code)){
+        return { valid:false, reason:'کد ملی نامعتبر است.' };
+      }
+      const digits = code.split('').map(Number);
+      const check = digits[9];
+      let sum = 0;
+      for(let i = 0; i < 9; i++){ sum += digits[i] * (10 - i); }
+      const remainder = sum % 11;
+      const expected = remainder < 2 ? remainder : 11 - remainder;
+      return { valid: check === expected, reason: check === expected ? '' : 'کد ملی نامعتبر است.', code };
+    }
+
+    function render(){
+      const r = checkNationalId(input.value);
+      if(!input.value){
+        result.innerHTML = '';
+        return;
+      }
+      if(r.valid){
+        result.innerHTML =
+          '<div style="display:flex;align-items:center;gap:10px;padding:14px 16px;border-radius:14px;' +
+          'background:rgba(52,196,184,.14);border:1px solid rgba(52,196,184,.45);color:#8FE9DD;font-weight:800;">' +
+          '✅ کد ملی <span class="num" style="direction:ltr;">' + escapeHtml(r.code) + '</span> از نظر ساختاری معتبر است.</div>';
+      }else{
+        result.innerHTML =
+          '<div style="display:flex;align-items:center;gap:10px;padding:14px 16px;border-radius:14px;' +
+          'background:rgba(255,122,110,.14);border:1px solid rgba(255,122,110,.45);color:var(--danger);font-weight:800;">' +
+          '❌ ' + escapeHtml(r.reason || 'کد ملی نامعتبر است.') + '</div>';
+      }
+    }
+
+    btn.addEventListener('click', render);
+    input.addEventListener('keydown', (e) => { if(e.key === 'Enter') render(); });
+  })();
 
   /* ================= Helpers ================= */
   function escapeHtml(str){
@@ -3363,171 +3375,6 @@
       box.style.opacity = '1';
     });
   });
-
-  /* ================= Site mode: seasonal weather effects ================= */
-  (function initSiteMode(){
-    const wrap = document.getElementById('site-mode-wrap');
-    const btn = document.getElementById('site-mode-btn');
-    const menu = document.getElementById('site-mode-menu');
-    const canvas = document.getElementById('site-fx-canvas');
-    if(!wrap || !btn || !menu || !canvas) return;
-    const ctx = canvas.getContext('2d');
-
-    function resizeCanvas(){
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
-
-    function rand(min, max){ return Math.random() * (max - min) + min; }
-
-    let particles = [];
-    let mode = null;
-    let rafId = null;
-
-    function spawnParticle(type){
-      const w = canvas.width;
-      const base = {
-        type, x: rand(0, w), y: -20,
-        rotation: rand(0, 360), vr: rand(-2, 2),
-        swayPhase: rand(0, Math.PI * 2), swaySpeed: rand(0.5, 1.5), life: 0
-      };
-      if(type === 'petal'){
-        return Object.assign(base, {
-          size: rand(6, 11), vy: rand(0.6, 1.3), swayAmp: rand(15, 35),
-          color: Math.random() < 0.5 ? '255,182,213' : '255,240,245'
-        });
-      }
-      if(type === 'leaf'){
-        const palette = ['214,158,52', '196,120,45', '224,168,63'];
-        return Object.assign(base, {
-          size: rand(7, 13), vy: rand(0.7, 1.5), swayAmp: rand(20, 45),
-          color: palette[Math.floor(rand(0, palette.length))]
-        });
-      }
-      if(type === 'snow'){
-        return Object.assign(base, {
-          size: rand(2, 4.5), vy: rand(0.5, 1.4), swayAmp: rand(10, 22),
-          color: '255,255,255'
-        });
-      }
-      if(type === 'rain'){
-        return { type, x: rand(0, w), y: -20, vy: rand(7, 11), vx: rand(-2.4, -1), len: rand(12, 22), life: 0, color: '180,210,255' };
-      }
-      if(type === 'ember'){
-        return Object.assign(base, {
-          size: rand(3, 7), vy: -rand(0.4, 1.1), swayAmp: rand(6, 16),
-          color: '255,140,60'
-        });
-      }
-    }
-
-    function step(){
-      const w = canvas.width, h = canvas.height;
-      ctx.clearRect(0, 0, w, h);
-
-      if(mode === 'summer'){
-        const grad = ctx.createRadialGradient(w/2, h*0.28, 0, w/2, h*0.28, Math.max(w, h) * 0.7);
-        grad.addColorStop(0, 'rgba(255,120,40,0.06)');
-        grad.addColorStop(1, 'rgba(255,80,20,0)');
-        ctx.fillStyle = grad;
-        ctx.fillRect(0, 0, w, h);
-      }
-
-      if(mode === 'spring' && particles.length < 180){
-        particles.push(spawnParticle('petal'), spawnParticle('petal'));
-      }else if(mode === 'autumn' && particles.length < 160){
-        particles.push(spawnParticle('leaf'), spawnParticle('leaf'));
-      }else if(mode === 'winter' && particles.length < 260){
-        particles.push(spawnParticle('snow'), spawnParticle('snow'), spawnParticle('rain'), spawnParticle('rain'));
-      }else if(mode === 'summer' && particles.length < 140){
-        particles.push(spawnParticle('ember'));
-      }
-
-      particles.forEach(p => {
-        p.life += 1;
-        if(p.type === 'rain'){
-          p.x += p.vx; p.y += p.vy;
-          ctx.strokeStyle = `rgba(${p.color},0.55)`;
-          ctx.lineWidth = 1.4;
-          ctx.beginPath();
-          ctx.moveTo(p.x, p.y);
-          ctx.lineTo(p.x + p.vx * 2, p.y + p.len);
-          ctx.stroke();
-          return;
-        }
-        p.swayPhase += 0.02 * p.swaySpeed;
-        p.x += Math.sin(p.swayPhase) * (p.swayAmp * 0.02);
-        p.y += p.vy;
-        p.rotation += p.vr;
-        let alpha = 0.85;
-        if(p.type === 'ember') alpha = Math.max(0, 0.6 - p.life / 220);
-        ctx.save();
-        ctx.translate(p.x, p.y);
-        ctx.rotate(p.rotation * Math.PI / 180);
-        ctx.fillStyle = `rgba(${p.color},${alpha})`;
-        if(p.type === 'petal' || p.type === 'leaf'){
-          ctx.beginPath();
-          ctx.ellipse(0, 0, p.size, p.size * 0.55, 0, 0, Math.PI * 2);
-          ctx.fill();
-        }else{
-          ctx.beginPath();
-          ctx.arc(0, 0, p.size, 0, Math.PI * 2);
-          ctx.fill();
-        }
-        ctx.restore();
-      });
-
-      particles = particles.filter(p => {
-        if(p.type === 'ember') return p.life < 220 && p.y > -50;
-        return p.y < h + 40 && p.y > -60;
-      });
-
-      rafId = requestAnimationFrame(step);
-    }
-
-    function setMode(newMode){
-      mode = (mode === newMode) ? null : newMode;
-      particles = [];
-      if(mode && !rafId){
-        rafId = requestAnimationFrame(step);
-      }else if(!mode && rafId){
-        cancelAnimationFrame(rafId);
-        rafId = null;
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-      }
-      document.querySelectorAll('.site-mode-option').forEach(opt => {
-        opt.setAttribute('aria-selected', opt.dataset.mode === mode ? 'true' : 'false');
-      });
-    }
-
-    function closeMenu(){
-      wrap.classList.remove('open');
-      btn.setAttribute('aria-expanded', 'false');
-      menu.setAttribute('aria-hidden', 'true');
-    }
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const isOpen = wrap.classList.contains('open');
-      if(isOpen){
-        closeMenu();
-      }else{
-        wrap.classList.add('open');
-        btn.setAttribute('aria-expanded', 'true');
-        menu.setAttribute('aria-hidden', 'false');
-      }
-    });
-    document.querySelectorAll('.site-mode-option').forEach(opt => {
-      opt.addEventListener('click', (e) => {
-        e.stopPropagation();
-        setMode(opt.dataset.mode);
-        closeMenu();
-      });
-    });
-    document.addEventListener('click', closeMenu);
-    document.addEventListener('keydown', (e) => { if(e.key === 'Escape') closeMenu(); });
-  })();
 
   /* ================= Yazd prayer times (اوقات شرعی) =================
      Uses the free, keyless AlAdhan API (api.aladhan.com). method=7 is
