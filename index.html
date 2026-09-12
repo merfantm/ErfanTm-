@@ -2485,9 +2485,9 @@
           <td>${escapeHtml(r.date || '—')}</td>
           <td>${escapeHtml(r.title)}</td>
           <td>${escapeHtml(r.place || '—')}</td>
-          <td class="num">${formatToman(r.amount)}</td>
-          <td class="num">${formatToman(r.vat)}</td>
-          <td class="num">${formatToman(total)}</td>
+          <td>${formatToman(r.amount)}</td>
+          <td>${formatToman(r.vat)}</td>
+          <td>${formatToman(total)}</td>
           <td>${escapeHtml(r.store || '—')}</td>
           <td>${escapeHtml(r.storeAddress || '—')}</td>
         </tr>`;
@@ -2496,7 +2496,7 @@
       const container = document.createElement('div');
       container.className = 'pdf-export-content';
       container.setAttribute('dir','rtl');
-      container.style.cssText = "font-family:'B Nazanin','BNazanin',Tahoma,'Vazirmatn',sans-serif; width:281mm; padding:0; color:#222; background:#fff; unicode-bidi:plaintext; box-sizing:border-box;";
+      container.style.cssText = "font-family:Vazirmatn,sans-serif; width:277mm; padding:0; color:#222; background:#fff; box-sizing:border-box;";
       container.innerHTML = `
         <style>
           .cash-pdf-table{ width:100%; table-layout:fixed; border-collapse:separate; border-spacing:0; border-radius:14px; overflow:hidden; border:1.5px solid #c7cad2; }
@@ -2510,7 +2510,6 @@
           .cash-pdf-title-row td{ background:#f1f2f6; font-weight:700; font-size:12.5pt; padding:9px 6px; }
           .cash-pdf-total-row td{ background:#eceef3; font-weight:700; }
           .cash-pdf-sign-row td{ padding:20px 6px 9px; font-weight:700; background:#f7f8fa; }
-          .num{ direction:ltr; unicode-bidi:plaintext; }
         </style>
         <table class="cash-pdf-table">
           <colgroup>
@@ -2531,7 +2530,7 @@
             ${rowsHtml}
             <tr class="cash-pdf-total-row">
               <td colspan="6">جمع کل</td>
-              <td class="num" colspan="1">${formatToman(totalAll)}</td>
+              <td colspan="1">${formatToman(totalAll)}</td>
               <td colspan="2"></td>
             </tr>
             <tr class="cash-pdf-sign-row">
@@ -2546,9 +2545,9 @@
       await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
 
       await window.html2pdf().set({
-        margin: 6,
+        margin: 8,
         filename: 'تنخواه.pdf',
-        html2canvas: { scale: 3, useCORS:true, letterRendering:false, scrollX:0, scrollY:0, windowWidth: container.scrollWidth },
+        html2canvas: { scale: 3, useCORS:true, letterRendering:false, scrollX:0, scrollY:0 },
         jsPDF: { unit:'mm', format:'a4', orientation:'landscape' },
         pagebreak: { mode:['css','avoid-all'] }
       }).from(container).save();
