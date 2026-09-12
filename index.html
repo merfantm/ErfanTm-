@@ -2562,14 +2562,14 @@
       await window.html2pdf().set({
         margin: 8,
         filename: 'تنخواه.pdf',
-        html2canvas: {
-          scale: 3, useCORS:true, foreignObjectRendering: true, scrollX:0, scrollY:0,
-          // Pin the capture viewport to the container's own width so the
-          // table is always rasterized at its real 281mm size, regardless
-          // of the actual browser window width (this is what made the
-          // exported table come out smaller/larger than an A4 page).
-          windowWidth: container.scrollWidth
-        },
+        // Same rendering path as every other export in this file (Word,
+        // text, invoice, salary, custom invoice): html2canvas's default
+        // cloning renderer. `foreignObjectRendering:true` combined with a
+        // manual `windowWidth` (as this used to have) is unreliable on
+        // mobile Chrome for content wider than the real screen -- it's
+        // what was clipping/shrinking the exported table instead of
+        // filling the full A4 landscape page.
+        html2canvas: { scale: 3, useCORS:true, scrollX:0, scrollY:0 },
         jsPDF: { unit:'mm', format:'a4', orientation:'landscape' },
         // Explicitly avoid slicing a row in half at a page boundary --
         // listing the selector is more reliable across table rows than
