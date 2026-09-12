@@ -1873,8 +1873,15 @@
   // the very first element in <body> and resetting scroll to the top
   // right before capture keeps its coordinates at (0,0) and avoids that.
   function mountForCapture(container){
+    const prevOverflowX = document.body.style.overflowX;
+    container.dataset.prevOverflowX = prevOverflowX;
+    document.body.style.overflowX = 'visible';
     document.body.insertBefore(container, document.body.firstChild);
     window.scrollTo(0, 0);
+  }
+  function unmountAfterCapture(container){
+    document.body.style.overflowX = container.dataset.prevOverflowX || '';
+    container.remove();
   }
 
   /* ---- Persian digits + Gregorian -> Jalali (Solar Hijri) conversion ---- */
@@ -2233,7 +2240,7 @@
         pagebreak: { mode:['css','avoid-all'] }
       }).from(container).save();
 
-      container.remove();
+      unmountAfterCapture(container);
       setStatus('word-status','');
       stamp(btn, 'PDF ساخته و دانلود شد');
     }catch(err){
@@ -2273,7 +2280,7 @@
         pagebreak: { mode:['css','avoid-all'] }
       }).from(container).save();
 
-      container.remove();
+      unmountAfterCapture(container);
       setStatus('text-status','');
       stamp(btn, 'PDF ساخته و دانلود شد');
     }catch(err){
@@ -2509,7 +2516,7 @@
           .cash-pdf-header-row th{ background:#eceef3; color:#222; font-weight:700; font-size:11.5pt; }
           .cash-pdf-title-row td{ background:#f1f2f6; font-weight:700; font-size:12.5pt; padding:9px 6px; }
           .cash-pdf-total-row td{ background:#eceef3; font-weight:700; }
-          .cash-pdf-sign-row td{ padding:20px 6px 9px; font-weight:700; background:#f7f8fa; }
+          .cash-pdf-sign-row td{ padding:16px 18px 52px; font-weight:700; background:#f7f8fa; }
         </style>
         <table class="cash-pdf-table">
           <colgroup>
@@ -2552,7 +2559,7 @@
         pagebreak: { mode:['css','avoid-all'] }
       }).from(container).save();
 
-      container.remove();
+      unmountAfterCapture(container);
       setStatus('cash-status','');
       stamp(btn, 'PDF ساخته و دانلود شد');
     }catch(err){
@@ -2836,7 +2843,7 @@
         pagebreak: { mode:['css','avoid-all'] }
       }).from(container).save();
 
-      container.remove();
+      unmountAfterCapture(container);
       setStatus('inv-status','');
       stamp(document.getElementById('inv-build'), 'PDF فاکتور ساخته و دانلود شد');
     }catch(err){
@@ -3016,7 +3023,7 @@
           pagebreak: { mode: ['css', 'avoid-all'] }
         }).from(container).save();
 
-        container.remove();
+        unmountAfterCapture(container);
         setStatus('ci-status', '');
         stamp(document.getElementById('ci-build'), 'PDF فاکتور اختصاصی ساخته و دانلود شد');
       }catch(err){
@@ -3377,7 +3384,7 @@
           pagebreak: { mode:['css','avoid-all'] }
         }).from(container).save();
 
-        container.remove();
+        unmountAfterCapture(container);
         setStatus('sal-print-status','');
         stamp(document.getElementById('sal-print'), 'فیش حقوقی ساخته و دانلود شد');
       }catch(err){
