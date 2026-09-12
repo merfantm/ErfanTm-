@@ -2503,10 +2503,18 @@
       const container = document.createElement('div');
       container.className = 'pdf-export-content';
       container.setAttribute('dir','rtl');
-      container.style.cssText = "font-family:Vazirmatn,sans-serif; width:277mm; padding:0; color:#222; background:#fff; box-sizing:border-box;";
+      // 297mm (A4 landscape width) minus the 8mm margin on each side used
+      // below = 281mm of usable page width. The table must fill exactly
+      // that width -- not less (would look shrunken) and not more (would
+      // get pushed off the page / cut off in the exported PDF).
+      container.style.cssText = "font-family:Vazirmatn,sans-serif; width:281mm; padding:0; color:#222; background:#fff; box-sizing:border-box;";
       container.innerHTML = `
         <style>
-          .cash-pdf-table{ width:100%; table-layout:fixed; border-collapse:separate; border-spacing:0; border-radius:14px; overflow:hidden; border:1.5px solid #c7cad2; }
+          /* No border-radius/overflow:hidden here -- clipping the table box
+             makes html2pdf's page-slicing measure the wrong height once the
+             table spans more than one A4 page, which is what caused the
+             exported table to not be sized/paginated as real A4 pages. */
+          .cash-pdf-table{ width:100%; table-layout:fixed; border-collapse:separate; border-spacing:0; border:1.5px solid #c7cad2; }
           .cash-pdf-table th, .cash-pdf-table td{ border:1px solid #dfe1e6; padding:6px 5px; text-align:center; font-size:11pt; font-family:inherit; word-break:break-word; overflow-wrap:break-word; }
           .cash-pdf-table col.c-idx{ width:5%; } .cash-pdf-table col.c-date{ width:9%; }
           .cash-pdf-table col.c-title{ width:14%; } .cash-pdf-table col.c-place{ width:9%; }
@@ -2554,9 +2562,20 @@
       await window.html2pdf().set({
         margin: 8,
         filename: 'تنخواه.pdf',
-        html2canvas: { scale: 3, useCORS:true, foreignObjectRendering: true, scrollX:0, scrollY:0 },
+        html2canvas: {
+          scale: 3, useCORS:true, foreignObjectRendering: true, scrollX:0, scrollY:0,
+          // Pin the capture viewport to the container's own width so the
+          // table is always rasterized at its real 281mm size, regardless
+          // of the actual browser window width (this is what made the
+          // exported table come out smaller/larger than an A4 page).
+          windowWidth: container.scrollWidth
+        },
         jsPDF: { unit:'mm', format:'a4', orientation:'landscape' },
-        pagebreak: { mode:['css','avoid-all'] }
+        // Explicitly avoid slicing a row in half at a page boundary --
+        // listing the selector is more reliable across table rows than
+        // relying on the CSS page-break rules alone, which is why long
+        // petty-cash tables weren't reliably filling/paginating as A4 pages.
+        pagebreak: { mode:['css','avoid-all'], avoid: 'tr' }
       }).from(container).save();
 
       unmountAfterCapture(container);
