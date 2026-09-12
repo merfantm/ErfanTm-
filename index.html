@@ -2500,29 +2500,19 @@
         </tr>`;
       }).join('');
 
-      const container = document.createElement('div');
-      container.className = 'pdf-export-content';
-      container.setAttribute('dir','rtl');
-      // 297mm (A4 landscape width) minus the 8mm margin on each side used
-      // below = 281mm of usable page width. The table must fill exactly
-      // that width -- not less (would look shrunken) and not more (would
-      // get pushed off the page / cut off in the exported PDF).
-      container.style.cssText = "font-family:Vazirmatn,sans-serif; width:281mm; padding:0; color:#222; background:#fff; box-sizing:border-box;";
-      container.innerHTML = `
+      const tableHtml = `
         <style>
-          /* No border-radius/overflow:hidden here -- clipping the table box
-             makes html2pdf's page-slicing measure the wrong height once the
-             table spans more than one A4 page, which is what caused the
-             exported table to not be sized/paginated as real A4 pages. */
-          .cash-pdf-table{ width:100%; table-layout:fixed; border-collapse:separate; border-spacing:0; border:1.5px solid #c7cad2; }
-          .cash-pdf-table th, .cash-pdf-table td{ border:1px solid #dfe1e6; padding:6px 5px; text-align:center; font-size:11pt; font-family:inherit; word-break:break-word; overflow-wrap:break-word; }
+          *{ box-sizing:border-box; }
+          body{ margin:0; padding:14px; background:#fff; font-family:Vazirmatn,sans-serif; color:#222; }
+          .cash-pdf-table{ width:100%; table-layout:fixed; border-collapse:separate; border-spacing:0; border-radius:14px; overflow:hidden; border:1.5px solid #c7cad2; }
+          .cash-pdf-table th, .cash-pdf-table td{ border:1px solid #dfe1e6; padding:6px 5px; text-align:center; font-size:15px; font-family:inherit; word-break:break-word; overflow-wrap:break-word; }
           .cash-pdf-table col.c-idx{ width:5%; } .cash-pdf-table col.c-date{ width:9%; }
           .cash-pdf-table col.c-title{ width:14%; } .cash-pdf-table col.c-place{ width:9%; }
           .cash-pdf-table col.c-amount{ width:11%; } .cash-pdf-table col.c-vat{ width:11%; }
           .cash-pdf-table col.c-total{ width:11%; } .cash-pdf-table col.c-store{ width:10%; }
           .cash-pdf-table col.c-addr{ width:20%; }
-          .cash-pdf-header-row th{ background:#eceef3; color:#222; font-weight:700; font-size:11.5pt; }
-          .cash-pdf-title-row td{ background:#f1f2f6; font-weight:700; font-size:12.5pt; padding:9px 6px; }
+          .cash-pdf-header-row th{ background:#eceef3; color:#222; font-weight:700; font-size:15.5px; }
+          .cash-pdf-title-row td{ background:#f1f2f6; font-weight:700; font-size:17px; padding:9px 6px; }
           .cash-pdf-total-row td{ background:#eceef3; font-weight:700; }
           .cash-pdf-sign-row td{ padding:16px 18px 52px; font-weight:700; background:#f7f8fa; }
         </style>
@@ -2554,31 +2544,61 @@
             </tr>
           </tbody>
         </table>`;
-      mountForCapture(container);
 
-      if(document.fonts && document.fonts.ready) await document.fonts.ready;
+      // Render inside a fully isolated off-screen iframe so nothing from the
+      // site's own CSS (overflow rules, transforms, zoom, etc.) can clip it.
+      const PDF_PAGE_PX = 1400; // wide fixed canvas, independent of the phone's screen width
+      const iframe = document.createElement('iframe');
+      iframe.style.cssText = `position:fixed; top:0; left:-99999px; width:${PDF_PAGE_PX}px; height:10px; border:0; background:#fff;`;
+      document.body.appendChild(iframe);
+      const idoc = iframe.contentDocument;
+      idoc.open();
+      idoc.write(`<!DOCTYPE html><html dir="rtl" lang="fa"><head><meta charset="utf-8">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap" rel="stylesheet">
+        </head><body>${tableHtml}</body></html>`);
+      idoc.close();
+
+      await new Promise(resolve => {
+        if(idoc.readyState === 'complete') return resolve();
+        iframe.addEventListener('load', resolve, { once:true });
+        setTimeout(resolve, 1200);
+      });
+      if(idoc.fonts && idoc.fonts.ready) await idoc.fonts.ready;
+      iframe.style.height = idoc.body.scrollHeight + 'px';
       await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
 
-      await window.html2pdf().set({
-        margin: 8,
-        filename: 'تنخواه.pdf',
-        // Same rendering path as every other export in this file (Word,
-        // text, invoice, salary, custom invoice): html2canvas's default
-        // cloning renderer. `foreignObjectRendering:true` combined with a
-        // manual `windowWidth` (as this used to have) is unreliable on
-        // mobile Chrome for content wider than the real screen -- it's
-        // what was clipping/shrinking the exported table instead of
-        // filling the full A4 landscape page.
-        html2canvas: { scale: 3, useCORS:true, scrollX:0, scrollY:0 },
-        jsPDF: { unit:'mm', format:'a4', orientation:'landscape' },
-        // Explicitly avoid slicing a row in half at a page boundary --
-        // listing the selector is more reliable across table rows than
-        // relying on the CSS page-break rules alone, which is why long
-        // petty-cash tables weren't reliably filling/paginating as A4 pages.
-        pagebreak: { mode:['css','avoid-all'], avoid: 'tr' }
-      }).from(container).save();
+      const canvas = await window.html2canvas(idoc.body, {
+        scale: 2,
+        useCORS: true,
+        foreignObjectRendering: true,
+        backgroundColor: '#ffffff',
+        width: idoc.body.scrollWidth,
+        height: idoc.body.scrollHeight,
+        windowWidth: idoc.body.scrollWidth,
+        windowHeight: idoc.body.scrollHeight
+      });
+      iframe.remove();
 
-      unmountAfterCapture(container);
+      // Fit the captured image into an A4 landscape page ourselves — no
+      // auto-fit guesswork, just plain proportional math against the page size.
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ unit:'mm', format:'a4', orientation:'landscape' });
+      const pageW = doc.internal.pageSize.getWidth();
+      const pageH = doc.internal.pageSize.getHeight();
+      const margin = 8;
+      const maxW = pageW - margin*2;
+      const maxH = pageH - margin*2;
+      const ratio = canvas.height / canvas.width;
+      let drawW = maxW;
+      let drawH = drawW * ratio;
+      if(drawH > maxH){ drawH = maxH; drawW = drawH / ratio; }
+      const x = (pageW - drawW) / 2;
+      const y = (pageH - drawH) / 2;
+      doc.addImage(canvas.toDataURL('image/png'), 'PNG', x, y, drawW, drawH);
+      doc.save('تنخواه.pdf');
+
       setStatus('cash-status','');
       stamp(btn, 'PDF ساخته و دانلود شد');
     }catch(err){
