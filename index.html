@@ -1118,7 +1118,23 @@
     <section id="panel-cash" class="panel">
       <div class="card">
         <h2>💵 ثبت تنخواه</h2>
-        <p class="lede">هزینه‌ها رو یکی‌یکی اضافه کن؛ هر وقت خواستی، همه رو یک‌جا به‌صورت اکسل خروجی بگیر. توجه: چون این ابزار سروری نداره، اطلاعات فقط تا وقتی صفحه بازه ذخیره می‌مونه — پس قبل از بستن صفحه، اکسل رو دانلود کن.</p>
+        <p class="lede">هزینه‌ها رو یکی‌یکی اضافه کن؛ هر وقت خواستی، همه رو یک‌جا به‌صورت اکسل یا PDF خروجی بگیر. توجه: چون این ابزار سروری نداره، اطلاعات فقط تا وقتی صفحه بازه ذخیره می‌مونه — پس قبل از بستن صفحه، خروجی رو دانلود کن.</p>
+
+        <div class="row">
+          <div class="field" style="flex:1 1 220px;">
+            <label for="cash-fund-day">تاریخ تنخواه (شمسی)</label>
+            <div class="jalali-date">
+              <select id="cash-fund-day" aria-label="روز"></select>
+              <select id="cash-fund-month" aria-label="ماه"></select>
+              <select id="cash-fund-year" aria-label="سال"></select>
+            </div>
+          </div>
+          <div class="field" style="flex:2 1 240px;">
+            <label for="cash-fund-name">نام تنخواه‌گردان</label>
+            <input type="text" id="cash-fund-name" placeholder="مثلاً: علی محمدی">
+          </div>
+        </div>
+
 
         <div class="row">
           <div class="field" style="flex:1 1 220px;">
@@ -1188,6 +1204,7 @@
 
         <div style="margin-top:18px; display:flex; gap:10px; flex-wrap:wrap;">
           <button class="btn green" id="cash-export">📊 خروجی Excel</button>
+          <button class="btn" id="cash-export-pdf">📄 خروجی PDF</button>
           <button class="btn ghost" id="cash-clear">پاک کردن همه</button>
         </div>
         <div class="status" id="cash-status"></div>
@@ -2275,6 +2292,7 @@
   }
 
   const cashDate = setupJalaliDatePicker('cash-day','cash-month','cash-year');
+  const cashFundDate = setupJalaliDatePicker('cash-fund-day','cash-fund-month','cash-fund-year');
 
   function renderCash(){
     const tbody = document.getElementById('cash-tbody');
@@ -2343,40 +2361,201 @@
   document.getElementById('cash-export').addEventListener('click', () => {
     if(cashRows.length === 0){ setStatus('cash-status','هنوز هزینه‌ای برای خروجی نیست.', true); return; }
     try{
+      const fundDate = cashFundDate.getValue();
+      const fundName = document.getElementById('cash-fund-name').value.trim();
+
       // Column order (A..I) matches the sheet layout exactly, right-to-left:
       // ردیف, تاریخ, عنوان, محل هزینه, مبلغ, ارزش افزوده, مبلغ کل, فروشگاه, آدرس فروشگاه
       const header = ['ردیف','تاریخ','عنوان','محل هزینه','مبلغ','ارزش افزوده','مبلغ کل','فروشگاه','آدرس فروشگاه'];
-      const aoa = [
-        ['لیست هزینه تنخواه'],
-        header,
-        ...cashRows.map((r,i) => [
-          i+1,
-          r.date || '',
-          r.title,
-          r.place || '',
-          r.amount || 0,
-          r.vat || 0,
-          Number(r.amount||0) + Number(r.vat||0),
-          r.store || '',
-          r.storeAddress || ''
-        ])
-      ];
+      const colCount = header.length;
+      const amountCols = [4,5,6];
+
+      // Title row: عنوان راست، نام تنخواه‌گردان وسط، تاریخ تنخواه چپ (نمایش RTL)
+      const titleRow = new Array(colCount).fill('');
+      titleRow[0] = 'لیست تنخواه';
+      titleRow[3] = 'نام تنخواه‌گردان: ' + (fundName || '—');
+      titleRow[6] = 'تاریخ تنخواه: ' + (fundDate || '—');
+
+      const dataRows = cashRows.map((r,i) => [
+        i+1,
+        r.date || '',
+        r.title,
+        r.place || '',
+        Number(r.amount||0),
+        Number(r.vat||0),
+        Number(r.amount||0) + Number(r.vat||0),
+        r.store || '',
+        r.storeAddress || ''
+      ]);
+
+      const totalAll = cashRows.reduce((s,r) => s + Number(r.amount||0) + Number(r.vat||0), 0);
+      const totalRow = new Array(colCount).fill('');
+      totalRow[0] = 'جمع کل';
+      totalRow[6] = totalAll;
+
+      const signRow = new Array(colCount).fill('');
+      signRow[0] = 'تنظیم‌کننده';
+      signRow[4] = 'تایید‌کننده';
+
+      const titleRowIdx = 0;
+      const headerRowIdx = 1;
+      const dataStartIdx = 2;
+      const totalRowIdx = dataStartIdx + dataRows.length;
+      const signRowIdx = totalRowIdx + 1;
+
+      const aoa = [titleRow, header, ...dataRows, totalRow, signRow];
       const ws = window.XLSX.utils.aoa_to_sheet(aoa);
-      ws['!merges'] = [{ s:{r:0,c:0}, e:{r:0,c:header.length-1} }];
-      ws['!cols'] = [
-        {wch:6},{wch:14},{wch:20},{wch:14},{wch:12},{wch:12},{wch:12},{wch:14},{wch:26}
+
+      ws['!merges'] = [
+        { s:{r:titleRowIdx,c:0}, e:{r:titleRowIdx,c:2} },
+        { s:{r:titleRowIdx,c:3}, e:{r:titleRowIdx,c:5} },
+        { s:{r:titleRowIdx,c:6}, e:{r:titleRowIdx,c:8} },
+        { s:{r:totalRowIdx,c:0}, e:{r:totalRowIdx,c:5} },
+        { s:{r:signRowIdx,c:0}, e:{r:signRowIdx,c:3} },
+        { s:{r:signRowIdx,c:4}, e:{r:signRowIdx,c:8} }
       ];
+
+      // ستون‌ها متناسب با طولانی‌ترین متن هر ستون فیت می‌شن (+حاشیه کوچک)
+      ws['!cols'] = header.map((h, ci) => {
+        let max = String(h).length;
+        aoa.forEach(row => {
+          const v = row[ci];
+          if(v !== undefined && v !== null && v !== ''){
+            const len = amountCols.includes(ci) && typeof v === 'number'
+              ? formatToman(v).length
+              : String(v).length;
+            if(len > max) max = len;
+          }
+        });
+        return { wch: Math.min(Math.max(max + 3, 8), 34) };
+      });
+
+      ws['!rows'] = aoa.map(() => ({ hpt: 22 }));
+
+      // استایل: فونت B Nazanin سایز ۱۴، دورخط نازک، وسط‌چین، و جداکننده سه‌رقمی برای مبلغ‌ها
+      const range = window.XLSX.utils.decode_range(ws['!ref']);
+      const thinBorder = { style:'thin', color:{ rgb:'CFCFCF' } };
+      for(let R = range.s.r; R <= range.e.r; R++){
+        for(let C = range.s.c; C <= range.e.c; C++){
+          const addr = window.XLSX.utils.encode_cell({ r:R, c:C });
+          if(!ws[addr]) ws[addr] = { t:'s', v:'' };
+          const isTitle = R === titleRowIdx;
+          const isHeader = R === headerRowIdx;
+          const isTotal = R === totalRowIdx;
+          const isSign = R === signRowIdx;
+          ws[addr].s = {
+            font: { name:'B Nazanin', sz:14, bold: isTitle || isHeader || isTotal || isSign },
+            alignment: { horizontal:'center', vertical:'center', wrapText:true, readingOrder:2 },
+            border: { top:thinBorder, bottom:thinBorder, left:thinBorder, right:thinBorder }
+          };
+          if(amountCols.includes(C) && ws[addr].t === 'n'){
+            ws[addr].z = '#,##0';
+          }
+        }
+      }
 
       const wb = window.XLSX.utils.book_new();
       // Render the sheet right-to-left, same as the reference layout.
       wb.Workbook = { Views: [{ RTL: true }] };
       window.XLSX.utils.book_append_sheet(wb, ws, 'تنخواه');
-      window.XLSX.writeFile(wb, 'تنخواه.xlsx');
+      window.XLSX.writeFile(wb, 'تنخواه.xlsx', { cellStyles:true });
       setStatus('cash-status','');
       stamp(document.getElementById('cash-export'), 'اکسل دانلود شد');
     }catch(err){
       console.error(err);
       setStatus('cash-status', 'مشکلی پیش اومد: ' + err.message, true);
+    }
+  });
+
+  document.getElementById('cash-export-pdf').addEventListener('click', async () => {
+    if(cashRows.length === 0){ setStatus('cash-status','هنوز هزینه‌ای برای خروجی نیست.', true); return; }
+    const btn = document.getElementById('cash-export-pdf');
+    btn.disabled = true;
+    setStatus('cash-status','در حال ساخت PDF...');
+    try{
+      const fundDate = cashFundDate.getValue();
+      const fundName = document.getElementById('cash-fund-name').value.trim();
+      const totalAll = cashRows.reduce((s,r) => s + Number(r.amount||0) + Number(r.vat||0), 0);
+
+      const rowsHtml = cashRows.map((r,i) => {
+        const total = Number(r.amount||0) + Number(r.vat||0);
+        return `<tr>
+          <td>${toFaDigits(i+1)}</td>
+          <td>${escapeHtml(r.date || '—')}</td>
+          <td>${escapeHtml(r.title)}</td>
+          <td>${escapeHtml(r.place || '—')}</td>
+          <td class="num">${formatToman(r.amount)}</td>
+          <td class="num">${formatToman(r.vat)}</td>
+          <td class="num">${formatToman(total)}</td>
+          <td>${escapeHtml(r.store || '—')}</td>
+          <td>${escapeHtml(r.storeAddress || '—')}</td>
+        </tr>`;
+      }).join('');
+
+      const container = document.createElement('div');
+      container.className = 'pdf-export-content';
+      container.setAttribute('dir','rtl');
+      container.style.cssText = "font-family:'B Nazanin','BNazanin',Tahoma,'Vazirmatn',sans-serif; font-size:14pt; width:277mm; padding:8mm; color:#111; background:#fff; unicode-bidi:plaintext;";
+      container.innerHTML = `
+        <style>
+          .cash-pdf-table{ width:100%; border-collapse:separate; border-spacing:0; border-radius:16px; overflow:hidden; border:1.5px solid #333; }
+          .cash-pdf-table th, .cash-pdf-table td{ border:1px solid #999; padding:7px 8px; text-align:center; font-size:14pt; font-family:inherit; }
+          .cash-pdf-table thead th{ background:#2c3550; color:#fff; font-weight:700; }
+          .cash-pdf-table tbody tr:nth-child(even){ background:#f4f5f9; }
+          .cash-pdf-title-row td{ background:#eef0f7; font-weight:700; padding:10px 8px; }
+          .cash-pdf-total-row td{ background:#e7ebf5; font-weight:700; }
+          .cash-pdf-sign-row td{ padding:22px 8px 10px; font-weight:700; }
+          .num{ direction:ltr; unicode-bidi:plaintext; }
+        </style>
+        <table class="cash-pdf-table">
+          <tbody>
+            <tr class="cash-pdf-title-row">
+              <td colspan="3" style="text-align:right;">لیست تنخواه</td>
+              <td colspan="3">نام تنخواه‌گردان: ${escapeHtml(fundName || '—')}</td>
+              <td colspan="3" style="text-align:left;">تاریخ تنخواه: ${escapeHtml(fundDate || '—')}</td>
+            </tr>
+          </tbody>
+          <thead>
+            <tr>
+              <th>ردیف</th><th>تاریخ</th><th>عنوان</th><th>محل هزینه</th>
+              <th>مبلغ</th><th>ارزش افزوده</th><th>مبلغ کل</th>
+              <th>فروشگاه</th><th>آدرس فروشگاه</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rowsHtml}
+            <tr class="cash-pdf-total-row">
+              <td colspan="6">جمع کل</td>
+              <td class="num" colspan="1">${formatToman(totalAll)}</td>
+              <td colspan="2"></td>
+            </tr>
+            <tr class="cash-pdf-sign-row">
+              <td colspan="4" style="text-align:right;">تنظیم‌کننده</td>
+              <td colspan="5" style="text-align:left;">تایید‌کننده</td>
+            </tr>
+          </tbody>
+        </table>`;
+      mountForCapture(container);
+
+      if(document.fonts && document.fonts.ready) await document.fonts.ready;
+      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+      await window.html2pdf().set({
+        margin: 8,
+        filename: 'تنخواه.pdf',
+        html2canvas: { scale: 3, useCORS:true, letterRendering:false, scrollX:0, scrollY:0 },
+        jsPDF: { unit:'mm', format:'a4', orientation:'landscape' },
+        pagebreak: { mode:['css','avoid-all'] }
+      }).from(container).save();
+
+      container.remove();
+      setStatus('cash-status','');
+      stamp(btn, 'PDF ساخته و دانلود شد');
+    }catch(err){
+      console.error(err);
+      setStatus('cash-status', 'مشکلی پیش اومد: ' + err.message, true);
+    }finally{
+      btn.disabled = false;
     }
   });
 
