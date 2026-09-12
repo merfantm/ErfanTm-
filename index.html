@@ -2479,6 +2479,7 @@
     const btn = document.getElementById('cash-export-pdf');
     btn.disabled = true;
     setStatus('cash-status','در حال ساخت PDF...');
+    let iframe = null;
     try{
       const fundDate = cashFundDate.getValue();
       const fundName = document.getElementById('cash-fund-name').value.trim();
@@ -2548,7 +2549,7 @@
       // Render inside a fully isolated off-screen iframe so nothing from the
       // site's own CSS (overflow rules, transforms, zoom, etc.) can clip it.
       const PDF_PAGE_PX = 1400; // wide fixed canvas, independent of the phone's screen width
-      const iframe = document.createElement('iframe');
+      iframe = document.createElement('iframe');
       iframe.style.cssText = `position:fixed; top:0; left:-99999px; width:${PDF_PAGE_PX}px; height:10px; border:0; background:#fff;`;
       document.body.appendChild(iframe);
       const idoc = iframe.contentDocument;
@@ -2569,16 +2570,20 @@
       iframe.style.height = idoc.body.scrollHeight + 'px';
       await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
 
-      const canvas = await window.html2canvas(idoc.body, {
-        scale: 2,
-        useCORS: true,
-        foreignObjectRendering: true,
-        backgroundColor: '#ffffff',
-        width: idoc.body.scrollWidth,
-        height: idoc.body.scrollHeight,
-        windowWidth: idoc.body.scrollWidth,
-        windowHeight: idoc.body.scrollHeight
-      });
+      const worker = window.html2pdf().set({
+        html2canvas: {
+          scale: 2,
+          useCORS: true,
+          foreignObjectRendering: true,
+          backgroundColor: '#ffffff',
+          width: idoc.body.scrollWidth,
+          height: idoc.body.scrollHeight,
+          windowWidth: idoc.body.scrollWidth,
+          windowHeight: idoc.body.scrollHeight
+        }
+      }).from(idoc.body);
+      await worker.toCanvas();
+      const canvas = worker.prop.canvas;
       iframe.remove();
 
       // Fit the captured image into an A4 landscape page ourselves — no
@@ -2605,6 +2610,7 @@
       console.error(err);
       setStatus('cash-status', 'مشکلی پیش اومد: ' + err.message, true);
     }finally{
+      if(iframe) iframe.remove();
       btn.disabled = false;
     }
   });
