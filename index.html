@@ -443,8 +443,32 @@
     padding:8px 10px; animation: riseIn .3s ease both;
   }
   .filelist .thumb{ width:38px; height:38px; border-radius:6px; object-fit:cover; flex:0 0 auto; background:#0F212B; }
+  .filelist .thumb.has-preview{ cursor:pointer; transition: transform .15s ease, box-shadow .15s ease; }
+  .filelist .thumb.has-preview:hover{ transform:scale(1.08); box-shadow:0 0 0 2px var(--stamp); }
   .filelist .name{ flex:1; font-size:13.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .filelist .ctrls{ display:flex; gap:4px; }
+
+  .img-lightbox{
+    position:fixed; inset:0; z-index:9999; display:flex; align-items:center; justify-content:center;
+    background:rgba(4,5,10,.86); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+    padding:28px; opacity:0; animation: riseIn .18s ease forwards;
+  }
+  .img-lightbox img{
+    max-width:92vw; max-height:86vh; border-radius:14px; object-fit:contain;
+    box-shadow:0 30px 60px -20px rgba(0,0,0,.8), 0 0 0 1px rgba(255,255,255,.12);
+    background:#0A0C18;
+  }
+  .img-lightbox .lb-caption{
+    position:absolute; bottom:18px; left:0; right:0; text-align:center;
+    font-size:13px; color:var(--ink-soft);
+  }
+  .img-lightbox .lb-close{
+    all:unset; position:absolute; top:18px; inset-inline-end:22px; cursor:pointer;
+    width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    background:rgba(255,255,255,.10); color:var(--ink); font-size:20px; line-height:1;
+    border:1px solid rgba(255,255,255,.18); transition: background .15s ease, transform .15s ease;
+  }
+  .img-lightbox .lb-close:hover{ background:rgba(255,255,255,.18); transform:scale(1.06); }
   .iconbtn{
     all:unset; cursor:pointer; width:28px; height:28px; border-radius:6px;
     display:flex; align-items:center; justify-content:center; color:var(--ink-soft);
@@ -1072,7 +1096,7 @@
           </div>
         </div>
 
-        <button class="btn" id="receipt-build">ساخت PDF</button>
+        <button class="btn" id="receipt-print">🖨️ پرینت</button>
         <div class="status" id="receipt-status"></div>
       </div>
     </section>
@@ -2026,6 +2050,45 @@
   /* ================= Generic file-picker widget ================= */
   // Wires a dropzone + hidden input + reorderable file list.
   // Returns an object exposing getFiles().
+  /* ---- Full-screen preview for uploaded images (click a thumbnail to see it) ---- */
+  function openImagePreview(src, caption){
+    const overlay = document.createElement('div');
+    overlay.className = 'img-lightbox';
+    overlay.setAttribute('role','dialog');
+    overlay.setAttribute('aria-modal','true');
+
+    const img = document.createElement('img');
+    img.src = src;
+    img.alt = caption || '';
+    overlay.appendChild(img);
+
+    if(caption){
+      const cap = document.createElement('div');
+      cap.className = 'lb-caption';
+      cap.textContent = caption;
+      overlay.appendChild(cap);
+    }
+
+    const closeBtn = document.createElement('button');
+    closeBtn.type = 'button';
+    closeBtn.className = 'lb-close';
+    closeBtn.setAttribute('aria-label','بستن');
+    closeBtn.textContent = '✕';
+    overlay.appendChild(closeBtn);
+
+    function close(){
+      overlay.remove();
+      document.removeEventListener('keydown', onKey);
+    }
+    function onKey(e){ if(e.key === 'Escape') close(); }
+
+    overlay.addEventListener('click', e => { if(e.target === overlay) close(); });
+    closeBtn.addEventListener('click', close);
+    document.addEventListener('keydown', onKey);
+
+    document.body.appendChild(overlay);
+  }
+
   function makeFilePicker({dropId, inputId, listId, multiple}){
     const drop = document.getElementById(dropId);
     const input = document.getElementById(inputId);
@@ -2041,9 +2104,14 @@
         thumb.className = 'thumb';
         thumb.alt = '';
         if(f.type && f.type.startsWith('image/')){
+          thumb.classList.add('has-preview');
+          thumb.title = 'برای پیش‌نمایش کلیک کن';
           const reader = new FileReader();
-          reader.onload = e => thumb.src = e.target.result;
+          reader.onload = e => { thumb.src = e.target.result; };
           reader.readAsDataURL(f);
+          thumb.addEventListener('click', () => {
+            if(thumb.src) openImagePreview(thumb.src, f.name);
+          });
         }
 
         const name = document.createElement('span');
@@ -2148,49 +2216,59 @@
   /* ================= Receipt to PDF (grid layout) ================= */
   const receiptPicker = makeFilePicker({dropId:'receipt-drop', inputId:'receipt-input', listId:'receipt-list', multiple:true});
 
-  document.getElementById('receipt-build').addEventListener('click', async () => {
+  document.getElementById('receipt-print').addEventListener('click', async () => {
     const files = receiptPicker.getFiles();
     if(files.length === 0){ setStatus('receipt-status','حداقل یک رسید اضافه کن.', true); return; }
-    const btn = document.getElementById('receipt-build');
+    const btn = document.getElementById('receipt-print');
     btn.disabled = true;
-    setStatus('receipt-status','در حال ساخت PDF...');
+    setStatus('receipt-status','در حال آماده‌سازی پرینت...');
     try{
       const perPage = parseInt(document.getElementById('receipt-grid').value, 10);
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF({ unit:'mm', format:'a4', orientation:'portrait' });
-      const pageW = doc.internal.pageSize.getWidth();
-      const pageH = doc.internal.pageSize.getHeight();
-      const margin = 8, gap = 6;
-
       // layout: 1 -> 1x1, 2 -> 1x2 (stacked), 4 -> 2x2
       const cols = perPage === 4 ? 2 : 1;
-      const rows = perPage === 1 ? 1 : (perPage === 2 ? 2 : 2);
-      const cellW = (pageW - margin*2 - gap*(cols-1)) / cols;
-      const cellH = (pageH - margin*2 - gap*(rows-1)) / rows;
+      const rows = perPage === 1 ? 1 : 2;
 
-      for(let i=0; i<files.length; i++){
-        const slot = i % perPage;
-        if(i > 0 && slot === 0) doc.addPage();
-        const col = slot % cols;
-        const row = Math.floor(slot / cols);
-        const cellX = margin + col * (cellW + gap);
-        const cellY = margin + row * (cellH + gap);
+      const urls = [];
+      for(const f of files){ urls.push(await fileToDataURL(f)); }
 
-        const raw = await fileToDataURL(files[i]);
-        const { dataUrl, w, h } = await normalizeToJpeg(raw);
-        const arW = w / h;
-        let drawW = cellW, drawH = cellW / arW;
-        if(drawH > cellH){ drawH = cellH; drawW = cellH * arW; }
-        const x = cellX + (cellW - drawW) / 2;
-        const y = cellY + (cellH - drawH) / 2;
-
-        doc.setDrawColor(200,196,180);
-        doc.rect(cellX, cellY, cellW, cellH);
-        doc.addImage(dataUrl, 'JPEG', x, y, drawW, drawH);
+      let pagesHtml = '';
+      for(let i = 0; i < urls.length; i += perPage){
+        const chunk = urls.slice(i, i + perPage);
+        const cellsHtml = chunk.map(u => `<div class="receipt-cell"><img src="${u}"></div>`).join('');
+        pagesHtml += `<div class="receipt-page" style="grid-template-columns:repeat(${cols},1fr); grid-template-rows:repeat(${rows},1fr);">${cellsHtml}</div>`;
       }
-      doc.save('رسیدها.pdf');
+
+      const printWin = window.open('', '_blank');
+      if(!printWin){
+        setStatus('receipt-status', 'مرورگر اجازه‌ی باز شدن پنجره‌ی پرینت رو نداد؛ پاپ‌آپ‌بلاکر رو برای این سایت خاموش کن.', true);
+        btn.disabled = false;
+        return;
+      }
+      const doc = printWin.document;
+      doc.open();
+      doc.write(`<!DOCTYPE html><html dir="rtl" lang="fa"><head><meta charset="utf-8">
+        <title>رسیدها</title>
+        <style>
+          @page{ size: A4 portrait; margin: 30mm; }
+          html,body{ margin:0; padding:0; background:#fff; height:100%; }
+          .receipt-page{
+            display:grid; gap:8mm; width:100%; height:100vh;
+            align-items:center; justify-items:center;
+            page-break-after: always;
+          }
+          .receipt-page:last-child{ page-break-after: auto; }
+          .receipt-cell{ width:100%; height:100%; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+          .receipt-cell img{ max-width:100%; max-height:100%; object-fit:contain; display:block; }
+        </style>
+        </head><body>${pagesHtml}</body></html>`);
+      doc.close();
+
+      printWin.addEventListener('load', () => {
+        setTimeout(() => { printWin.focus(); printWin.print(); }, 300);
+      });
+
       setStatus('receipt-status','');
-      stamp(btn, 'PDF ساخته و دانلود شد');
+      stamp(btn, 'پنجره‌ی پرینت باز شد');
     }catch(err){
       console.error(err);
       setStatus('receipt-status', 'مشکلی پیش اومد: ' + err.message, true);
