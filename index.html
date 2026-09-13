@@ -2422,7 +2422,7 @@
         { s:{r:signRowIdx,c:4}, e:{r:signRowIdx,c:8} }
       ];
 
-      // ستون‌ها متناسب با طولانی‌ترین متن هر ستون فیت می‌شن (+حاشیه کوچک)
+      // ستون‌ها متناسب با طولانی‌ترین متن هر ستون فیت می‌شن (با احتساب فونت سایز ۱۴ که پهن‌تر از پیش‌فرض اکسله)
       ws['!cols'] = header.map((h, ci) => {
         let max = String(h).length;
         aoa.forEach(row => {
@@ -2434,10 +2434,11 @@
             if(len > max) max = len;
           }
         });
-        return { wch: Math.min(Math.max(max + 3, 8), 34) };
+        return { wch: Math.min(Math.max(Math.ceil((max + 2) * 1.3), 9), 44) };
       });
 
-      ws['!rows'] = aoa.map(() => ({ hpt: 22 }));
+      // ارتفاع سطرها رو عمداً ثابت نمی‌کنیم تا خود اکسل با توجه به متن هر سطر
+      // (به‌خصوص سطرهایی که چندخطی می‌شن) ارتفاع رو خودکار تنظیم کنه.
 
       // استایل: فونت B Nazanin سایز ۱۴، دورخط نازک، وسط‌چین، و جداکننده سه‌رقمی برای مبلغ‌ها
       const range = window.XLSX.utils.decode_range(ws['!ref']);
@@ -2570,40 +2571,20 @@
       iframe.style.height = idoc.body.scrollHeight + 'px';
       await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
 
-      const worker = window.html2pdf().set({
+      await window.html2pdf().set({
+        margin: 8,
+        filename: 'تنخواه.pdf',
         html2canvas: {
           scale: 2,
           useCORS: true,
           foreignObjectRendering: true,
-          backgroundColor: '#ffffff',
-          width: idoc.body.scrollWidth,
-          height: idoc.body.scrollHeight,
-          windowWidth: idoc.body.scrollWidth,
-          windowHeight: idoc.body.scrollHeight
-        }
-      }).from(idoc.body);
-      await worker.toCanvas();
-      const canvas = worker.prop.canvas;
+          backgroundColor: '#ffffff'
+        },
+        jsPDF: { unit:'mm', format:'a4', orientation:'landscape' },
+        pagebreak: { mode:['css','avoid-all'] }
+      }).from(idoc.body).save();
+
       iframe.remove();
-
-      // Fit the captured image into an A4 landscape page ourselves — no
-      // auto-fit guesswork, just plain proportional math against the page size.
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF({ unit:'mm', format:'a4', orientation:'landscape' });
-      const pageW = doc.internal.pageSize.getWidth();
-      const pageH = doc.internal.pageSize.getHeight();
-      const margin = 8;
-      const maxW = pageW - margin*2;
-      const maxH = pageH - margin*2;
-      const ratio = canvas.height / canvas.width;
-      let drawW = maxW;
-      let drawH = drawW * ratio;
-      if(drawH > maxH){ drawH = maxH; drawW = drawH / ratio; }
-      const x = (pageW - drawW) / 2;
-      const y = (pageH - drawH) / 2;
-      doc.addImage(canvas.toDataURL('image/png'), 'PNG', x, y, drawW, drawH);
-      doc.save('تنخواه.pdf');
-
       setStatus('cash-status','');
       stamp(btn, 'PDF ساخته و دانلود شد');
     }catch(err){
