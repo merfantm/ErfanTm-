@@ -1205,6 +1205,7 @@
         <div style="margin-top:18px; display:flex; gap:10px; flex-wrap:wrap;">
           <button class="btn green" id="cash-export">📊 خروجی Excel</button>
           <button class="btn" id="cash-export-pdf">📄 خروجی PDF</button>
+          <button class="btn" id="cash-print">🖨️ پرینت (A4 افقی)</button>
           <button class="btn ghost" id="cash-clear">پاک کردن همه</button>
         </div>
         <div class="status" id="cash-status"></div>
@@ -2475,6 +2476,85 @@
     }
   });
 
+  function buildCashTableMarkup(){
+    const fundDate = cashFundDate.getValue();
+    const fundName = document.getElementById('cash-fund-name').value.trim();
+    const totalAll = cashRows.reduce((s,r) => s + Number(r.amount||0) + Number(r.vat||0), 0);
+
+    const rowsHtml = cashRows.map((r,i) => {
+      const total = Number(r.amount||0) + Number(r.vat||0);
+      const zebra = i % 2 === 1 ? ' style="background:#f7f8fa;"' : '';
+      return `<tr class="data-row"${zebra}>
+        <td>${toFaDigits(i+1)}</td>
+        <td>${escapeHtml(r.date || '—')}</td>
+        <td>${escapeHtml(r.title)}</td>
+        <td>${escapeHtml(r.place || '—')}</td>
+        <td>${formatToman(r.amount)}</td>
+        <td>${formatToman(r.vat)}</td>
+        <td>${formatToman(total)}</td>
+        <td>${escapeHtml(r.store || '—')}</td>
+        <td>${escapeHtml(r.storeAddress || '—')}</td>
+      </tr>`;
+    }).join('');
+
+    return `
+      <table class="cash-pdf-table">
+        <colgroup>
+          <col class="c-idx"><col class="c-date"><col class="c-title"><col class="c-place">
+          <col class="c-amount"><col class="c-vat"><col class="c-total"><col class="c-store"><col class="c-addr">
+        </colgroup>
+        <tbody>
+          <tr class="cash-pdf-title-row">
+            <td colspan="3" style="text-align:right;">لیست تنخواه</td>
+            <td colspan="3">نام تنخواه‌گردان: ${escapeHtml(fundName || '—')}</td>
+            <td colspan="3" style="text-align:left;">تاریخ تنخواه: ${escapeHtml(fundDate || '—')}</td>
+          </tr>
+          <tr class="cash-pdf-header-row">
+            <th>ردیف</th><th>تاریخ</th><th>عنوان</th><th>محل هزینه</th>
+            <th>مبلغ</th><th>ارزش افزوده</th><th>مبلغ کل</th>
+            <th>فروشگاه</th><th>آدرس فروشگاه</th>
+          </tr>
+          ${rowsHtml}
+          <tr class="cash-pdf-total-row">
+            <td colspan="6">جمع کل</td>
+            <td colspan="1">${formatToman(totalAll)}</td>
+            <td colspan="2"></td>
+          </tr>
+          <tr class="cash-pdf-sign-row">
+            <td colspan="4" style="text-align:right;">تنظیم‌کننده</td>
+            <td colspan="5" style="text-align:left;">تایید‌کننده</td>
+          </tr>
+        </tbody>
+      </table>`;
+  }
+
+  const CASH_TABLE_CSS = `
+    *{ box-sizing:border-box; }
+    .cash-pdf-table{ width:100%; table-layout:fixed; border-collapse:separate; border-spacing:0; border-radius:14px; overflow:hidden; border:1.5px solid #c7cad2; }
+    .cash-pdf-table th, .cash-pdf-table td{ border:1px solid #dfe1e6; padding:6px 5px; text-align:center; font-size:15px; font-family:inherit; word-break:break-word; overflow-wrap:break-word; }
+    .cash-pdf-table col.c-idx{ width:5%; } .cash-pdf-table col.c-date{ width:9%; }
+    .cash-pdf-table col.c-title{ width:14%; } .cash-pdf-table col.c-place{ width:9%; }
+    .cash-pdf-table col.c-amount{ width:11%; } .cash-pdf-table col.c-vat{ width:11%; }
+    .cash-pdf-table col.c-total{ width:11%; } .cash-pdf-table col.c-store{ width:10%; }
+    .cash-pdf-table col.c-addr{ width:20%; }
+    .cash-pdf-header-row th{ background:#eceef3; color:#222; font-weight:700; font-size:15.5px; }
+    .cash-pdf-title-row td{ background:#f1f2f6; font-weight:700; font-size:17px; padding:9px 6px; }
+    .cash-pdf-total-row td{ background:#eceef3; font-weight:700; }
+    .cash-pdf-sign-row td{ padding:16px 18px 52px; font-weight:700; background:#f7f8fa; }
+  `;
+
+  const CASH_B_NAZANIN_FONT_FACE = `
+    @font-face{
+      font-family:'B Nazanin';
+      src: url('https://db.onlinewebfonts.com/t/3671adca6f650c92b83f906e49656986.eot');
+      src: url('https://db.onlinewebfonts.com/t/3671adca6f650c92b83f906e49656986.eot?#iefix') format('embedded-opentype'),
+           url('https://db.onlinewebfonts.com/t/3671adca6f650c92b83f906e49656986.woff2') format('woff2'),
+           url('https://db.onlinewebfonts.com/t/3671adca6f650c92b83f906e49656986.woff') format('woff'),
+           url('https://db.onlinewebfonts.com/t/3671adca6f650c92b83f906e49656986.ttf') format('truetype');
+      font-weight:normal; font-style:normal; font-display:block;
+    }
+  `;
+
   document.getElementById('cash-export-pdf').addEventListener('click', async () => {
     if(cashRows.length === 0){ setStatus('cash-status','هنوز هزینه‌ای برای خروجی نیست.', true); return; }
     const btn = document.getElementById('cash-export-pdf');
@@ -2482,70 +2562,9 @@
     setStatus('cash-status','در حال ساخت PDF...');
     let iframe = null;
     try{
-      const fundDate = cashFundDate.getValue();
-      const fundName = document.getElementById('cash-fund-name').value.trim();
-      const totalAll = cashRows.reduce((s,r) => s + Number(r.amount||0) + Number(r.vat||0), 0);
-
-      const rowsHtml = cashRows.map((r,i) => {
-        const total = Number(r.amount||0) + Number(r.vat||0);
-        const zebra = i % 2 === 1 ? ' style="background:#f7f8fa;"' : '';
-        return `<tr class="data-row"${zebra}>
-          <td>${toFaDigits(i+1)}</td>
-          <td>${escapeHtml(r.date || '—')}</td>
-          <td>${escapeHtml(r.title)}</td>
-          <td>${escapeHtml(r.place || '—')}</td>
-          <td>${formatToman(r.amount)}</td>
-          <td>${formatToman(r.vat)}</td>
-          <td>${formatToman(total)}</td>
-          <td>${escapeHtml(r.store || '—')}</td>
-          <td>${escapeHtml(r.storeAddress || '—')}</td>
-        </tr>`;
-      }).join('');
-
-      const tableHtml = `
-        <style>
-          *{ box-sizing:border-box; }
-          body{ margin:0; padding:14px; background:#fff; font-family:Vazirmatn,sans-serif; color:#222; }
-          .cash-pdf-table{ width:100%; table-layout:fixed; border-collapse:separate; border-spacing:0; border-radius:14px; overflow:hidden; border:1.5px solid #c7cad2; }
-          .cash-pdf-table th, .cash-pdf-table td{ border:1px solid #dfe1e6; padding:6px 5px; text-align:center; font-size:15px; font-family:inherit; word-break:break-word; overflow-wrap:break-word; }
-          .cash-pdf-table col.c-idx{ width:5%; } .cash-pdf-table col.c-date{ width:9%; }
-          .cash-pdf-table col.c-title{ width:14%; } .cash-pdf-table col.c-place{ width:9%; }
-          .cash-pdf-table col.c-amount{ width:11%; } .cash-pdf-table col.c-vat{ width:11%; }
-          .cash-pdf-table col.c-total{ width:11%; } .cash-pdf-table col.c-store{ width:10%; }
-          .cash-pdf-table col.c-addr{ width:20%; }
-          .cash-pdf-header-row th{ background:#eceef3; color:#222; font-weight:700; font-size:15.5px; }
-          .cash-pdf-title-row td{ background:#f1f2f6; font-weight:700; font-size:17px; padding:9px 6px; }
-          .cash-pdf-total-row td{ background:#eceef3; font-weight:700; }
-          .cash-pdf-sign-row td{ padding:16px 18px 52px; font-weight:700; background:#f7f8fa; }
-        </style>
-        <table class="cash-pdf-table">
-          <colgroup>
-            <col class="c-idx"><col class="c-date"><col class="c-title"><col class="c-place">
-            <col class="c-amount"><col class="c-vat"><col class="c-total"><col class="c-store"><col class="c-addr">
-          </colgroup>
-          <tbody>
-            <tr class="cash-pdf-title-row">
-              <td colspan="3" style="text-align:right;">لیست تنخواه</td>
-              <td colspan="3">نام تنخواه‌گردان: ${escapeHtml(fundName || '—')}</td>
-              <td colspan="3" style="text-align:left;">تاریخ تنخواه: ${escapeHtml(fundDate || '—')}</td>
-            </tr>
-            <tr class="cash-pdf-header-row">
-              <th>ردیف</th><th>تاریخ</th><th>عنوان</th><th>محل هزینه</th>
-              <th>مبلغ</th><th>ارزش افزوده</th><th>مبلغ کل</th>
-              <th>فروشگاه</th><th>آدرس فروشگاه</th>
-            </tr>
-            ${rowsHtml}
-            <tr class="cash-pdf-total-row">
-              <td colspan="6">جمع کل</td>
-              <td colspan="1">${formatToman(totalAll)}</td>
-              <td colspan="2"></td>
-            </tr>
-            <tr class="cash-pdf-sign-row">
-              <td colspan="4" style="text-align:right;">تنظیم‌کننده</td>
-              <td colspan="5" style="text-align:left;">تایید‌کننده</td>
-            </tr>
-          </tbody>
-        </table>`;
+      const tableHtml = `<style>${CASH_TABLE_CSS}
+        body{ margin:0; padding:14px; background:#fff; font-family:Vazirmatn,sans-serif; color:#222; }
+      </style>${buildCashTableMarkup()}`;
 
       // Render inside a fully isolated off-screen iframe so nothing from the
       // site's own CSS (overflow rules, transforms, zoom, etc.) can clip it.
@@ -2594,6 +2613,34 @@
       if(iframe) iframe.remove();
       btn.disabled = false;
     }
+  });
+
+  document.getElementById('cash-print').addEventListener('click', () => {
+    if(cashRows.length === 0){ setStatus('cash-status','هنوز هزینه‌ای برای خروجی نیست.', true); return; }
+    setStatus('cash-status','');
+    const printWin = window.open('', '_blank');
+    if(!printWin){
+      setStatus('cash-status', 'مرورگر اجازه‌ی باز شدن پنجره‌ی پرینت رو نداد؛ پاپ‌آپ‌بلاکر رو برای این سایت خاموش کن.', true);
+      return;
+    }
+    const doc = printWin.document;
+    doc.open();
+    doc.write(`<!DOCTYPE html><html dir="rtl" lang="fa"><head><meta charset="utf-8">
+      <title>تنخواه</title>
+      <style>
+        ${CASH_B_NAZANIN_FONT_FACE}
+        @page{ size: A4 landscape; margin: 10mm; }
+        html,body{ margin:0; padding:0; background:#fff; }
+        body{ font-family:'B Nazanin','Vazirmatn',Tahoma,sans-serif; font-size:14pt; color:#222; padding:6mm; }
+        ${CASH_TABLE_CSS}
+      </style>
+      </head><body>${buildCashTableMarkup()}</body></html>`);
+    doc.close();
+
+    printWin.addEventListener('load', async () => {
+      try{ if(doc.fonts && doc.fonts.ready) await doc.fonts.ready; }catch(e){}
+      setTimeout(() => { printWin.focus(); printWin.print(); }, 300);
+    });
   });
 
   renderCash();
