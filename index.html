@@ -1154,11 +1154,10 @@
             <input type="text" id="cash-place" list="cash-place-list" placeholder="مثلاً: اداری">
             <datalist id="cash-place-list">
               <option value="اداری">
-              <option value="عملیاتی">
-              <option value="بازاریابی">
-              <option value="حمل و نقل">
-              <option value="پذیرایی">
-              <option value="متفرقه">
+              <option value="نیروگاه 10MW">
+              <option value="نیروگاه 15MW">
+              <option value="نیروگاه 25MW اول">
+              <option value="نیروگاه 25MW دوم">
             </datalist>
           </div>
         </div>
@@ -1204,8 +1203,7 @@
 
         <div style="margin-top:18px; display:flex; gap:10px; flex-wrap:wrap;">
           <button class="btn green" id="cash-export">📊 خروجی Excel</button>
-          <button class="btn" id="cash-export-pdf">📄 خروجی PDF</button>
-          <button class="btn" id="cash-print">🖨️ پرینت (A4 افقی)</button>
+          <button class="btn" id="cash-print">🖨️ پرینت</button>
           <button class="btn ghost" id="cash-clear">پاک کردن همه</button>
         </div>
         <div class="status" id="cash-status"></div>
@@ -2498,49 +2496,51 @@
     }).join('');
 
     return `
-      <table class="cash-pdf-table">
-        <colgroup>
-          <col class="c-idx"><col class="c-date"><col class="c-title"><col class="c-place">
-          <col class="c-amount"><col class="c-vat"><col class="c-total"><col class="c-store"><col class="c-addr">
-        </colgroup>
-        <tbody>
-          <tr class="cash-pdf-title-row">
-            <td colspan="3" style="text-align:right;">لیست تنخواه</td>
-            <td colspan="3">نام تنخواه‌گردان: ${escapeHtml(fundName || '—')}</td>
-            <td colspan="3" style="text-align:left;">تاریخ تنخواه: ${escapeHtml(fundDate || '—')}</td>
-          </tr>
-          <tr class="cash-pdf-header-row">
-            <th>ردیف</th><th>تاریخ</th><th>عنوان</th><th>محل هزینه</th>
-            <th>مبلغ</th><th>ارزش افزوده</th><th>مبلغ کل</th>
-            <th>فروشگاه</th><th>آدرس فروشگاه</th>
-          </tr>
-          ${rowsHtml}
-          <tr class="cash-pdf-total-row">
-            <td colspan="6">جمع کل</td>
-            <td colspan="1">${formatToman(totalAll)}</td>
-            <td colspan="2"></td>
-          </tr>
-          <tr class="cash-pdf-sign-row">
-            <td colspan="4" style="text-align:right;">تنظیم‌کننده</td>
-            <td colspan="5" style="text-align:left;">تایید‌کننده</td>
-          </tr>
-        </tbody>
-      </table>`;
+      <div id="cash-print-stage">
+        <div id="cash-print-inner">
+          <table class="cash-pdf-table">
+            <colgroup>
+              <col class="c-idx"><col class="c-date"><col class="c-title"><col class="c-place">
+              <col class="c-amount"><col class="c-vat"><col class="c-total"><col class="c-store"><col class="c-addr">
+            </colgroup>
+            <tbody>
+              <tr class="cash-pdf-title-row">
+                <td colspan="3" style="text-align:right;">لیست تنخواه</td>
+                <td colspan="3">نام تنخواه‌گردان: ${escapeHtml(fundName || '—')}</td>
+                <td colspan="3" style="text-align:left;">تاریخ تنخواه: ${escapeHtml(fundDate || '—')}</td>
+              </tr>
+              <tr class="cash-pdf-header-row">
+                <th>ردیف</th><th>تاریخ</th><th>عنوان</th><th>محل هزینه</th>
+                <th>مبلغ</th><th>ارزش افزوده</th><th>مبلغ کل</th>
+                <th>فروشگاه</th><th>آدرس فروشگاه</th>
+              </tr>
+              ${rowsHtml}
+              <tr class="cash-pdf-total-row">
+                <td colspan="6">جمع کل</td>
+                <td colspan="1">${formatToman(totalAll)}</td>
+                <td colspan="2"></td>
+              </tr>
+              <tr class="cash-pdf-sign-row">
+                <td colspan="4" style="text-align:right;">تنظیم‌کننده</td>
+                <td colspan="5" style="text-align:left;">تایید‌کننده</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>`;
   }
 
   const CASH_TABLE_CSS = `
     *{ box-sizing:border-box; }
-    .cash-pdf-table{ width:100%; table-layout:fixed; border-collapse:separate; border-spacing:0; border-radius:14px; overflow:hidden; border:1.5px solid #c7cad2; }
-    .cash-pdf-table th, .cash-pdf-table td{ border:1px solid #dfe1e6; padding:6px 5px; text-align:center; font-size:15px; font-family:inherit; word-break:break-word; overflow-wrap:break-word; }
-    .cash-pdf-table col.c-idx{ width:5%; } .cash-pdf-table col.c-date{ width:9%; }
-    .cash-pdf-table col.c-title{ width:14%; } .cash-pdf-table col.c-place{ width:9%; }
-    .cash-pdf-table col.c-amount{ width:11%; } .cash-pdf-table col.c-vat{ width:11%; }
-    .cash-pdf-table col.c-total{ width:11%; } .cash-pdf-table col.c-store{ width:10%; }
-    .cash-pdf-table col.c-addr{ width:20%; }
+    #cash-print-stage{ width:100%; display:flex; justify-content:center; }
+    #cash-print-inner{ transform-origin: top center; }
+    .cash-pdf-table{ table-layout:auto; border-collapse:separate; border-spacing:0; border-radius:14px; overflow:hidden; border:1.5px solid #c7cad2; }
+    .cash-pdf-table th, .cash-pdf-table td{ border:1px solid #dfe1e6; padding:6px 10px; text-align:center; font-size:15px; font-family:inherit; white-space:nowrap; }
+    .cash-pdf-table col.c-title, .cash-pdf-table col.c-addr{ min-width:170px; }
     .cash-pdf-header-row th{ background:#eceef3; color:#222; font-weight:700; font-size:15.5px; }
-    .cash-pdf-title-row td{ background:#f1f2f6; font-weight:700; font-size:17px; padding:9px 6px; }
+    .cash-pdf-title-row td{ background:#f1f2f6; font-weight:700; font-size:17px; padding:9px 10px; white-space:normal; }
     .cash-pdf-total-row td{ background:#eceef3; font-weight:700; }
-    .cash-pdf-sign-row td{ padding:16px 18px 52px; font-weight:700; background:#f7f8fa; }
+    .cash-pdf-sign-row td{ padding:16px 18px 52px; font-weight:700; background:#f7f8fa; white-space:normal; }
   `;
 
   const CASH_B_NAZANIN_FONT_FACE = `
@@ -2555,66 +2555,6 @@
     }
   `;
 
-  document.getElementById('cash-export-pdf').addEventListener('click', async () => {
-    if(cashRows.length === 0){ setStatus('cash-status','هنوز هزینه‌ای برای خروجی نیست.', true); return; }
-    const btn = document.getElementById('cash-export-pdf');
-    btn.disabled = true;
-    setStatus('cash-status','در حال ساخت PDF...');
-    let iframe = null;
-    try{
-      const tableHtml = `<style>${CASH_TABLE_CSS}
-        body{ margin:0; padding:14px; background:#fff; font-family:Vazirmatn,sans-serif; color:#222; }
-      </style>${buildCashTableMarkup()}`;
-
-      // Render inside a fully isolated off-screen iframe so nothing from the
-      // site's own CSS (overflow rules, transforms, zoom, etc.) can clip it.
-      const PDF_PAGE_PX = 1400; // wide fixed canvas, independent of the phone's screen width
-      iframe = document.createElement('iframe');
-      iframe.style.cssText = `position:fixed; top:0; left:-99999px; width:${PDF_PAGE_PX}px; height:10px; border:0; background:#fff;`;
-      document.body.appendChild(iframe);
-      const idoc = iframe.contentDocument;
-      idoc.open();
-      idoc.write(`<!DOCTYPE html><html dir="rtl" lang="fa"><head><meta charset="utf-8">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap" rel="stylesheet">
-        </head><body>${tableHtml}</body></html>`);
-      idoc.close();
-
-      await new Promise(resolve => {
-        if(idoc.readyState === 'complete') return resolve();
-        iframe.addEventListener('load', resolve, { once:true });
-        setTimeout(resolve, 1200);
-      });
-      if(idoc.fonts && idoc.fonts.ready) await idoc.fonts.ready;
-      iframe.style.height = idoc.body.scrollHeight + 'px';
-      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
-
-      await window.html2pdf().set({
-        margin: 8,
-        filename: 'تنخواه.pdf',
-        html2canvas: {
-          scale: 2,
-          useCORS: true,
-          foreignObjectRendering: true,
-          backgroundColor: '#ffffff'
-        },
-        jsPDF: { unit:'mm', format:'a4', orientation:'landscape' },
-        pagebreak: { mode:['css','avoid-all'] }
-      }).from(idoc.body).save();
-
-      iframe.remove();
-      setStatus('cash-status','');
-      stamp(btn, 'PDF ساخته و دانلود شد');
-    }catch(err){
-      console.error(err);
-      setStatus('cash-status', 'مشکلی پیش اومد: ' + err.message, true);
-    }finally{
-      if(iframe) iframe.remove();
-      btn.disabled = false;
-    }
-  });
-
   document.getElementById('cash-print').addEventListener('click', () => {
     if(cashRows.length === 0){ setStatus('cash-status','هنوز هزینه‌ای برای خروجی نیست.', true); return; }
     setStatus('cash-status','');
@@ -2624,14 +2564,15 @@
       return;
     }
     const doc = printWin.document;
+    const PAGE_MARGIN_MM = 8;
     doc.open();
     doc.write(`<!DOCTYPE html><html dir="rtl" lang="fa"><head><meta charset="utf-8">
       <title>تنخواه</title>
       <style>
         ${CASH_B_NAZANIN_FONT_FACE}
-        @page{ size: A4 landscape; margin: 10mm; }
-        html,body{ margin:0; padding:0; background:#fff; }
-        body{ font-family:'B Nazanin','Vazirmatn',Tahoma,sans-serif; font-size:14pt; color:#222; padding:6mm; }
+        @page{ size: A4 landscape; margin: ${PAGE_MARGIN_MM}mm; }
+        html,body{ margin:0; padding:0; background:#fff; height:100%; }
+        body{ font-family:'B Nazanin','Vazirmatn',Tahoma,sans-serif; font-size:14pt; color:#222; }
         ${CASH_TABLE_CSS}
       </style>
       </head><body>${buildCashTableMarkup()}</body></html>`);
@@ -2639,6 +2580,27 @@
 
     printWin.addEventListener('load', async () => {
       try{ if(doc.fonts && doc.fonts.ready) await doc.fonts.ready; }catch(e){}
+
+      // Shrink + center the table so it always lands on a single centered
+      // A4-landscape page, no matter how many rows or how much text it holds.
+      const inner = doc.getElementById('cash-print-inner');
+      if(inner){
+        const MM_TO_PX = 96 / 25.4;
+        const PAGE_W_MM = 297, PAGE_H_MM = 210;
+        const availW = (PAGE_W_MM - PAGE_MARGIN_MM * 2) * MM_TO_PX;
+        const availH = (PAGE_H_MM - PAGE_MARGIN_MM * 2) * MM_TO_PX;
+
+        const naturalW = inner.scrollWidth;
+        const naturalH = inner.scrollHeight;
+        const scale = Math.min(1, availW / naturalW, availH / naturalH);
+
+        inner.style.width = naturalW + 'px';
+        inner.style.transform = `scale(${scale})`;
+        // Compensate for the layout space transform leaves behind, so the
+        // shrunk table doesn't leave a blank page after it.
+        inner.style.marginBottom = (-(naturalH - naturalH * scale)) + 'px';
+      }
+
       setTimeout(() => { printWin.focus(); printWin.print(); }, 300);
     });
   });
