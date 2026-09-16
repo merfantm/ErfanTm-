@@ -469,6 +469,47 @@
     border:1px solid rgba(255,255,255,.18); transition: background .15s ease, transform .15s ease;
   }
   .img-lightbox .lb-close:hover{ background:rgba(255,255,255,.18); transform:scale(1.06); }
+
+  /* ---------- Voice entry wizard (petty cash by voice) ---------- */
+  .voice-modal{
+    position:fixed; inset:0; z-index:9999; display:flex; align-items:center; justify-content:center;
+    background:rgba(4,5,10,.86); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+    padding:18px; opacity:0; animation: riseIn .18s ease forwards;
+  }
+  .voice-card{
+    width:100%; max-width:480px; max-height:88vh; overflow-y:auto;
+    background:var(--card); border:1px solid var(--glass-border); border-radius:var(--radius);
+    box-shadow:var(--shadow); padding:22px 20px;
+  }
+  .voice-card h3{ margin:0 0 4px; font-size:16px; }
+  .voice-progress{ font-size:12px; color:var(--ink-soft); margin-bottom:14px; }
+  .voice-example{ font-size:12.5px; color:var(--ink-soft); margin:6px 0 14px; }
+  .voice-mic-row{ display:flex; align-items:center; gap:12px; margin:10px 0 14px; }
+  .voice-mic-btn{
+    all:unset; cursor:pointer; width:64px; height:64px; border-radius:50%; flex:0 0 auto;
+    display:flex; align-items:center; justify-content:center; font-size:26px;
+    background: var(--glass-bg); border:1.5px solid var(--glass-border); color:var(--ink);
+    transition: transform .15s ease, border-color .15s ease;
+  }
+  .voice-mic-btn:hover{ transform:scale(1.05); }
+  .voice-mic-btn.listening{
+    border-color: var(--stamp); animation: voicePulse 1.2s ease-in-out infinite;
+  }
+  @keyframes voicePulse{
+    0%,100%{ box-shadow:0 0 0 0 rgba(124,111,240,.45); }
+    50%{ box-shadow:0 0 0 12px rgba(124,111,240,0); }
+  }
+  .voice-mic-hint{ font-size:12.5px; color:var(--ink-soft); }
+  .voice-transcript{
+    min-height:38px; padding:10px 12px; border-radius:12px; background:rgba(255,255,255,.04);
+    border:1px solid var(--rule); font-size:13.5px; color:var(--ink); margin-bottom:10px; white-space:pre-wrap;
+  }
+  .voice-parsed{ font-size:12.5px; color:var(--green); margin-bottom:4px; }
+  .voice-actions{ display:flex; gap:8px; flex-wrap:wrap; margin-top:14px; }
+  .voice-steps-dots{ display:flex; gap:5px; margin-bottom:10px; }
+  .voice-steps-dots span{ width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,.14); }
+  .voice-steps-dots span.done{ background:var(--stamp); }
+  .voice-steps-dots span.active{ background:var(--stamp-2); }
   .iconbtn{
     all:unset; cursor:pointer; width:28px; height:28px; border-radius:6px;
     display:flex; align-items:center; justify-content:center; color:var(--ink-soft);
@@ -1205,7 +1246,10 @@
           </div>
         </div>
 
-        <button class="btn" id="cash-add">➕ افزودن ردیف</button>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="btn" id="cash-add">➕ افزودن ردیف</button>
+          <button class="btn ghost" id="cash-voice-btn" type="button">🎤 افزودن با صدا</button>
+        </div>
 
         <div style="overflow-x:auto; margin-top:20px;">
           <table>
@@ -1995,6 +2039,18 @@
         const jm = parseInt(monthSel.value, 10);
         const jd = parseInt(daySel.value, 10);
         return `${toFaDigits(jy)}/${toFaDigits(pad2(jm))}/${toFaDigits(pad2(jd))}`;
+      },
+      setValue(jy, jm, jd){
+        if(jy && [...yearSel.options].some(o => Number(o.value) === Number(jy))){
+          yearSel.value = jy;
+        }
+        if(jm){
+          monthSel.value = jm;
+          fillDays();
+        }
+        if(jd){
+          daySel.value = jd;
+        }
       }
     };
   }
@@ -2433,6 +2489,295 @@
     document.getElementById('cash-store-address').value = '';
     document.getElementById('cash-title').focus();
   });
+
+  /* ================= Voice entry wizard for petty cash ================= */
+  (function initCashVoiceWizard(){
+    const btn = document.getElementById('cash-voice-btn');
+    if(!btn) return;
+
+    const SpeechRecognitionCtor = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    const FA_NUM_UNITS = {
+      'صفر':0,'یک':1,'یه':1,'دو':2,'سه':3,'چهار':4,'پنج':5,'شش':6,'شیش':6,'هفت':7,'هشت':8,'نه':9,'ده':10,
+      'یازده':11,'دوازده':12,'سیزده':13,'چهارده':14,'پانزده':15,'پونزده':15,'شانزده':16,'شونزده':16,
+      'هفده':17,'هجده':18,'نوزده':19,'بیست':20,'سی':30,'چهل':40,'پنجاه':50,'شصت':60,'هفتاد':70,'هشتاد':80,'نود':90
+    };
+    const FA_NUM_HUNDREDS = {
+      'صد':100,'یکصد':100,'دویست':200,'سیصد':300,'چهارصد':400,'پانصد':500,'پونصد':500,
+      'ششصد':600,'شیشصد':600,'هفتصد':700,'هشتصد':800,'نهصد':900
+    };
+    const FA_NUM_MULT = { 'هزار':1000, 'میلیون':1000000, 'میلیارد':1000000000 };
+    const FA_IGNORE_WORDS = ['و','تومان','ریال','تومن','عدد','حدود','دقیقا','تقریبا'];
+
+    function faDigitsToEn(str){
+      return String(str||'')
+        .replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d))
+        .replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d));
+    }
+
+    // Parses a Persian spoken phrase like "دویست و پنجاه هزار تومان" into a number.
+    function wordsToNumber(text){
+      const tokens = faDigitsToEn(text)
+        .replace(/[^\u0600-\u06FF0-9\s]/g, ' ')
+        .split(/\s+/).filter(Boolean);
+      let total = 0, current = 0, matchedAny = false;
+      for(const raw of tokens){
+        const tok = raw.trim();
+        if(/^\d+$/.test(tok)){ current += parseInt(tok,10); matchedAny = true; continue; }
+        if(tok in FA_NUM_UNITS){ current += FA_NUM_UNITS[tok]; matchedAny = true; continue; }
+        if(tok in FA_NUM_HUNDREDS){ current += FA_NUM_HUNDREDS[tok]; matchedAny = true; continue; }
+        if(tok in FA_NUM_MULT){
+          current = current === 0 ? 1 : current;
+          total += current * FA_NUM_MULT[tok];
+          current = 0; matchedAny = true; continue;
+        }
+        // ignore filler words (و، تومان، ...)
+      }
+      total += current;
+      return matchedAny ? total : null;
+    }
+
+    // Extracts the first / primary amount-like number from free speech.
+    function extractAmount(text){
+      const cleaned = faDigitsToEn(text);
+      const digitMatch = cleaned.match(/\d[\d,]*/);
+      if(digitMatch){
+        return parseInt(digitMatch[0].replace(/,/g,''), 10);
+      }
+      return wordsToNumber(text);
+    }
+
+    // Extracts an ordered list of standalone small integers (for dates like "15 و 6 و 1405").
+    function extractNumberSequence(text){
+      const cleaned = faDigitsToEn(text);
+      const digitNums = cleaned.match(/\d+/g);
+      if(digitNums && digitNums.length){
+        return digitNums.map(n => parseInt(n,10));
+      }
+      // fallback: split on 'و' and parse each chunk as a separate word-number
+      const parts = text.split(/\s+و\s+/);
+      const nums = parts.map(p => wordsToNumber(p)).filter(n => n !== null && !isNaN(n));
+      return nums;
+    }
+
+    function parseJalaliDate(text){
+      const monthIdx = JALALI_MONTHS.findIndex(m => text.indexOf(m) !== -1);
+      const nums = extractNumberSequence(text);
+      let day = null, month = null, year = null;
+      if(monthIdx !== -1){
+        month = monthIdx + 1;
+        if(nums.length >= 1) day = nums[0];
+        if(nums.length >= 2) year = nums[nums.length - 1];
+      }else{
+        if(nums.length >= 1) day = nums[0];
+        if(nums.length >= 2) month = nums[1];
+        if(nums.length >= 3) year = nums[2];
+      }
+      if(year !== null && year < 100) year += 1400;
+      if(day !== null && (day < 1 || day > 31)) day = null;
+      if(month !== null && (month < 1 || month > 12)) month = null;
+      return { day, month, year };
+    }
+
+    // Try to snap free-spoken "place" text onto an existing datalist option (e.g. نیروگاه 10MW).
+    function matchPlace(text){
+      const options = [...document.querySelectorAll('#cash-place-list option')].map(o => o.value);
+      const cleaned = faDigitsToEn(text).replace(/\s+/g,' ').trim();
+      const numMatch = cleaned.match(/\d+/);
+      for(const opt of options){
+        const optNorm = faDigitsToEn(opt);
+        if(cleaned.indexOf('نیروگاه') !== -1 && optNorm.indexOf('نیروگاه') !== -1 && numMatch){
+          if(optNorm.indexOf(numMatch[0]) !== -1) return opt;
+        }
+        if(cleaned.indexOf(optNorm) !== -1 || optNorm.indexOf(cleaned) !== -1) return opt;
+      }
+      return text.trim();
+    }
+
+    const STEPS = [
+      {
+        key:'date', title:'تاریخ هزینه',
+        example:'مثلاً بگو: «تاریخ ۱۵ و ۶ و ۱۴۰۵» یا «پانزدهم شهریور ۱۴۰۵»',
+        parse(text){
+          const d = parseJalaliDate(text);
+          if(d.day==null && d.month==null && d.year==null) return null;
+          const parts = [];
+          if(d.day) parts.push('روز: ' + toFaDigits(d.day));
+          if(d.month) parts.push('ماه: ' + JALALI_MONTHS[d.month-1]);
+          if(d.year) parts.push('سال: ' + toFaDigits(d.year));
+          return { value:d, label: parts.join(' — ') };
+        },
+        apply(d){ if(d) cashDate.setValue(d.year, d.month, d.day); }
+      },
+      {
+        key:'title', title:'عنوان هزینه',
+        example:'مثلاً بگو: «خرید غذا جهت سگ نگهبان نیروگاه»',
+        parse(text){ const t = text.trim(); return t ? { value:t, label:t } : null; },
+        apply(t){ if(t) document.getElementById('cash-title').value = t; }
+      },
+      {
+        key:'place', title:'محل هزینه',
+        example:'مثلاً بگو: «نیروگاه 10 مگاوات» یا «اداری»',
+        parse(text){ const p = matchPlace(text); return p ? { value:p, label:p } : null; },
+        apply(p){ if(p) document.getElementById('cash-place').value = p; }
+      },
+      {
+        key:'amount', title:'مبلغ (تومان)',
+        example:'مثلاً بگو: «دویست هزار تومان» یا «۲۰۰۰۰۰»',
+        parse(text){ const n = extractAmount(text); return (n!=null && n>0) ? { value:n, label: formatToman(n) + ' تومان' } : null; },
+        apply(n){ if(n) document.getElementById('cash-amount').value = n; }
+      },
+      {
+        key:'vat', title:'ارزش افزوده (تومان)',
+        example:'مثلاً بگو: «هجده هزار تومان» — اگه ارزش افزوده نداره بگو «صفر» یا رد شو',
+        parse(text){ const n = extractAmount(text); return (n!=null) ? { value:n, label: formatToman(n) + ' تومان' } : null; },
+        apply(n){ if(n!=null) document.getElementById('cash-vat').value = n; },
+        optional:true
+      },
+      {
+        key:'total', title:'مبلغ کل (اختیاری — برای تطبیق خودکار)',
+        example:'مثلاً بگو: «دویست و هجده هزار تومان». اگه با مبلغ + ارزش‌افزوده جور نباشه، ارزش‌افزوده خودکار اصلاح می‌شه.',
+        parse(text){ const n = extractAmount(text); return (n!=null) ? { value:n, label: formatToman(n) + ' تومان' } : null; },
+        apply(n){
+          if(n==null) return;
+          const amount = parseFloat(document.getElementById('cash-amount').value) || 0;
+          const fixedVat = n - amount;
+          if(fixedVat >= 0) document.getElementById('cash-vat').value = fixedVat;
+        },
+        optional:true
+      },
+      {
+        key:'store', title:'نام فروشگاه',
+        example:'مثلاً بگو: «فروشگاه قاسم»',
+        parse(text){ const t = text.trim(); return t ? { value:t, label:t } : null; },
+        apply(t){ if(t) document.getElementById('cash-store').value = t; },
+        optional:true
+      },
+      {
+        key:'storeAddress', title:'آدرس فروشگاه',
+        example:'مثلاً بگو: «یزد، بلوار همنبین»',
+        parse(text){ const t = text.trim(); return t ? { value:t, label:t } : null; },
+        apply(t){ if(t) document.getElementById('cash-store-address').value = t; },
+        optional:true
+      }
+    ];
+
+    let stepIdx = 0;
+    let recognizer = null;
+    let modalEl = null;
+    let currentParsed = null;
+
+    function closeModal(){
+      if(recognizer){ try{ recognizer.stop(); }catch(e){} recognizer = null; }
+      if(modalEl){ modalEl.remove(); modalEl = null; }
+    }
+
+    function renderStep(){
+      const step = STEPS[stepIdx];
+      currentParsed = null;
+      const dots = STEPS.map((s,i) => `<span class="${i<stepIdx?'done':(i===stepIdx?'active':'')}"></span>`).join('');
+      modalEl.querySelector('.voice-card').innerHTML = `
+        <div class="voice-steps-dots">${dots}</div>
+        <div class="voice-progress">مرحله ${toFaDigits(stepIdx+1)} از ${toFaDigits(STEPS.length)}${step.optional ? ' (اختیاری)' : ''}</div>
+        <h3>${escapeHtml(step.title)}</h3>
+        <div class="voice-example">${escapeHtml(step.example)}</div>
+        <div class="voice-mic-row">
+          <button type="button" class="voice-mic-btn" id="vw-mic">🎙️</button>
+          <div class="voice-mic-hint" id="vw-hint">برای صحبت‌کردن، روی میکروفون بزن.</div>
+        </div>
+        <div class="voice-transcript" id="vw-transcript">— متن گفته‌شده اینجا نمایش داده می‌شه —</div>
+        <div class="voice-parsed" id="vw-parsed"></div>
+        <div class="voice-actions">
+          <button type="button" class="btn ghost" id="vw-cancel">✕ انصراف</button>
+          ${stepIdx>0 ? '<button type="button" class="btn ghost" id="vw-back">◀ مرحله قبل</button>' : ''}
+          ${step.optional ? '<button type="button" class="btn ghost" id="vw-skip">رد شدن</button>' : ''}
+          <button type="button" class="btn" id="vw-next" disabled>تایید و بعدی ▶</button>
+        </div>
+      `;
+      modalEl.querySelector('#vw-cancel').addEventListener('click', closeModal);
+      const backBtn = modalEl.querySelector('#vw-back');
+      if(backBtn) backBtn.addEventListener('click', () => { stepIdx--; renderStep(); });
+      const skipBtn = modalEl.querySelector('#vw-skip');
+      if(skipBtn) skipBtn.addEventListener('click', () => goNext());
+      modalEl.querySelector('#vw-next').addEventListener('click', () => goNext());
+      modalEl.querySelector('#vw-mic').addEventListener('click', () => startListening(step));
+    }
+
+    function goNext(){
+      const step = STEPS[stepIdx];
+      if(currentParsed !== null){ step.apply(currentParsed); }
+      if(stepIdx < STEPS.length - 1){
+        stepIdx++;
+        renderStep();
+      }else{
+        closeModal();
+        setStatus('cash-status', 'اطلاعات از روی صدا پر شد؛ لطفاً یه نگاه بنداز و «افزودن ردیف» رو بزن.', false);
+        document.getElementById('cash-title').scrollIntoView({behavior:'smooth', block:'center'});
+      }
+    }
+
+    function startListening(step){
+      if(!SpeechRecognitionCtor){
+        setStatus('cash-status', 'مرورگر شما از تشخیص گفتار پشتیبانی نمی‌کنه. لطفاً از کروم (دسکتاپ یا اندروید) استفاده کن.', true);
+        return;
+      }
+      if(recognizer){ try{ recognizer.stop(); }catch(e){} }
+      recognizer = new SpeechRecognitionCtor();
+      recognizer.lang = 'fa-IR';
+      recognizer.interimResults = true;
+      recognizer.maxAlternatives = 1;
+
+      const micBtn = modalEl.querySelector('#vw-mic');
+      const hintEl = modalEl.querySelector('#vw-hint');
+      const transcriptEl = modalEl.querySelector('#vw-transcript');
+      const parsedEl = modalEl.querySelector('#vw-parsed');
+      const nextBtn = modalEl.querySelector('#vw-next');
+
+      micBtn.classList.add('listening');
+      hintEl.textContent = 'در حال شنیدن... صحبت کن.';
+
+      recognizer.onresult = (evt) => {
+        let text = '';
+        for(let i=0;i<evt.results.length;i++){ text += evt.results[i][0].transcript; }
+        transcriptEl.textContent = text;
+        const result = step.parse(text);
+        if(result){
+          currentParsed = result.value;
+          parsedEl.textContent = '✅ تشخیص داده شد: ' + result.label;
+          nextBtn.disabled = false;
+        }else{
+          currentParsed = null;
+          parsedEl.textContent = '';
+          nextBtn.disabled = true;
+        }
+      };
+      recognizer.onerror = (evt) => {
+        micBtn.classList.remove('listening');
+        hintEl.textContent = 'خطا در دریافت صدا (' + evt.error + '). دوباره امتحان کن یا دستی وارد کن.';
+      };
+      recognizer.onend = () => {
+        micBtn.classList.remove('listening');
+        hintEl.textContent = 'برای تلاش دوباره، روی میکروفون بزن.';
+      };
+      try{ recognizer.start(); }catch(e){ /* already started */ }
+    }
+
+    btn.addEventListener('click', () => {
+      if(!SpeechRecognitionCtor){
+        setStatus('cash-status', 'مرورگر شما از تشخیص گفتار پشتیبانی نمی‌کنه. لطفاً از کروم (دسکتاپ یا اندروید) استفاده کن.', true);
+        return;
+      }
+      stepIdx = 0;
+      modalEl = document.createElement('div');
+      modalEl.className = 'voice-modal';
+      modalEl.setAttribute('role','dialog');
+      modalEl.setAttribute('aria-modal','true');
+      modalEl.innerHTML = '<div class="voice-card"></div>';
+      modalEl.addEventListener('click', (e) => { if(e.target === modalEl) closeModal(); });
+      document.body.appendChild(modalEl);
+      renderStep();
+    });
+  })();
 
   document.getElementById('cash-clear').addEventListener('click', () => {
     if(cashRows.length === 0) return;
