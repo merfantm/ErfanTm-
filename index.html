@@ -510,6 +510,26 @@
   .voice-steps-dots span{ width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,.14); }
   .voice-steps-dots span.done{ background:var(--stamp); }
   .voice-steps-dots span.active{ background:var(--stamp-2); }
+
+  /* Checklist used by the "all-at-once" voice capture mode */
+  .voice-checklist{
+    list-style:none; margin:0 0 14px; padding:0; display:flex; flex-wrap:wrap; gap:6px;
+  }
+  .voice-checklist li{
+    font-size:12px; padding:5px 10px; border-radius:999px;
+    border:1px solid var(--rule); color:var(--ink-soft); background:rgba(255,255,255,.03);
+    transition: all .15s ease;
+  }
+  .voice-checklist li small{ opacity:.75; }
+  .voice-checklist li.current{
+    border-color: var(--stamp-2); color:var(--ink); background:rgba(79,140,255,.12); font-weight:700;
+  }
+  .voice-checklist li.done{
+    border-color: var(--stamp); color:var(--ink); background:rgba(124,111,240,.14);
+  }
+  .voice-checklist li.skipped{
+    opacity:.5; text-decoration:line-through;
+  }
   .iconbtn{
     all:unset; cursor:pointer; width:28px; height:28px; border-radius:6px;
     display:flex; align-items:center; justify-content:center; color:var(--ink-soft);
@@ -1248,7 +1268,7 @@
 
         <div style="display:flex; gap:10px; flex-wrap:wrap;">
           <button class="btn" id="cash-add">➕ افزودن ردیف</button>
-          <button class="btn ghost" id="cash-voice-btn" type="button">🎤 افزودن با صدا</button>
+          <button class="btn ghost" id="cash-voice-btn" type="button">🎤 افزودن با صدا (یکجا)</button>
         </div>
 
         <div style="overflow-x:auto; margin-top:20px;">
@@ -2594,129 +2614,139 @@
       return text.trim();
     }
 
-    const STEPS = [
+    // Each field is filled from ONE continuous voice session: the user speaks
+    // all of them back-to-back (short pause between each), and every time the
+    // browser finalizes a spoken phrase we hand it to the next field in line.
+    // Numeric fields are skipped automatically if the phrase clearly isn't a
+    // number (so skipping VAT/total/store by just not mentioning them works).
+    const FIELDS = [
       {
-        key:'date', title:'تاریخ هزینه',
-        example:'مثلاً بگو: «تاریخ ۱۵ و ۶ و ۱۴۰۵» یا «پانزدهم شهریور ۱۴۰۵»',
+        key:'date', label:'تاریخ', optional:false,
         parse(text){
           const d = parseJalaliDate(text);
           if(d.day==null && d.month==null && d.year==null) return null;
-          const parts = [];
-          if(d.day) parts.push('روز: ' + toFaDigits(d.day));
-          if(d.month) parts.push('ماه: ' + JALALI_MONTHS[d.month-1]);
-          if(d.year) parts.push('سال: ' + toFaDigits(d.year));
-          return { value:d, label: parts.join(' — ') };
+          return d;
         },
-        apply(d){ if(d) cashDate.setValue(d.year, d.month, d.day); }
+        apply(d){ cashDate.setValue(d.year, d.month, d.day); },
+        describe(d){
+          const parts = [];
+          if(d.day) parts.push('روز ' + toFaDigits(d.day));
+          if(d.month) parts.push(JALALI_MONTHS[d.month-1]);
+          if(d.year) parts.push('سال ' + toFaDigits(d.year));
+          return parts.join(' ');
+        }
       },
       {
-        key:'title', title:'عنوان هزینه',
-        example:'مثلاً بگو: «خرید غذا جهت سگ نگهبان نیروگاه»',
-        parse(text){ const t = text.trim(); return t ? { value:t, label:t } : null; },
-        apply(t){ if(t) document.getElementById('cash-title').value = t; }
+        key:'title', label:'عنوان', optional:false,
+        parse(text){ const t = text.trim(); return t ? t : null; },
+        apply(t){ document.getElementById('cash-title').value = t; },
+        describe(t){ return t; }
       },
       {
-        key:'place', title:'محل هزینه',
-        example:'مثلاً بگو: «نیروگاه 10 مگاوات» یا «اداری»',
-        parse(text){ const p = matchPlace(text); return p ? { value:p, label:p } : null; },
-        apply(p){ if(p) document.getElementById('cash-place').value = p; }
+        key:'place', label:'محل هزینه', optional:false,
+        parse(text){ const p = matchPlace(text); return p ? p : null; },
+        apply(p){ document.getElementById('cash-place').value = p; },
+        describe(p){ return p; }
       },
       {
-        key:'amount', title:'مبلغ (تومان)',
-        example:'مثلاً بگو: «دویست هزار تومان» یا «۲۰۰۰۰۰»',
-        parse(text){ const n = extractAmount(text); return (n!=null && n>0) ? { value:n, label: formatToman(n) + ' تومان' } : null; },
-        apply(n){ if(n) document.getElementById('cash-amount').value = n; }
+        key:'amount', label:'مبلغ', optional:false,
+        parse(text){ const n = extractAmount(text); return (n!=null && n>0) ? n : null; },
+        apply(n){ document.getElementById('cash-amount').value = n; },
+        describe(n){ return formatToman(n) + ' تومان'; }
       },
       {
-        key:'vat', title:'ارزش افزوده (تومان)',
-        example:'مثلاً بگو: «هجده هزار تومان» — اگه ارزش افزوده نداره بگو «صفر» یا رد شو',
-        parse(text){ const n = extractAmount(text); return (n!=null) ? { value:n, label: formatToman(n) + ' تومان' } : null; },
-        apply(n){ if(n!=null) document.getElementById('cash-vat').value = n; },
-        optional:true
+        key:'vat', label:'ارزش افزوده', optional:true,
+        parse(text){ const n = extractAmount(text); return (n!=null) ? n : null; },
+        apply(n){ document.getElementById('cash-vat').value = n; },
+        describe(n){ return formatToman(n) + ' تومان'; }
       },
       {
-        key:'total', title:'مبلغ کل (اختیاری — برای تطبیق خودکار)',
-        example:'مثلاً بگو: «دویست و هجده هزار تومان». اگه با مبلغ + ارزش‌افزوده جور نباشه، ارزش‌افزوده خودکار اصلاح می‌شه.',
-        parse(text){ const n = extractAmount(text); return (n!=null) ? { value:n, label: formatToman(n) + ' تومان' } : null; },
+        key:'total', label:'مبلغ کل', optional:true,
+        parse(text){ const n = extractAmount(text); return (n!=null) ? n : null; },
         apply(n){
-          if(n==null) return;
           const amount = parseFloat(document.getElementById('cash-amount').value) || 0;
           const fixedVat = n - amount;
           if(fixedVat >= 0) document.getElementById('cash-vat').value = fixedVat;
         },
-        optional:true
+        describe(n){ return formatToman(n) + ' تومان'; }
       },
       {
-        key:'store', title:'نام فروشگاه',
-        example:'مثلاً بگو: «فروشگاه قاسم»',
-        parse(text){ const t = text.trim(); return t ? { value:t, label:t } : null; },
-        apply(t){ if(t) document.getElementById('cash-store').value = t; },
-        optional:true
+        key:'store', label:'فروشگاه', optional:true,
+        parse(text){ const t = text.trim(); return t ? t : null; },
+        apply(t){ document.getElementById('cash-store').value = t; },
+        describe(t){ return t; }
       },
       {
-        key:'storeAddress', title:'آدرس فروشگاه',
-        example:'مثلاً بگو: «یزد، بلوار همنبین»',
-        parse(text){ const t = text.trim(); return t ? { value:t, label:t } : null; },
-        apply(t){ if(t) document.getElementById('cash-store-address').value = t; },
-        optional:true
+        key:'storeAddress', label:'آدرس فروشگاه', optional:true,
+        parse(text){ const t = text.trim(); return t ? t : null; },
+        apply(t){ document.getElementById('cash-store-address').value = t; },
+        describe(t){ return t; }
       }
     ];
 
-    let stepIdx = 0;
+    let fieldPointer = 0;
+    let fieldStatus = FIELDS.map(() => 'pending'); // pending | current | done | skipped
     let recognizer = null;
     let modalEl = null;
-    let currentParsed = null;
+    let listening = false;
 
     function closeModal(){
       if(recognizer){ try{ recognizer.stop(); }catch(e){} recognizer = null; }
+      listening = false;
       if(modalEl){ modalEl.remove(); modalEl = null; }
     }
 
-    function renderStep(){
-      const step = STEPS[stepIdx];
-      currentParsed = null;
-      const dots = STEPS.map((s,i) => `<span class="${i<stepIdx?'done':(i===stepIdx?'active':'')}"></span>`).join('');
-      modalEl.querySelector('.voice-card').innerHTML = `
-        <div class="voice-steps-dots">${dots}</div>
-        <div class="voice-progress">مرحله ${toFaDigits(stepIdx+1)} از ${toFaDigits(STEPS.length)}${step.optional ? ' (اختیاری)' : ''}</div>
-        <h3>${escapeHtml(step.title)}</h3>
-        <div class="voice-example">${escapeHtml(step.example)}</div>
-        <div class="voice-mic-row">
-          <button type="button" class="voice-mic-btn" id="vw-mic">🎙️</button>
-          <div class="voice-mic-hint" id="vw-hint">برای صحبت‌کردن، روی میکروفون بزن.</div>
-        </div>
-        <div class="voice-transcript" id="vw-transcript">— متن گفته‌شده اینجا نمایش داده می‌شه —</div>
-        <div class="voice-parsed" id="vw-parsed"></div>
-        <div class="voice-actions">
-          <button type="button" class="btn ghost" id="vw-cancel">✕ انصراف</button>
-          ${stepIdx>0 ? '<button type="button" class="btn ghost" id="vw-back">◀ مرحله قبل</button>' : ''}
-          ${step.optional ? '<button type="button" class="btn ghost" id="vw-skip">رد شدن</button>' : ''}
-          <button type="button" class="btn" id="vw-next" disabled>تایید و بعدی ▶</button>
-        </div>
-      `;
-      modalEl.querySelector('#vw-cancel').addEventListener('click', closeModal);
-      const backBtn = modalEl.querySelector('#vw-back');
-      if(backBtn) backBtn.addEventListener('click', () => { stepIdx--; renderStep(); });
-      const skipBtn = modalEl.querySelector('#vw-skip');
-      if(skipBtn) skipBtn.addEventListener('click', () => goNext());
-      modalEl.querySelector('#vw-next').addEventListener('click', () => goNext());
-      modalEl.querySelector('#vw-mic').addEventListener('click', () => startListening(step));
+    function renderChecklist(){
+      return FIELDS.map((f,i) => {
+        const status = fieldStatus[i] === 'pending' && i === fieldPointer ? 'current' : fieldStatus[i];
+        const mark = status === 'done' ? '✅ ' : status === 'skipped' ? '➖ ' : '';
+        return `<li class="${status}">${mark}${escapeHtml(f.label)}${f.optional ? ' <small>(اختیاری)</small>' : ''}</li>`;
+      }).join('');
     }
 
-    function goNext(){
-      const step = STEPS[stepIdx];
-      if(currentParsed !== null){ step.apply(currentParsed); }
-      if(stepIdx < STEPS.length - 1){
-        stepIdx++;
-        renderStep();
-      }else{
-        closeModal();
-        setStatus('cash-status', 'اطلاعات از روی صدا پر شد؛ لطفاً یه نگاه بنداز و «افزودن ردیف» رو بزن.', false);
-        document.getElementById('cash-title').scrollIntoView({behavior:'smooth', block:'center'});
+    function updateChecklistDom(){
+      if(!modalEl) return;
+      const el = modalEl.querySelector('#vw-checklist');
+      if(el) el.innerHTML = renderChecklist();
+    }
+
+    function setHint(text){
+      if(!modalEl) return;
+      const hintEl = modalEl.querySelector('#vw-hint');
+      if(hintEl) hintEl.textContent = text;
+    }
+
+    // Tries the spoken phrase against the current field; if it's a number-only
+    // optional field (vat/total) that clearly doesn't match, it looks ahead to
+    // the next optional fields, so silently skipping them (by not mentioning
+    // them) still lands correctly on the next thing the user actually says.
+    function handleFinalPhrase(text){
+      text = (text || '').trim();
+      if(!text || fieldPointer >= FIELDS.length) return;
+      let idx = fieldPointer;
+      while(idx < FIELDS.length){
+        const field = FIELDS[idx];
+        const value = field.parse(text);
+        if(value !== null && value !== undefined && value !== ''){
+          for(let j = fieldPointer; j < idx; j++) fieldStatus[j] = 'skipped';
+          field.apply(value);
+          fieldStatus[idx] = 'done';
+          fieldPointer = idx + 1;
+          updateChecklistDom();
+          if(fieldPointer < FIELDS.length){
+            setHint('«' + field.describe(value) + '» ثبت شد ✅ — حالا «' + FIELDS[fieldPointer].label + '» رو بگو.');
+          }else{
+            setHint('همه‌چیز تشخیص داده شد ✅ — می‌تونی «پایان و بستن» رو بزنی.');
+          }
+          return;
+        }
+        if(!field.optional) break;
+        idx++;
       }
+      setHint('متوجه «' + text + '» به‌عنوان «' + FIELDS[fieldPointer].label + '» نشدم؛ یه‌بار دیگه واضح‌تر بگو.');
     }
 
-    function startListening(step){
+    function startListening(){
       if(!SpeechRecognitionCtor){
         setStatus('cash-status', 'مرورگر شما از تشخیص گفتار پشتیبانی نمی‌کنه. لطفاً از کروم (دسکتاپ یا اندروید) استفاده کن.', true);
         return;
@@ -2724,42 +2754,93 @@
       if(recognizer){ try{ recognizer.stop(); }catch(e){} }
       recognizer = new SpeechRecognitionCtor();
       recognizer.lang = 'fa-IR';
+      recognizer.continuous = true;
       recognizer.interimResults = true;
       recognizer.maxAlternatives = 1;
 
       const micBtn = modalEl.querySelector('#vw-mic');
-      const hintEl = modalEl.querySelector('#vw-hint');
       const transcriptEl = modalEl.querySelector('#vw-transcript');
-      const parsedEl = modalEl.querySelector('#vw-parsed');
-      const nextBtn = modalEl.querySelector('#vw-next');
+      let resultCursor = 0;
 
-      micBtn.classList.add('listening');
-      hintEl.textContent = 'در حال شنیدن... صحبت کن.';
+      recognizer.onstart = () => {
+        listening = true;
+        micBtn.classList.add('listening');
+        setHint('در حال شنیدن... همه‌چیز رو پشت‌سرهم، با یه مکث کوتاه بین هرکدوم، بگو.');
+      };
 
       recognizer.onresult = (evt) => {
-        let text = '';
-        for(let i=0;i<evt.results.length;i++){ text += evt.results[i][0].transcript; }
-        transcriptEl.textContent = text;
-        const result = step.parse(text);
-        if(result){
-          currentParsed = result.value;
-          parsedEl.textContent = '✅ تشخیص داده شد: ' + result.label;
-          nextBtn.disabled = false;
-        }else{
-          currentParsed = null;
-          parsedEl.textContent = '';
-          nextBtn.disabled = true;
+        let interim = '';
+        for(let i = resultCursor; i < evt.results.length; i++){
+          const res = evt.results[i];
+          if(res.isFinal){
+            handleFinalPhrase(res[0].transcript);
+            resultCursor = i + 1;
+          }else{
+            interim += res[0].transcript;
+          }
         }
+        if(interim) transcriptEl.textContent = interim;
       };
+
       recognizer.onerror = (evt) => {
         micBtn.classList.remove('listening');
-        hintEl.textContent = 'خطا در دریافت صدا (' + evt.error + '). دوباره امتحان کن یا دستی وارد کن.';
+        setHint('خطا در دریافت صدا (' + evt.error + '). دوباره روی میکروفون بزن.');
       };
+
       recognizer.onend = () => {
+        listening = false;
         micBtn.classList.remove('listening');
-        hintEl.textContent = 'برای تلاش دوباره، روی میکروفون بزن.';
+        if(fieldPointer < FIELDS.length){
+          setHint('ضبط متوقف شد. اگه چیزی جا موند، دوباره روی میکروفون بزن یا دستی تکمیل کن.');
+        }else{
+          setHint('همه‌چیز تشخیص داده شد ✅ — می‌تونی «پایان و بستن» رو بزنی.');
+        }
       };
+
       try{ recognizer.start(); }catch(e){ /* already started */ }
+    }
+
+    function toggleListening(){
+      if(listening){ try{ recognizer.stop(); }catch(e){} return; }
+      startListening();
+    }
+
+    function finish(){
+      closeModal();
+      setStatus('cash-status', 'اطلاعاتی که از روی صدا تشخیص داده شد توی فرم پر شد؛ یه نگاه بنداز و «افزودن ردیف» رو بزن.', false);
+      document.getElementById('cash-title').scrollIntoView({behavior:'smooth', block:'center'});
+    }
+
+    function openModal(){
+      fieldPointer = 0;
+      fieldStatus = FIELDS.map(() => 'pending');
+      modalEl = document.createElement('div');
+      modalEl.className = 'voice-modal';
+      modalEl.setAttribute('role','dialog');
+      modalEl.setAttribute('aria-modal','true');
+      modalEl.innerHTML = `
+        <div class="voice-card">
+          <h3>🎤 افزودن هزینه با صدا (یکجا)</h3>
+          <div class="voice-progress">اینا رو پشت‌سرهم، با یه مکث کوتاه بین هرکدوم بگو؛ خودش می‌فهمه هرکدوم برای کدوم فیلده. دیگه لازم نیست هی دکمه بزنی.</div>
+          <div class="voice-example">ترتیب گفتن: تاریخ ⟵ عنوان هزینه ⟵ محل هزینه ⟵ مبلغ ⟵ ارزش‌افزوده ⟵ مبلغ کل ⟵ فروشگاه ⟵ آدرس فروشگاه<br>مثال: «تاریخ ۱۵ و ۶ و ۱۴۰۵» … «خرید غذا جهت سگ نگهبان نیروگاه» … «نیروگاه ۱۰ مگاوات» … «۲۰۰ هزار تومان» … «۱۸ هزار تومان» … «فروشگاه قاسم» … «یزد بلوار همنبین»</div>
+          <ul class="voice-checklist" id="vw-checklist">${renderChecklist()}</ul>
+          <div class="voice-mic-row">
+            <button type="button" class="voice-mic-btn" id="vw-mic">🎙️</button>
+            <div class="voice-mic-hint" id="vw-hint">در حال آماده‌سازی میکروفون...</div>
+          </div>
+          <div class="voice-transcript" id="vw-transcript">— متن گفته‌شده اینجا نمایش داده می‌شه —</div>
+          <div class="voice-actions">
+            <button type="button" class="btn ghost" id="vw-cancel">✕ انصراف</button>
+            <button type="button" class="btn" id="vw-finish">✅ پایان و بستن</button>
+          </div>
+        </div>
+      `;
+      modalEl.addEventListener('click', (e) => { if(e.target === modalEl) closeModal(); });
+      document.body.appendChild(modalEl);
+      modalEl.querySelector('#vw-cancel').addEventListener('click', closeModal);
+      modalEl.querySelector('#vw-finish').addEventListener('click', finish);
+      modalEl.querySelector('#vw-mic').addEventListener('click', toggleListening);
+      startListening();
     }
 
     btn.addEventListener('click', () => {
@@ -2767,15 +2848,7 @@
         setStatus('cash-status', 'مرورگر شما از تشخیص گفتار پشتیبانی نمی‌کنه. لطفاً از کروم (دسکتاپ یا اندروید) استفاده کن.', true);
         return;
       }
-      stepIdx = 0;
-      modalEl = document.createElement('div');
-      modalEl.className = 'voice-modal';
-      modalEl.setAttribute('role','dialog');
-      modalEl.setAttribute('aria-modal','true');
-      modalEl.innerHTML = '<div class="voice-card"></div>';
-      modalEl.addEventListener('click', (e) => { if(e.target === modalEl) closeModal(); });
-      document.body.appendChild(modalEl);
-      renderStep();
+      openModal();
     });
   })();
 
