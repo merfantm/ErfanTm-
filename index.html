@@ -4480,8 +4480,18 @@
     const copyBtn = document.getElementById('v2t-copy');
     const clearBtn = document.getElementById('v2t-clear');
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-    let rec = null, listening = false, wantOn = false, startedAt = 0, timerId = null, fatal = false;
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
+    let rec = null, wantOn = false, startedAt = 0, timerId = null, fatal = false;
+    let base = '';              // متنِ ثبت‌شده قبل از شروع جلسه‌ی فعلی
+    let sessionStart = 0, gotResult = false, quickFails = 0;
+    let lastSessionFinal = '', lastSessionEnd = 0;
+
+    const norm = t => t.replace(/\s+/g, ' ').trim();
+    function join(a, b){
+      a = a.replace(/\s+$/, ''); b = b.trim();
+      return !a ? b : (!b ? a : a + ' ' + b);
+    }
     function updateCount(){
       const n = (txt.value.trim().match(/\S+/g) || []).length;
       countEl.textContent = toFaDigits(n) + ' کلمه';
@@ -4492,14 +4502,6 @@
       const sec = Math.floor((Date.now() - startedAt) / 1000);
       timerEl.textContent = pad2(Math.floor(sec / 60)) + ':' + pad2(sec % 60);
     }
-    function appendFinal(t){
-      t = t.trim();
-      if(!t) return;
-      const cur = txt.value;
-      txt.value = cur && !/\s$/.test(cur) ? cur + ' ' + t : cur + t;
-      txt.scrollTop = txt.scrollHeight;
-      updateCount();
-    }
 
     if(!SR){
       micBtn.disabled = true;
@@ -4507,21 +4509,46 @@
       setState('پشتیبانی نمی‌شود');
     }
 
+    // متنِ هر جلسه همیشه «از اول» از روی کل نتایج ساخته می‌شود (نه اضافه‌کردن)،
+    // پس اگر مرورگر نتایج قبلی را دوباره بفرستد هم چیزی تکرار نمی‌شود.
+    function render(results){
+      let fin = '', interim = '', prevFinal = null;
+      for(let i = 0; i < results.length; i++){
+        const r = results[i];
+        const t = norm(r[0].transcript || '');
+        if(!t) continue;
+        if(r.isFinal){
+          if(prevFinal !== null && prevFinal === t) continue;   // نتیجه‌ی تکراری پشت‌سرهم
+          // نتیجه‌ای که فقط ادامه‌ی (یا همان) نتیجه‌ی قبلی است، جایگزین می‌شود
+          if(prevFinal !== null && t.startsWith(prevFinal + ' ')){
+            fin = fin.slice(0, fin.length - prevFinal.length).replace(/\s+$/, '');
+          }
+          fin = join(fin, t); prevFinal = t;
+        }else{
+          interim = join(interim, t);
+        }
+      }
+      return { fin, interim };
+    }
+
     function build(){
       const r = new SR();
       r.lang = langSel.value;
-      r.continuous = true;
+      r.continuous = !isMobile;          // روی موبایل، حالت پیوسته باگ دارد؛ جمله‌به‌جمله و با شروع مجدد خودکار
       r.interimResults = true;
       r.maxAlternatives = 1;
-      r.onstart = () => { listening = true; };
+      sessionStart = Date.now(); gotResult = false;
       r.onresult = (e) => {
-        let interim = '';
-        for(let i = e.resultIndex; i < e.results.length; i++){
-          const res = e.results[i];
-          if(res.isFinal) appendFinal(res[0].transcript);
-          else interim += res[0].transcript;
+        gotResult = true; quickFails = 0;
+        const { fin, interim } = render(e.results);
+        // بازپخش نتیجه‌ی جلسه‌ی قبلی بعد از شروع مجدد را نادیده بگیر
+        if(fin && fin === lastSessionFinal && Date.now() - lastSessionEnd < 1800 && !interim){
+          live.textContent = ''; return;
         }
+        txt.value = join(base, fin);
+        txt.scrollTop = txt.scrollHeight;
         live.textContent = interim;
+        updateCount();
       };
       r.onerror = (e) => {
         if(e.error === 'no-speech' || e.error === 'aborted') return;
@@ -4537,25 +4564,36 @@
         stop();
       };
       r.onend = () => {
-        listening = false;
         live.textContent = '';
-        // Browsers stop after a pause — keep going until the user presses stop.
-        if(wantOn && !fatal){
-          setTimeout(() => { if(wantOn){ try{ rec = build(); rec.start(); }catch(_){ } } }, 150);
+        // پایان جلسه: متن این جلسه قطعی می‌شود و پایه‌ی جلسه‌ی بعدی می‌شود
+        lastSessionFinal = norm(txt.value.slice(base.length)) ;
+        lastSessionEnd = Date.now();
+        base = txt.value;
+        if(!wantOn || fatal) return;
+        // جلوگیری از حلقه‌ی قطع و وصل سریع
+        if(!gotResult && Date.now() - sessionStart < 1500){
+          quickFails++;
+          if(quickFails >= 6){
+            setStatus('v2t-status', 'مرورگر مدام ضبط رو قطع می‌کنه. دسترسی میکروفون و اینترنت رو بررسی کن و دوباره تلاش کن.', true);
+            stop(); return;
+          }
         }
+        const delay = Math.min(250 + quickFails * 400, 2500);
+        setTimeout(() => { if(wantOn && !fatal){ try{ rec = build(); rec.start(); }catch(_){ } } }, delay);
       };
       return r;
     }
 
     function start(){
       if(!SR || wantOn) return;
-      fatal = false; wantOn = true;
+      fatal = false; wantOn = true; quickFails = 0; lastSessionFinal = ''; lastSessionEnd = 0;
+      base = txt.value;
       setStatus('v2t-status', '');
       try{ rec = build(); rec.start(); }catch(err){ wantOn = false; setStatus('v2t-status', 'شروع ضبط ممکن نشد: ' + err.message, true); return; }
       startedAt = Date.now(); tickTimer();
       timerId = setInterval(tickTimer, 500);
       micBtn.classList.add('on'); micBtn.setAttribute('aria-pressed', 'true');
-      langSel.disabled = true;
+      langSel.disabled = true; txt.readOnly = true;
       setState('در حال گوش دادن... صحبت کن');
     }
     function stop(){
@@ -4563,12 +4601,11 @@
       if(rec){ try{ rec.stop(); }catch(_){ } }
       clearInterval(timerId); timerId = null;
       micBtn.classList.remove('on'); micBtn.setAttribute('aria-pressed', 'false');
-      langSel.disabled = false;
+      langSel.disabled = false; txt.readOnly = false;
       live.textContent = '';
       setState('متوقف شد؛ برای ادامه دوباره بزن');
     }
     micBtn.addEventListener('click', () => { wantOn ? stop() : start(); });
-    // leaving the tab / page: release the microphone
     document.addEventListener('visibilitychange', () => { if(document.hidden && wantOn) stop(); });
     document.querySelectorAll('.tool-nav [data-tab], [data-goto]').forEach(b => b.addEventListener('click', () => {
       const t = b.dataset.tab || b.dataset.goto;
@@ -4581,9 +4618,10 @@
       try{
         await navigator.clipboard.writeText(t);
       }catch(_){
+        const ro = txt.readOnly; txt.readOnly = false;
         txt.focus(); txt.select();
-        try{ document.execCommand('copy'); }catch(__){ flash('کپی نشد؛ متن رو دستی انتخاب کن'); return; }
-        txt.setSelectionRange(txt.value.length, txt.value.length);
+        try{ document.execCommand('copy'); }catch(__){ flash('کپی نشد؛ متن رو دستی انتخاب کن'); txt.readOnly = ro; return; }
+        txt.setSelectionRange(txt.value.length, txt.value.length); txt.readOnly = ro;
       }
       flash('کپی شد ✓');
     }
@@ -4595,7 +4633,7 @@
       flashT = setTimeout(() => { copyBtn.classList.remove('done'); setStatus('v2t-status', ''); }, 1800);
     }
     copyBtn.addEventListener('click', copyText);
-    clearBtn.addEventListener('click', () => { txt.value = ''; live.textContent = ''; updateCount(); txt.focus(); });
+    clearBtn.addEventListener('click', () => { txt.value = ''; base = ''; lastSessionFinal = ''; live.textContent = ''; updateCount(); if(!wantOn) txt.focus(); });
     updateCount();
   })();
 
