@@ -1382,6 +1382,78 @@
 
   .hero-banner-img, .brand-stamp img, .social-avatar img{ mix-blend-mode:normal; background:none; }
   .hero-banner-img-wrap, .hero{ background:none; }
+
+  /* ---------- fix: contact tiles were invisible (opacity:0 left over from a removed entrance animation) ---------- */
+  .tool-card{ opacity:1 !important; color:var(--ink); background:var(--bg); border:0; border-radius:18px; box-shadow:var(--raise-s); text-decoration:none; }
+  .tool-card:active{ box-shadow:var(--sink-s); }
+  .tool-card h3{ color:var(--ink); }
+  .tool-card .ico .ico-svg{ color:var(--ac); }
+  .tool-card .ico{ width:44px; height:44px; }
+
+  /* ---------- network sharing (همرسانی تحت شبکه) ---------- */
+  .nav-item.has-new > span:last-child::after{ content:' ●'; color:var(--ac); font-size:11px; }
+  .sh-avatars{ display:grid; grid-template-columns:repeat(auto-fill,minmax(52px,1fr)); gap:12px; margin:8px 0 20px; padding:4px; }
+  .sh-av{ all:unset; cursor:pointer; box-sizing:border-box; height:52px; border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:28px; background:var(--bg); box-shadow:var(--raise-s); }
+  .sh-av[aria-pressed="true"]{ box-shadow:var(--sink-s); outline:2px solid rgba(138,90,43,.5); }
+  .sh-av:focus-visible{ outline:2px solid var(--ac); outline-offset:2px; }
+  .sh-top{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:16px; }
+  .sh-me{ display:flex; align-items:center; gap:10px; font-weight:800; }
+  .sh-me small{ display:block; font-weight:500; color:var(--ink-soft); font-size:12px; }
+  .sh-avatar{ width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:24px; background:var(--bg); box-shadow:var(--raise-s); flex:0 0 auto; }
+  .sh-top .sh-actions{ margin-inline-start:auto; display:flex; gap:10px; flex-wrap:wrap; }
+  .sh-room{ margin:0 0 16px; font-size:13px; color:var(--ink-soft); }
+  .sh-room summary{ cursor:pointer; padding:6px 2px; }
+  .sh-room .row{ margin-top:10px; align-items:flex-end; }
+  .sh-layout{ display:grid; grid-template-columns:250px minmax(0,1fr); gap:18px; min-height:480px; }
+  .sh-peers{ display:flex; flex-direction:column; gap:12px; padding:4px; align-content:flex-start; }
+  .sh-peer{ all:unset; cursor:pointer; box-sizing:border-box; display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:16px; background:var(--bg); box-shadow:var(--raise-s); color:var(--ink); font-weight:700; font-size:14px; }
+  .sh-peer.sel{ box-shadow:var(--sink-s); color:var(--ac); }
+  .sh-peer:focus-visible{ outline:2px solid var(--ac); outline-offset:2px; }
+  .sh-peer .sh-avatar{ width:38px; height:38px; font-size:21px; }
+  .sh-pname{ min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .sh-pname small{ display:block; font-weight:500; color:var(--ink-soft); font-size:11.5px; }
+  .sh-dot{ width:9px; height:9px; border-radius:50%; background:#B9AC93; flex:0 0 auto; }
+  .sh-dot.on{ background:var(--green); }
+  .sh-badge{ margin-inline-start:auto; min-width:20px; height:20px; border-radius:10px; background:var(--ac); color:#fff; font-size:11px; display:flex; align-items:center; justify-content:center; padding:0 6px; }
+  .sh-empty{ color:var(--ink-soft); font-size:13px; line-height:1.9; padding:8px; }
+  .sh-chat{ display:flex; flex-direction:column; border-radius:18px; box-shadow:var(--sink); min-height:480px; overflow:hidden; background:var(--bg); }
+  .sh-chat-empty{ flex:1; display:flex; align-items:center; justify-content:center; text-align:center; padding:24px; color:var(--ink-soft); font-size:14px; line-height:2; }
+  .sh-chat-body{ flex:1; display:none; flex-direction:column; min-height:0; }
+  .sh-chat-head{ display:flex; align-items:center; gap:10px; padding:12px 14px; border-bottom:1px solid var(--rule); }
+  .sh-chat-head .sh-avatar{ width:38px; height:38px; font-size:21px; }
+  .sh-back{ display:none; }
+  .sh-msgs{ flex:1; overflow-y:auto; padding:14px; display:flex; flex-direction:column; gap:10px; height:50vh; min-height:300px; }
+  .sh-msg{ max-width:80%; padding:9px 13px; border-radius:16px; background:var(--bg); box-shadow:var(--raise-s); word-break:break-word; font-size:14px; line-height:1.8; }
+  .sh-msg.out{ align-self:flex-start; background:rgba(138,90,43,.10); }
+  .sh-msg.in{ align-self:flex-end; }
+  .sh-msg.sh-stk{ background:none; box-shadow:none; padding:2px 6px; }
+  .sh-st{ font-size:56px; line-height:1.2; }
+  .sh-tx{ white-space:pre-wrap; }
+  .sh-time{ font-size:10.5px; color:var(--ink-soft); margin-top:2px; }
+  .sh-sys{ align-self:center; font-size:12px; color:var(--ink-soft); padding:4px 12px; border-radius:999px; box-shadow:var(--sink-s); }
+  .sh-file-name{ font-weight:700; direction:ltr; text-align:start; unicode-bidi:plaintext; }
+  .sh-file-meta{ font-size:12px; color:var(--ink-soft); margin-top:2px; }
+  .sh-msg img.sh-prev, .sh-msg video.sh-prev{ display:block; max-width:100%; max-height:260px; border-radius:12px; margin-bottom:8px; }
+  .sh-msg audio{ display:block; width:min(260px,100%); margin-bottom:8px; }
+  .sh-prog{ height:6px; border-radius:3px; background:var(--lo); margin-top:8px; overflow:hidden; }
+  .sh-prog i{ display:block; height:100%; width:0; background:var(--ac); }
+  .sh-dl{ display:inline-block; margin-top:8px; font-size:13px; font-weight:800; }
+  .sh-composer{ display:flex; align-items:center; gap:8px; padding:10px 12px; border-top:1px solid var(--rule); }
+  .sh-composer input[type=text]{ flex:1; min-width:0; }
+  .sh-composer .v2t-icon{ flex:0 0 auto; }
+  .sh-composer .v2t-icon:disabled{ opacity:.45; cursor:not-allowed; }
+  .sh-stickers{ display:none; grid-template-columns:repeat(auto-fill,minmax(46px,1fr)); gap:8px; padding:10px 12px; border-top:1px solid var(--rule); max-height:170px; overflow:auto; }
+  .sh-stickers.open{ display:grid; }
+  .sh-stickers button{ all:unset; cursor:pointer; text-align:center; font-size:28px; height:44px; line-height:44px; border-radius:12px; background:var(--bg); box-shadow:var(--raise-s); }
+  .sh-stickers button:active{ box-shadow:var(--sink-s); }
+  .sh-chat.drag{ outline:2px dashed var(--ac); outline-offset:-6px; }
+  @media (max-width:760px){
+    .sh-layout{ grid-template-columns:1fr; }
+    .sh-layout.chat-open .sh-peers{ display:none; }
+    .sh-layout:not(.chat-open) .sh-chat{ display:none; }
+    .sh-back{ display:inline-flex; }
+    .sh-msg{ max-width:90%; }
+  }
 </style>
 </head>
 <body>
@@ -1414,6 +1486,7 @@
   <symbol id="ico-swap" viewBox="0 0 24 24"><path d="M4 8h13l-3.2-3.2M20 16H7l3.2 3.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="ico-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3M8.5 21h7" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
   <symbol id="ico-copy" viewBox="0 0 24 24"><rect x="8.5" y="8.5" width="11" height="12" rx="2.2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M15.5 5.5v-.3a1.7 1.7 0 0 0-1.7-1.7H6.2a1.7 1.7 0 0 0-1.7 1.7v10.1a1.7 1.7 0 0 0 1.7 1.7h.3" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
+  <symbol id="ico-share" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1.8" fill="currentColor" stroke="none"/><path d="M8.2 8.2a5.4 5.4 0 0 0 0 7.6M15.8 8.2a5.4 5.4 0 0 1 0 7.6M5.2 5.2a9.6 9.6 0 0 0 0 13.6M18.8 5.2a9.6 9.6 0 0 1 0 13.6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
   <symbol id="ico-search" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M15.5 15.5 20 20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
 </defs>
 </svg>
@@ -1480,6 +1553,7 @@
       </div>
     </div>
 
+    <button class="nav-item" data-tab="share" role="tab" aria-selected="false"><span class="ico ico-flat-teal"><svg class="ico-svg"><use href="#ico-share"></use></svg></span> <span>همرسانی شبکه</span></button>
     <button class="nav-item" data-tab="hafez" role="tab" aria-selected="false"><span class="ico ico-flat-purple"><svg class="ico-svg"><use href="#ico-book"></use></svg></span> <span>فال حافظ</span></button>
     <button class="nav-item" data-tab="contact" role="tab" aria-selected="false"><span class="ico ico-flat-blue"><svg class="ico-svg"><use href="#ico-mail"></use></svg></span> <span>ارتباط با ما</span></button>
   </nav>
@@ -2349,6 +2423,74 @@
         <p class="lede">چشم‌هاتو ببند، یه نیت کن، بعد کلیک کن.</p>
         <button class="btn" id="hafez-go" type="button">🔮 بگیر فال</button>
         <div id="hafez-result" style="margin-top:26px;"></div>
+      </div>
+    </section>
+
+    <!-- ---------------- NETWORK SHARING ---------------- -->
+    <section id="panel-share" class="panel">
+      <div class="card" id="sh-setup">
+        <h2>📡 همرسانی تحت شبکه</h2>
+        <p class="lede">یک نام و آواتار انتخاب کن؛ هر کسی که به همین شبکه‌ی اینترنت وصله و این سایت رو باز کرده باشه، توی لیست ظاهر می‌شه. بعد می‌تونید مستقیم (دستگاه به دستگاه) فایل، عکس، موسیقی، پیام و استیکر برای هم بفرستید.</p>
+        <div class="field" style="max-width:320px;">
+          <label for="sh-name">نام نمایشی</label>
+          <input type="text" id="sh-name" maxlength="20" placeholder="مثلاً: علی">
+        </div>
+        <label>آواتار</label>
+        <div class="sh-avatars" id="sh-avatars"></div>
+        <button class="btn" id="sh-join" type="button">ورود به شبکه</button>
+        <div class="status" id="sh-setup-status"></div>
+      </div>
+
+      <div class="card" id="sh-main" style="display:none;">
+        <div class="sh-top">
+          <div class="sh-me">
+            <span class="sh-avatar" id="sh-me-av"></span>
+            <span><span id="sh-me-name"></span><small id="sh-status">در حال اتصال...</small></span>
+          </div>
+          <div class="sh-actions">
+            <button class="btn ghost small" id="sh-edit" type="button">✏️ ویرایش پروفایل</button>
+          </div>
+        </div>
+        <details class="sh-room" id="sh-room-box">
+          <summary>اتاق: <span class="num" id="sh-room-label">—</span> (اگه همدیگه رو نمی‌بینید، اینجا کلیک کن)</summary>
+          <div class="row">
+            <div class="field" style="flex:1 1 200px;">
+              <label for="sh-room-code">کد اتاق مشترک (هر دو یک کد وارد کنید)</label>
+              <input type="text" id="sh-room-code" maxlength="30" placeholder="مثلاً: office1405" style="direction:ltr;">
+            </div>
+            <div class="field" style="flex:0 0 auto;">
+              <button class="btn small" id="sh-room-go" type="button">اتصال به این اتاق</button>
+              <button class="btn ghost small" id="sh-room-auto" type="button">برگشت به حالت خودکار</button>
+            </div>
+          </div>
+        </details>
+
+        <div class="sh-layout" id="sh-layout">
+          <aside class="sh-peers">
+            <div id="sh-peers-list" style="display:flex;flex-direction:column;gap:12px;"></div>
+            <div class="sh-empty" id="sh-peers-empty">هنوز کسی پیدا نشد. روی یه دستگاه دیگه که به همین شبکه وصله این سایت رو باز کن و وارد «همرسانی شبکه» بشه.</div>
+          </aside>
+          <section class="sh-chat" id="sh-chat">
+            <div class="sh-chat-empty" id="sh-chat-empty">یه دستگاه رو از لیست انتخاب کن تا اتصال برقرار بشه.</div>
+            <div class="sh-chat-body" id="sh-chat-body">
+              <div class="sh-chat-head">
+                <button class="v2t-icon sh-back" id="sh-back" type="button" aria-label="بازگشت">→</button>
+                <span class="sh-avatar" id="sh-chat-av"></span>
+                <div class="sh-pname"><span id="sh-chat-name"></span><small id="sh-chat-state"></small></div>
+              </div>
+              <div class="sh-msgs" id="sh-msgs"></div>
+              <div class="sh-stickers" id="sh-stickers"></div>
+              <div class="sh-composer">
+                <button class="v2t-icon" id="sh-stk-btn" type="button" title="استیکر" aria-label="استیکر">😊</button>
+                <button class="v2t-icon" id="sh-file-btn" type="button" title="ارسال فایل" aria-label="ارسال فایل">📎</button>
+                <input type="file" id="sh-file-input" multiple hidden>
+                <input type="text" id="sh-input" placeholder="پیام بنویس..." autocomplete="off" dir="auto">
+                <button class="v2t-icon" id="sh-send" type="button" title="ارسال" aria-label="ارسال">➤</button>
+              </div>
+            </div>
+          </section>
+        </div>
+        <p style="color:var(--ink-soft);font-size:12px;margin:14px 0 0;line-height:1.9;">فایل‌ها و پیام‌ها مستقیم بین دو دستگاه (WebRTC) جابه‌جا می‌شن و جایی ذخیره نمی‌شن؛ با بستن صفحه، چت پاک می‌شه. برای پیدا کردن همدیگه فقط یک پیام کوچک اتصال از طریق یک سرویس عمومی رایگان رد می‌شه.</p>
       </div>
     </section>
 
@@ -5264,6 +5406,498 @@
     allBtn.addEventListener('click', () => {
       outputs.forEach((o, i) => setTimeout(() => download(o.url, o.name), i * 300));
     });
+  })();
+
+  /* ================= Network sharing (همرسانی تحت شبکه) =================
+     Discovery: devices behind the same public IP meet in a room whose name is a
+     hash of that IP, over free public MQTT-over-WebSocket brokers (signaling only).
+     Data (chat + files): direct WebRTC data channels between the two devices. */
+  (function initShare(){
+    const panel = document.getElementById('panel-share');
+    if(!panel) return;
+    const $ = id => document.getElementById(id);
+    const esc = escapeHtml;
+    const rand = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-3);
+    const AVATARS = ['🦊','🐼','🐯','🦁','🐸','🐵','🦉','🐙','🦄','🐧','🐱','🐶','🐰','🦋','🐢','🚀','👽','🤖','🎃','🌵'];
+    const STICKERS = ['😂','😍','🥰','😎','🤩','😭','😡','🤔','👍','👎','👏','🙏','🔥','❤️','💔','🎉','🥳','😴','🤝','💯','🙈','😱','🤣','😘'];
+    const ICE = [{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'}];
+    const BROKERS = ['wss://broker.emqx.io:8084/mqtt', 'wss://broker.hivemq.com:8884/mqtt'];
+    const CHUNK = 16 * 1024;
+
+    let profile = null;
+    try{ profile = JSON.parse(localStorage.getItem('tm_share_profile') || 'null'); }catch(e){}
+    let selAvatar = (profile && profile.avatar) || AVATARS[Math.floor(Math.random() * AVATARS.length)];
+    const myId = rand();
+    const peers = new Map();
+    const seenSig = new Set();
+    let selected = null, started = false, clients = [], roomId = '', customRoom = '', topic = '';
+    let helloTimer = null, pruneTimer = null, renderQueued = false;
+
+    /* ---------- profile UI ---------- */
+    const avBox = $('sh-avatars');
+    function renderAvatarPicker(){
+      avBox.innerHTML = '';
+      AVATARS.forEach(a => {
+        const b = document.createElement('button');
+        b.type = 'button'; b.className = 'sh-av'; b.textContent = a;
+        b.setAttribute('aria-pressed', a === selAvatar ? 'true' : 'false');
+        b.setAttribute('aria-label', 'آواتار ' + a);
+        b.addEventListener('click', () => { selAvatar = a; renderAvatarPicker(); });
+        avBox.appendChild(b);
+      });
+    }
+    renderAvatarPicker();
+    if(profile && profile.name) $('sh-name').value = profile.name;
+
+    function renderMe(){
+      $('sh-me-av').textContent = profile.avatar;
+      $('sh-me-name').textContent = profile.name;
+    }
+
+    $('sh-join').addEventListener('click', () => {
+      const name = $('sh-name').value.trim();
+      if(!name){ setStatus('sh-setup-status', 'یه نام برای خودت بنویس.', true); return; }
+      profile = { name, avatar: selAvatar };
+      try{ localStorage.setItem('tm_share_profile', JSON.stringify(profile)); }catch(e){}
+      setStatus('sh-setup-status', '');
+      $('sh-setup').style.display = 'none';
+      $('sh-main').style.display = '';
+      renderMe();
+      if(started){ sendHello(false); renderChat(); } else { start(); }
+    });
+    $('sh-edit').addEventListener('click', () => {
+      $('sh-main').style.display = 'none';
+      $('sh-setup').style.display = '';
+      $('sh-join').textContent = started ? 'ذخیره' : 'ورود به شبکه';
+    });
+
+    /* ---------- helpers ---------- */
+    function fmtSize(n){
+      if(n < 1024) return toFaDigits(n) + ' بایت';
+      if(n < 1048576) return toFaDigits((n / 1024).toFixed(1)) + ' کیلوبایت';
+      if(n < 1073741824) return toFaDigits((n / 1048576).toFixed(1)) + ' مگابایت';
+      return toFaDigits((n / 1073741824).toFixed(2)) + ' گیگابایت';
+    }
+    function timeStr(t){ const d = new Date(t); return pad2(d.getHours()) + ':' + pad2(d.getMinutes()); }
+    async function sha(str){
+      try{
+        const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+        return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+      }catch(e){
+        let h = 5381; for(let i = 0; i < str.length; i++) h = ((h << 5) + h + str.charCodeAt(i)) >>> 0;
+        return h.toString(16).padStart(8, '0').repeat(4);
+      }
+    }
+    async function fetchWithTimeout(url, ms){
+      const ctl = new AbortController(); const t = setTimeout(() => ctl.abort(), ms);
+      try{ return await fetch(url, { signal: ctl.signal, cache: 'no-store' }); } finally { clearTimeout(t); }
+    }
+    async function getPublicIP(){
+      const tries = [
+        async () => (await (await fetchWithTimeout('https://api.ipify.org?format=json', 4500)).json()).ip,
+        async () => { const t = await (await fetchWithTimeout('https://www.cloudflare.com/cdn-cgi/trace', 4500)).text(); const m = t.match(/ip=(.+)/); return m && m[1].trim(); },
+        async () => (await (await fetchWithTimeout('https://api64.ipify.org?format=json', 4500)).json()).ip
+      ];
+      for(const f of tries){ try{ const ip = await f(); if(ip) return ip; }catch(e){} }
+      return null;
+    }
+    function loadScript(src){
+      return new Promise((res, rej) => {
+        const s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = () => rej(new Error('load'));
+        document.head.appendChild(s);
+      });
+    }
+    async function ensureMqtt(){
+      if(window.mqtt) return;
+      try{ await loadScript('https://cdn.jsdelivr.net/npm/mqtt@5.10.1/dist/mqtt.min.js'); }
+      catch(e){ await loadScript('https://unpkg.com/mqtt@5.10.1/dist/mqtt.min.js'); }
+      if(!window.mqtt) throw new Error('mqtt');
+    }
+    function setShStatus(msg, err){
+      const el = $('sh-status'); el.textContent = msg; el.style.color = err ? 'var(--danger)' : '';
+    }
+
+    /* ---------- signaling over MQTT ---------- */
+    function pub(obj){
+      obj.m = obj.m || rand();
+      const s = JSON.stringify(obj);
+      clients.forEach(c => { if(c.connected){ try{ c.publish(topic, s, { qos: 0 }); }catch(e){} } });
+    }
+    function sendHello(ask){ pub({ t: 'hello', from: myId, name: profile.name, avatar: profile.avatar, ask: !!ask }); }
+    function sendSig(to, kind, data){ pub({ t: 'sig', from: myId, to, kind, data }); }
+
+    function updateConnStatus(){
+      const n = clients.filter(c => c.connected).length;
+      if(n === 0){ setShStatus('در حال اتصال به سرویس پیدا کردن دستگاه‌ها...'); return; }
+      const count = peers.size;
+      setShStatus(count ? ('آنلاین · ' + toFaDigits(count) + ' دستگاه در شبکه') : 'آنلاین · منتظر دستگاه‌های دیگه...');
+    }
+
+    function onMessage(buf){
+      let m; try{ m = JSON.parse(buf.toString()); }catch(e){ return; }
+      if(!m || m.from === myId) return;
+      if(m.to && m.to !== myId) return;
+      if(m.t === 'sig'){
+        if(seenSig.has(m.m)) return;
+        seenSig.add(m.m); if(seenSig.size > 600) seenSig.clear();
+        onSig(m);
+      }else if(m.t === 'hello'){
+        let p = peers.get(m.from);
+        if(!p) p = newPeer(m.from);
+        p.name = String(m.name || 'ناشناس').slice(0, 20); p.avatar = String(m.avatar || '👤').slice(0, 4); p.seen = Date.now();
+        queueRender();
+        if(m.ask) setTimeout(() => sendHello(false), Math.random() * 600);
+      }else if(m.t === 'bye'){
+        const p = peers.get(m.from);
+        if(p && p.state !== 'open'){ dropPeer(p); }
+      }
+    }
+
+    async function startNetwork(){
+      topic = 'tmshare/v1/' + roomId;
+      $('sh-room-label').textContent = roomId.slice(0, 6);
+      clients.forEach(c => { try{ c.end(true); }catch(e){} });
+      clients = BROKERS.map(url => {
+        const c = mqtt.connect(url, {
+          clientId: 'tm_' + myId + Math.random().toString(16).slice(2, 6),
+          clean: true, reconnectPeriod: 3000, connectTimeout: 8000,
+          will: { topic, payload: JSON.stringify({ t: 'bye', from: myId, m: 'w' + myId }), qos: 0 }
+        });
+        c.on('connect', () => { c.subscribe(topic, { qos: 0 }); updateConnStatus(); sendHello(true); });
+        c.on('message', (tp, payload) => onMessage(payload));
+        c.on('close', updateConnStatus);
+        c.on('error', () => {});
+        return c;
+      });
+      updateConnStatus();
+      setTimeout(() => {
+        if(started && !clients.some(c => c.connected)) setShStatus('اتصال به سرویس برقرار نشد؛ اینترنت یا فیلترشکن رو بررسی کن.', true);
+      }, 15000);
+      clearInterval(helloTimer); clearInterval(pruneTimer);
+      helloTimer = setInterval(() => sendHello(false), 10000);
+      pruneTimer = setInterval(() => {
+        const now = Date.now(); let changed = false;
+        peers.forEach(p => { if(p.state !== 'open' && now - p.seen > 28000){ dropPeer(p, true); changed = true; } });
+        if(changed) queueRender();
+      }, 5000);
+    }
+
+    async function start(){
+      started = true;
+      setShStatus('در حال یافتن شبکه...');
+      try{ await ensureMqtt(); }
+      catch(e){ setShStatus('بارگذاری کتابخانه ارتباطی ممکن نشد؛ اینترنت رو بررسی کن.', true); started = false; return; }
+      if(customRoom){
+        roomId = 'c' + (await sha('tm-room:' + customRoom)).slice(0, 19);
+      }else{
+        const ip = await getPublicIP();
+        if(!ip){
+          setShStatus('آی‌پی شبکه تشخیص داده نشد. از بخش «اتاق» یه کد مشترک وارد کنید.', true);
+          $('sh-room-box').open = true; started = false; return;
+        }
+        roomId = 'a' + (await sha('tm-ip:' + ip)).slice(0, 19);
+      }
+      await startNetwork();
+    }
+    function restartRoom(code){
+      customRoom = code;
+      peers.forEach(p => { resetConn(p); });
+      peers.clear(); selected = null; queueRender(); renderChat();
+      if(started){ try{ pub({ t: 'bye', from: myId }); }catch(e){} clients.forEach(c => { try{ c.end(true); }catch(e){} }); clients = []; }
+      start();
+    }
+    $('sh-room-go').addEventListener('click', () => {
+      const code = $('sh-room-code').value.trim();
+      if(!code){ setShStatus('یه کد اتاق وارد کن.', true); return; }
+      restartRoom(code);
+    });
+    $('sh-room-auto').addEventListener('click', () => { $('sh-room-code').value = ''; restartRoom(''); });
+    window.addEventListener('beforeunload', () => { try{ pub({ t: 'bye', from: myId }); }catch(e){} });
+
+    /* ---------- peers ---------- */
+    function newPeer(id){
+      const p = { id, name: 'ناشناس', avatar: '👤', seen: Date.now(), pc: null, dc: null, state: 'idle', initiator: false,
+                  msgs: [], unread: 0, pend: [], cur: null, sendQ: Promise.resolve(), timer: null };
+      peers.set(id, p); return p;
+    }
+    function dropPeer(p, silent){
+      resetConn(p); peers.delete(p.id);
+      if(selected === p.id){ selected = null; renderChat(); }
+      queueRender();
+    }
+    function resetConn(p){
+      clearTimeout(p.timer);
+      const pc = p.pc, dc = p.dc; p.pc = null; p.dc = null;
+      try{ if(dc) dc.close(); }catch(e){}
+      try{ if(pc) pc.close(); }catch(e){}
+      p.state = 'idle'; p.cur = null; p.sendQ = Promise.resolve();
+    }
+    function sysMsg(p, text){ p.msgs.push({ id: rand(), kind: 'sys', text, time: Date.now() }); }
+
+    function makePC(p, initiator){
+      const pc = new RTCPeerConnection({ iceServers: ICE });
+      p.pc = pc; p.state = 'connecting'; p.initiator = initiator;
+      pc.onicecandidate = e => { if(e.candidate && p.pc === pc) sendSig(p.id, 'ice', e.candidate.toJSON()); };
+      pc.onconnectionstatechange = () => {
+        if(p.pc !== pc) return;
+        if(pc.connectionState === 'failed' || pc.connectionState === 'closed'){
+          const was = p.state === 'open';
+          resetConn(p);
+          if(was) sysMsg(p, 'ارتباط قطع شد.');
+          queueRender(); if(selected === p.id) renderChat();
+        }
+      };
+      if(initiator){ setupDC(p, pc, pc.createDataChannel('tm', { ordered: true })); }
+      else{ pc.ondatachannel = e => setupDC(p, pc, e.channel); }
+      return pc;
+    }
+    function setupDC(p, pc, dc){
+      dc.binaryType = 'arraybuffer';
+      dc.bufferedAmountLowThreshold = 256 * 1024;
+      p.dc = dc;
+      dc.onopen = () => {
+        if(p.pc !== pc) return;
+        clearTimeout(p.timer); p.state = 'open';
+        sysMsg(p, 'ارتباط مستقیم برقرار شد ✅');
+        queueRender(); if(selected === p.id) renderChat();
+      };
+      dc.onclose = () => {
+        if(p.pc !== pc) return;
+        const was = p.state === 'open'; resetConn(p);
+        if(was) sysMsg(p, 'ارتباط قطع شد.');
+        queueRender(); if(selected === p.id) renderChat();
+      };
+      dc.onmessage = e => onDC(p, e.data);
+    }
+    function flushPend(p){
+      const list = p.pend; p.pend = [];
+      list.forEach(c => { try{ p.pc.addIceCandidate(c).catch(() => {}); }catch(e){} });
+    }
+    async function connectPeer(p){
+      if(p.state !== 'idle') return;
+      resetConn(p); p.pend = [];
+      try{
+        const pc = makePC(p, true);
+        const off = await pc.createOffer();
+        await pc.setLocalDescription(off);
+        sendSig(p.id, 'offer', pc.localDescription.toJSON());
+        p.timer = setTimeout(() => {
+          if(p.state !== 'open'){ resetConn(p); sysMsg(p, 'اتصال برقرار نشد. مطمئن شو هر دو دستگاه روی یک شبکه‌ان و دوباره روی نام دستگاه بزن.'); queueRender(); if(selected === p.id) renderChat(); }
+        }, 20000);
+      }catch(e){ resetConn(p); sysMsg(p, 'خطا در شروع اتصال.'); }
+      queueRender(); if(selected === p.id) renderChat();
+    }
+    async function onSig(m){
+      let p = peers.get(m.from);
+      if(!p){ p = newPeer(m.from); }
+      try{
+        if(m.kind === 'offer'){
+          if(p.pc && p.initiator && myId < p.id) return;   // we win the tie
+          if(p.pc){ resetConn(p); }
+          const pc = makePC(p, false);
+          await pc.setRemoteDescription(m.data);
+          flushPend(p);
+          const ans = await pc.createAnswer();
+          await pc.setLocalDescription(ans);
+          sendSig(p.id, 'answer', pc.localDescription.toJSON());
+          clearTimeout(p.timer);
+          p.timer = setTimeout(() => { if(p.state !== 'open'){ resetConn(p); queueRender(); } }, 20000);
+          queueRender();
+        }else if(m.kind === 'answer'){
+          if(p.pc && p.initiator && p.pc.signalingState === 'have-local-offer'){
+            await p.pc.setRemoteDescription(m.data); flushPend(p);
+          }
+        }else if(m.kind === 'ice'){
+          if(p.pc && p.pc.remoteDescription){ p.pc.addIceCandidate(m.data).catch(() => {}); }
+          else p.pend.push(m.data);
+        }
+      }catch(e){ console.warn('signal error', e); }
+    }
+
+    /* ---------- data channel protocol ---------- */
+    function notify(p){
+      if(selected !== p.id || !panel.classList.contains('active')){
+        p.unread++;
+        const nb = document.querySelector('.tool-nav [data-tab="share"]');
+        if(nb && !panel.classList.contains('active')) nb.classList.add('has-new');
+      }
+    }
+    let progTick = 0;
+    function onDC(p, data){
+      if(typeof data === 'string'){
+        let m; try{ m = JSON.parse(data); }catch(e){ return; }
+        if(m.t === 'txt' || m.t === 'stk'){
+          p.msgs.push({ id: m.id || rand(), dir: 'in', kind: m.t, text: String(m.text || '').slice(0, 5000), time: Date.now() });
+          notify(p); queueRender(); if(selected === p.id) renderChat();
+        }else if(m.t === 'fs'){
+          const msg = { id: m.id || rand(), dir: 'in', kind: 'file', name: String(m.name || 'file').slice(0, 200), size: +m.size || 0, mime: String(m.mime || ''), prog: 0, done: false, time: Date.now() };
+          p.cur = { msg, chunks: [], got: 0 };
+          p.msgs.push(msg); notify(p); queueRender(); if(selected === p.id) renderChat();
+        }else if(m.t === 'fe'){
+          const cur = p.cur; if(!cur) return;
+          cur.msg.url = URL.createObjectURL(new Blob(cur.chunks, { type: cur.msg.mime || 'application/octet-stream' }));
+          cur.msg.prog = 1; cur.msg.done = true; p.cur = null;
+          if(selected === p.id) renderChat();
+        }
+      }else if(p.cur){
+        const cur = p.cur; cur.chunks.push(data); cur.got += data.byteLength;
+        cur.msg.prog = cur.msg.size ? Math.min(1, cur.got / cur.msg.size) : 0;
+        const now = Date.now();
+        if(now - progTick > 120){ progTick = now; updateProg(cur.msg); }
+      }
+    }
+    function dcSend(p, obj){ if(p.dc && p.dc.readyState === 'open') p.dc.send(JSON.stringify(obj)); }
+
+    function sendText(p, text, kind){
+      if(p.state !== 'open') return;
+      const id = rand();
+      dcSend(p, { t: kind, id, text });
+      p.msgs.push({ id, dir: 'out', kind, text, time: Date.now() });
+      renderChat();
+    }
+    function waitDrain(dc){
+      return new Promise((res, rej) => {
+        const ok = () => { dc.removeEventListener('close', bad); res(); };
+        const bad = () => { dc.removeEventListener('bufferedamountlow', ok); rej(new Error('closed')); };
+        dc.addEventListener('bufferedamountlow', ok, { once: true });
+        dc.addEventListener('close', bad, { once: true });
+      });
+    }
+    function sendFile(p, file){
+      if(p.state !== 'open') return;
+      const id = rand();
+      const msg = { id, dir: 'out', kind: 'file', name: file.name, size: file.size, mime: file.type || '', url: URL.createObjectURL(file), prog: 0, done: false, time: Date.now() };
+      p.msgs.push(msg); renderChat();
+      p.sendQ = p.sendQ.then(async () => {
+        const dc = p.dc;
+        try{
+          if(!dc || dc.readyState !== 'open') throw new Error('closed');
+          dc.send(JSON.stringify({ t: 'fs', id, name: file.name, size: file.size, mime: file.type || '' }));
+          let off = 0, tick = 0;
+          while(off < file.size){
+            if(dc.readyState !== 'open') throw new Error('closed');
+            if(dc.bufferedAmount > 1024 * 1024) await waitDrain(dc);
+            const buf = await file.slice(off, off + CHUNK).arrayBuffer();
+            dc.send(buf); off += buf.byteLength;
+            msg.prog = off / file.size;
+            const now = Date.now(); if(now - tick > 120){ tick = now; updateProg(msg); await new Promise(r => setTimeout(r, 0)); }
+          }
+          dc.send(JSON.stringify({ t: 'fe', id }));
+          msg.prog = 1; msg.done = true;
+        }catch(e){ msg.err = 'ارسال ناموفق بود'; msg.done = true; }
+        if(selected === p.id) renderChat();
+      });
+    }
+
+    /* ---------- rendering ---------- */
+    function queueRender(){
+      if(renderQueued) return; renderQueued = true;
+      requestAnimationFrame(() => { renderQueued = false; renderPeers(); updateConnStatus(); });
+    }
+    function stateText(p){
+      return p.state === 'open' ? 'متصل مستقیم' : p.state === 'connecting' ? 'در حال اتصال...' : 'آنلاین';
+    }
+    function renderPeers(){
+      const list = $('sh-peers-list'); list.innerHTML = '';
+      const arr = Array.from(peers.values()).sort((a, b) => a.name.localeCompare(b.name, 'fa'));
+      $('sh-peers-empty').style.display = arr.length ? 'none' : '';
+      arr.forEach(p => {
+        const b = document.createElement('button');
+        b.type = 'button'; b.className = 'sh-peer' + (p.id === selected ? ' sel' : '');
+        b.innerHTML = '<span class="sh-avatar">' + esc(p.avatar) + '</span>' +
+          '<span class="sh-pname">' + esc(p.name) + '<small>' + stateText(p) + '</small></span>' +
+          (p.unread ? '<span class="sh-badge">' + toFaDigits(p.unread) + '</span>' : '<span class="sh-dot on" style="margin-inline-start:auto;"></span>');
+        b.addEventListener('click', () => selectPeer(p.id));
+        list.appendChild(b);
+      });
+    }
+    function selectPeer(id){
+      selected = id;
+      const p = peers.get(id); if(!p) return;
+      p.unread = 0;
+      $('sh-stickers').classList.remove('open');
+      if(p.state === 'idle') connectPeer(p);
+      renderPeers(); renderChat();
+      $('sh-layout').scrollIntoView({ block: 'nearest' });
+    }
+    function msgHTML(m){
+      const t = toFaDigits(timeStr(m.time));
+      if(m.kind === 'sys') return '<div class="sh-sys">' + esc(m.text) + '</div>';
+      if(m.kind === 'stk') return '<div class="sh-msg sh-stk ' + m.dir + '"><div class="sh-st">' + esc(m.text) + '</div><div class="sh-time">' + t + '</div></div>';
+      if(m.kind === 'txt') return '<div class="sh-msg ' + m.dir + '"><div class="sh-tx" dir="auto">' + esc(m.text) + '</div><div class="sh-time">' + t + '</div></div>';
+      let prev = '';
+      if(m.url){
+        const u = esc(m.url);
+        if(/^image\//.test(m.mime)) prev = '<img class="sh-prev" src="' + u + '" alt="">';
+        else if(/^audio\//.test(m.mime)) prev = '<audio controls src="' + u + '"></audio>';
+        else if(/^video\//.test(m.mime)) prev = '<video class="sh-prev" controls src="' + u + '"></video>';
+      }
+      const pct = Math.round((m.prog || 0) * 100);
+      let foot = '';
+      if(m.err) foot = '<div class="sh-file-meta" style="color:var(--danger)">' + esc(m.err) + '</div>';
+      else if(!m.done) foot = '<div class="sh-prog" data-mid="' + esc(m.id) + '"><i style="width:' + pct + '%"></i></div><div class="sh-file-meta" data-pt="' + esc(m.id) + '">' + toFaDigits(pct) + '٪ ' + (m.dir === 'in' ? 'در حال دریافت' : 'در حال ارسال') + '</div>';
+      else if(m.url) foot = '<a class="sh-dl" href="' + esc(m.url) + '" download="' + esc(m.name) + '">⬇️ ' + (m.dir === 'in' ? 'ذخیره فایل' : 'دانلود نسخه') + '</a>';
+      return '<div class="sh-msg ' + m.dir + '">' + prev + '<div class="sh-file-name">📄 ' + esc(m.name) + '</div><div class="sh-file-meta">' + fmtSize(m.size) + '</div>' + foot + '<div class="sh-time">' + t + '</div></div>';
+    }
+    function updateProg(msg){
+      const pct = Math.round((msg.prog || 0) * 100);
+      const bar = document.querySelector('.sh-prog[data-mid="' + msg.id + '"] i');
+      if(bar) bar.style.width = pct + '%';
+      const pt = document.querySelector('[data-pt="' + msg.id + '"]');
+      if(pt) pt.textContent = toFaDigits(pct) + '٪ ' + (msg.dir === 'in' ? 'در حال دریافت' : 'در حال ارسال');
+    }
+    function renderChat(){
+      const p = selected && peers.get(selected);
+      $('sh-layout').classList.toggle('chat-open', !!p);
+      $('sh-chat-empty').style.display = p ? 'none' : 'flex';
+      $('sh-chat-body').style.display = p ? 'flex' : 'none';
+      if(!p) return;
+      $('sh-chat-av').textContent = p.avatar;
+      $('sh-chat-name').textContent = p.name;
+      $('sh-chat-state').textContent = stateText(p);
+      const open = p.state === 'open';
+      ['sh-input', 'sh-send', 'sh-file-btn', 'sh-stk-btn'].forEach(id => { $(id).disabled = !open; });
+      $('sh-input').placeholder = open ? 'پیام بنویس...' : 'منتظر اتصال...';
+      const box = $('sh-msgs');
+      const nearBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 120;
+      box.innerHTML = p.msgs.map(msgHTML).join('');
+      if(nearBottom || true) box.scrollTop = box.scrollHeight;
+    }
+
+    /* ---------- composer ---------- */
+    $('sh-back').addEventListener('click', () => { selected = null; renderPeers(); renderChat(); });
+    function doSend(){
+      const p = selected && peers.get(selected); if(!p) return;
+      const v = $('sh-input').value.trim(); if(!v) return;
+      sendText(p, v, 'txt'); $('sh-input').value = '';
+    }
+    $('sh-send').addEventListener('click', doSend);
+    $('sh-input').addEventListener('keydown', e => { if(e.key === 'Enter' && !e.isComposing){ e.preventDefault(); doSend(); } });
+    const stkBox = $('sh-stickers');
+    STICKERS.forEach(s => {
+      const b = document.createElement('button'); b.type = 'button'; b.textContent = s; b.setAttribute('aria-label', 'استیکر ' + s);
+      b.addEventListener('click', () => {
+        const p = selected && peers.get(selected); if(!p) return;
+        sendText(p, s, 'stk'); stkBox.classList.remove('open');
+      });
+      stkBox.appendChild(b);
+    });
+    $('sh-stk-btn').addEventListener('click', () => stkBox.classList.toggle('open'));
+    $('sh-file-btn').addEventListener('click', () => $('sh-file-input').click());
+    function sendFiles(list){
+      const p = selected && peers.get(selected); if(!p) return;
+      Array.from(list).forEach(f => sendFile(p, f));
+    }
+    $('sh-file-input').addEventListener('change', e => { sendFiles(e.target.files); e.target.value = ''; });
+    const chatEl = $('sh-chat');
+    ['dragenter', 'dragover'].forEach(ev => chatEl.addEventListener(ev, e => { e.preventDefault(); chatEl.classList.add('drag'); }));
+    ['dragleave', 'drop'].forEach(ev => chatEl.addEventListener(ev, e => { e.preventDefault(); chatEl.classList.remove('drag'); }));
+    chatEl.addEventListener('drop', e => { if(e.dataTransfer && e.dataTransfer.files.length) sendFiles(e.dataTransfer.files); });
+
+    document.querySelectorAll('.tool-nav [data-tab="share"]').forEach(b => b.addEventListener('click', () => {
+      b.classList.remove('has-new');
+      const p = selected && peers.get(selected); if(p){ p.unread = 0; renderPeers(); }
+    }));
   })();
 
   /* ================= Translator ================= */
